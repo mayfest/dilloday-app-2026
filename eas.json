@@ -1,0 +1,55 @@
+{
+  "cli": {
+    "version": ">= 16.4.1",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "autoIncrement": true,
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development"
+    },
+    "ios-simulator": {
+      "extends": "development",
+      "ios": {
+        "simulator": true
+      },
+      "channel": "ios-simulator"
+    },
+    "preview": {
+      "autoIncrement": true,
+      "distribution": "internal",
+      "channel": "preview",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "autoIncrement": true,
+      "channel": "production"
+    },
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "channel": "preview2"
+    },
+    "preview3": {
+      "developmentClient": true,
+      "channel": "preview3"
+    },
+    "preview4": {
+      "distribution": "internal",
+      "channel": "preview4"
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "6745717280"
+      }
+    }
+  }
+}
