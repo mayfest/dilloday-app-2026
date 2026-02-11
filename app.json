@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "Dillo Day 2025",
+    "slug": "dillo-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icons/app-icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.dillo-app",
+      "runtimeVersion": "1.0.0"
+    },
+    "notification": {
+      "iosDisplayInForeground": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/app-icon.png",
+        "backgroundColor": "#173885"
+      },
+      "package": "com.mayfest.dillo",
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icons/app-splash.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#173885"
+        }
+      ],
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8669df30-c3ec-4752-beca-e53624680e07"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/8669df30-c3ec-4752-beca-e53624680e07"
+    }
+  }
+}
