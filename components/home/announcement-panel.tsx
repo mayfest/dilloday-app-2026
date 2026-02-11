@@ -1,0 +1,52 @@
+import { Colors } from '@/constants/Colors';
+import { useRouter } from 'expo-router';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+
+interface AnnouncementPanelProps {
+  value: string;
+}
+
+export default function AnnouncementPanel({ value }: AnnouncementPanelProps) {
+  const router = useRouter();
+
+  return (
+    <TouchableOpacity
+      style={styles.container}
+      activeOpacity={0.8}
+      onPress={() => {
+        router.push('/(tabs)/announcements');
+      }}
+    >
+      <Text style={styles.text}>{value}</Text>
+      <Text style={styles.note}>Tap to view more</Text>
+    </TouchableOpacity>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: Colors.light.background,
+    borderRadius: 16,
+    padding: 18,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    marginVertical: 8,
+    width: '100%',
+  },
+  text: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#ffffff',
+    marginBottom: 12,
+  },
+  note: {
+    fontSize: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    color: Colors.light.card,
+    opacity: 0.5,
+    textAlign: 'right',
+  },
+});
