@@ -5,7 +5,14 @@ import FMOStageBanner from '@/components/schedule/fmo-stage-banner';
 import MainStageBanner from '@/components/schedule/main-stage-banner';
 import { useConfig } from '@/lib/config';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function ScheduleScrollView() {
   const { config, reload } = useConfig();

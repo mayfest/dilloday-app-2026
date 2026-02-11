@@ -24,8 +24,6 @@ export default function FoodTruckDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const meta = FOOD_TRUCKS.find((t) => t.id === id) as FoodTruckMeta;
 
-  if (!meta) return null;
-
   const menu = useMemo(() => {
     if (!config || !id) return [];
     const raw = config.food_truck_menus[id] ?? {};
@@ -37,6 +35,8 @@ export default function FoodTruckDetail() {
       }))
       .sort((a, b) => b.numericPrice - a.numericPrice); // Sort highest to lowest
   }, [config, id]);
+
+  if (!meta) return null;
 
   if (!config) {
     return (
@@ -61,7 +61,7 @@ export default function FoodTruckDetail() {
           }
         >
           {/* Hero image at 50% width */}
-          {meta.name === 'D&Ds' || meta.name == 'Soul & Smoke' ? (
+          {meta.name === 'D&Ds' || meta.name === 'Soul & Smoke' ? (
             <Image
               source={meta.logo}
               style={styles.blackHero}
