@@ -1,0 +1,18 @@
+- [x] faq page
+- [x] sponsors page
+- [ ] food trucks page
+- [ ] LineLeap page
+- [ ] add the two buttons to the home screen
+  - [ ] Dillosonas
+  - [ ] Other
+- [ ] animation when switching between pages
+- [ ] animation when going "back" to pages
+- [ ] IOS live activites integration
+- [ ] Dillosonas
+- [x] socials page
+- [ ] reintegration of store page
+- [ ] onboarding section / page
+- [x] fix css on artist page
+
+- smart dillo graphics cut off
+- acitvities page
