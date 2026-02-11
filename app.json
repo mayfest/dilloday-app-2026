@@ -1,0 +1,80 @@
+{
+  "expo": {
+    "name": "Dillo Day 2025",
+    "slug": "dillo-app",
+    "version": "1.0.3",
+    "orientation": "portrait",
+    "icon": "./assets/icons/app-icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "owner": "mayfest",
+    "ios": {
+      "supportsTablet": true,
+      "entitlements": {
+        "aps-environment": "production"
+      },
+      "bundleIdentifier": "com.anonymous.dillo-app",
+      "runtimeVersion": "1.0.2",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "notification": {
+      "iosDisplayInForeground": true
+    },
+    "build": {
+      "preview": {
+        "distribution": "internal"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/app-icon.png",
+        "backgroundColor": "#173885"
+      },
+      "package": "com.mayfest.dillo",
+      "runtimeVersion": "1.0.2"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icons/app-splash.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#173885"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icons/app-icon.png",
+          "color": "#173885",
+          "enableBackgroundRemoteNotifications": false
+        }
+      ],
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b697e429-edea-4280-80bb-5030130077a7"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "b697e429-edea-4280-80bb-5030130077a7"
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+import * as React from 'react';
+
+import Svg, { Path } from 'react-native-svg';
+
+const StarOutline = () => {
+  return (
+    <Svg width='1006' height='959' viewBox='0 0 1006 959' fill='none'>
+      <Path
+        d='M380.429 279.011L88.8314 214.947L329.079 401.479L63.5 685.375L369.766 469.727L509.871 894L487.667 513.099L957.5 516.677L600 382.463L536.232 358.523L723.127 215.638L910.023 72.7523L684.825 175.863L459.627 278.973L386.952 51L380.429 279.011Z'
+        stroke='#A6BDCF'
+        stroke-width={200}
+        stroke-miterlimit='10'
+      />
+    </Svg>
+  );
+};
+
+export default StarOutline;

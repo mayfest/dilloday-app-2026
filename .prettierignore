@@ -1,0 +1,7 @@
+node_modules
+.expo
+out
+build
+coverage
+.github/workflows/*.yml
+.github/workflows/*.yaml

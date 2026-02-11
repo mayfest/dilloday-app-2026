@@ -1,0 +1,4 @@
+- [ ] finish promo graphics for promo
+- [x] change store to just link to the item in the store itself
+- [ ] remove interactive map
+- [ ] onboarding flow
