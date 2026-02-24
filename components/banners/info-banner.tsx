@@ -11,8 +11,6 @@ export default function InfoPageBanner() {
 
   return (
     <Svg width="393" height="110" viewBox="0 0 393 110" fill="none">
-      
-      {/* Replaced the Pattern Rect with the fixed Flags component */}
       <G x="98">
         <Flags />
       </G>

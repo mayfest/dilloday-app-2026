@@ -99,7 +99,7 @@ export default function InfoScreenTwo() {
             >
               <SisFormIcon
                 style={styles.svg}
-                height={SIS_BUTTON_SIZE + 150}
+                height={SIS_BUTTON_SIZE}
                 width={SIS_BUTTON_SIZE + 150}
               />
             </TouchableOpacity>
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingVertical: 40,
+    paddingVertical: 30,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
@@ -128,11 +128,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 5,
-    gap: 25,
+    gap: 0,
     width: '100%',
   },
   buttonWrapper: {
-    marginHorizontal: 15,
+    marginHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },

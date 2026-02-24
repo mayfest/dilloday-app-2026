@@ -89,17 +89,16 @@ export default function GlobalTabBar() {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
+    bottom: 20,
+    left: '2.5%',
     right: 0,
-    backgroundColor: '#173885',
+    backgroundColor: '#150c0c',
     flexDirection: 'row',
     justifyContent: 'space-around',
+    borderRadius: 100,
     alignItems: 'center',
-    height: 80,
-    paddingBottom: 18,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.1)',
+    height: 70,
+    width: '95%',
   },
   tabButton: {
     flex: 1,
