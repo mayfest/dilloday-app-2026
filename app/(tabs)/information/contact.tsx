@@ -28,6 +28,9 @@ function getCoordinatorNumber() {
   const hour = parseInt(hourStr, 10);
   const minute = parseInt(minuteStr, 10);
 
+  /* 
+    TODO update name and numbers, need to get info from promo or prog??? 
+  */
   if (hour < 13 || (hour === 13 && minute < 30)) {
     return { name: 'Danielle', number: '+12406786015' };
   } else {

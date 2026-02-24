@@ -76,8 +76,8 @@ export default function InfoScreenTwo() {
             >
               <NineOneOneButton
                 style={styles.svg}
-                height={BUTTON_SIZE - (isIpad ? 25 : 20)}
-                width={BUTTON_SIZE - (isIpad ? 25 : 20)}
+                height={BUTTON_SIZE + 20}
+                width={BUTTON_SIZE + 20}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -99,8 +99,8 @@ export default function InfoScreenTwo() {
             >
               <SisFormIcon
                 style={styles.svg}
-                height={SIS_BUTTON_SIZE + 50}
-                width={SIS_BUTTON_SIZE + 50}
+                height={SIS_BUTTON_SIZE + 150}
+                width={SIS_BUTTON_SIZE + 150}
               />
             </TouchableOpacity>
           </View>
