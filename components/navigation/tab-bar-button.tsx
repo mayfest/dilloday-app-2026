@@ -49,7 +49,7 @@ export default function TabBarButton({
   return (
     <TouchableOpacity
       className={`p-2 rounded-full w-[50px] max-w-[50px] h-[50px] flex-1 items-center justify-center ${
-        focused ? 'bg-accent' : 'bg-transparent'
+        focused ? 'bg-[#FFFBEB]' : 'bg-transparent'
       }`}
       onPress={onPress}
       onLongPress={onLongPress}
@@ -60,7 +60,7 @@ export default function TabBarButton({
         <FontAwesome6
           name={icon}
           size={20}
-          color={focused ? '#173885' : '#F6F2A3'}
+          color={focused ? '#173885' : '#FFFBEB'}
         />
       )}
     </TouchableOpacity>

@@ -1,10 +1,11 @@
 import React from 'react';
 
-import BalloonLogo from '@/assets/images/balloonlogopink.svg';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { usePathname, useRouter } from 'expo-router';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+const SpeedsterLogo = require('@/assets/images/temp_speedster_logo.png');
 
 type ValidRoutePath = '/' | '/schedule' | '/map' | '/information';
 
@@ -69,12 +70,12 @@ export default function GlobalTabBar() {
             ]}
           >
             {route.name === 'index' ? (
-              <BalloonLogo width={32} height={32} />
+              <Image source={SpeedsterLogo} style={{ width: 75, height: 75, borderRadius: 20 }} />
             ) : (
               <FontAwesome6
                 name={route.icon}
-                size={18}
-                color={getIsActive(route.path) ? '#173885' : '#F6F2A3'}
+                size={22}
+                color={getIsActive(route.path) ? '#DF4D9B' : '#FFFBEB'}
               />
             )}
           </View>
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     borderRadius: 100,
     alignItems: 'center',
-    height: 70,
+    height: 60,
     width: '95%',
   },
   tabButton: {
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   activeIconContainer: {
-    backgroundColor: '#F6F2A3',
+    backgroundColor: '#FFFBEB',
     borderRadius: 20,
   },
 });
