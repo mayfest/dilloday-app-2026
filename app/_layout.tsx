@@ -154,7 +154,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='house-chimney'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -175,7 +175,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='bullhorn'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -188,7 +188,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='utensils'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -201,7 +201,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='ticket-simple'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -227,7 +227,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='camera'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -241,7 +241,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='shield'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -261,7 +261,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='circle-info'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -274,7 +274,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='share-nodes'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -288,7 +288,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='bag-shopping'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -301,7 +301,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='handshake'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}

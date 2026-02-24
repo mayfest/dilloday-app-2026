@@ -1,49 +1,55 @@
-// Brand book colors
-const primaryBlue = '#173885';
-const primaryPurple = '#841973';
-const accentYellow = '#F6F2A3';
-const accentPink = '#FFB1CD';
-const accentRed = '#D61919';
-const neutralGrayBlue = '#AABCCD';
+// Brand book colors — Dillo Day 2026
+const crimsonDark = '#8a1e1b';
+const crimsonMid = '#b52025';
+const crimsonLight = '#e13f3f';
+const blueDark = '#14375f';
+const blueMid = '#084e8a';
+const blueLight = '#1672b9';
+const gold = '#fcb415';
+const yellow = '#ffcd46';
+const magenta = '#df4d9b';
+const pink = '#e882b5';
+const nearBlack = '#150c0c';
+const cream = '#fffbeb';
 
 export const Colors = {
   light: {
-    text: primaryBlue,
-    background: primaryBlue,
-    tint: accentYellow,
-    icon: neutralGrayBlue,
-    tabIconDefault: neutralGrayBlue,
-    tabIconSelected: accentYellow,
-    card: accentYellow,
-    cardAlt: accentPink,
-    cardText: primaryBlue,
-    action: primaryPurple,
-    actionText: accentYellow,
-    alert: accentRed,
+    text: cream,            // light text on dark backgrounds
+    background: blueDark,   // #14375f — primary dark background
+    tint: yellow,           // #ffcd46 — primary accent / active state
+    icon: blueLight,        // #1672b9 — default icon color
+    tabIconDefault: blueLight,
+    tabIconSelected: yellow,
+    card: gold,             // #fcb415
+    cardAlt: pink,          // #e882b5
+    cardText: blueDark,     // #14375f — dark text on light cards
+    action: magenta,        // #df4d9b
+    actionText: cream,      // #fffbeb
+    alert: crimsonMid,      // #b52025
   },
   dark: {
-    text: accentYellow,
-    background: primaryBlue,
-    tint: accentYellow,
-    icon: neutralGrayBlue,
-    tabIconDefault: neutralGrayBlue,
-    tabIconSelected: accentYellow,
-    card: accentYellow,
-    cardAlt: accentPink,
-    cardText: primaryBlue,
-    action: primaryPurple,
-    actionText: accentYellow,
-    alert: accentRed,
+    text: cream,
+    background: nearBlack,  // #150c0c — deepest dark background
+    tint: yellow,
+    icon: blueLight,
+    tabIconDefault: blueLight,
+    tabIconSelected: yellow,
+    card: gold,
+    cardAlt: pink,
+    cardText: blueDark,
+    action: magenta,
+    actionText: cream,
+    alert: crimsonMid,
   },
 };
 
 export const SemanticColors = {
-  primary: primaryBlue,
-  secondary: primaryPurple,
-  accent: accentYellow,
-  error: accentRed,
-  inactive: neutralGrayBlue,
-  success: primaryPurple,
-  warning: accentYellow,
-  info: accentPink,
+  primary: blueDark,
+  secondary: magenta,
+  accent: yellow,
+  error: crimsonMid,
+  inactive: blueLight,
+  success: blueMid,
+  warning: gold,
+  info: pink,
 };
