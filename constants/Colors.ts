@@ -14,22 +14,22 @@ const cream = '#fffbeb';
 
 export const Colors = {
   light: {
-    text: cream,            // light text on dark backgrounds
-    background: blueDark,   // #14375f — primary dark background
-    tint: yellow,           // #ffcd46 — primary accent / active state
-    icon: blueLight,        // #1672b9 — default icon color
+    text: cream, // light text on dark backgrounds
+    background: blueDark, // #14375f — primary dark background
+    tint: yellow, // #ffcd46 — primary accent / active state
+    icon: blueLight, // #1672b9 — default icon color
     tabIconDefault: blueLight,
     tabIconSelected: yellow,
-    card: gold,             // #fcb415
-    cardAlt: pink,          // #e882b5
-    cardText: blueDark,     // #14375f — dark text on light cards
-    action: magenta,        // #df4d9b
-    actionText: cream,      // #fffbeb
-    alert: crimsonMid,      // #b52025
+    card: gold, // #fcb415
+    cardAlt: pink, // #e882b5
+    cardText: blueDark, // #14375f — dark text on light cards
+    action: magenta, // #df4d9b
+    actionText: cream, // #fffbeb
+    alert: crimsonMid, // #b52025
   },
   dark: {
     text: cream,
-    background: nearBlack,  // #150c0c — deepest dark background
+    background: nearBlack, // #150c0c — deepest dark background
     tint: yellow,
     icon: blueLight,
     tabIconDefault: blueLight,

@@ -70,7 +70,10 @@ export default function GlobalTabBar() {
             ]}
           >
             {route.name === 'index' ? (
-              <Image source={SpeedsterLogo} style={{ width: 75, height: 75, borderRadius: 20 }} />
+              <Image
+                source={SpeedsterLogo}
+                style={{ width: 75, height: 75, borderRadius: 20 }}
+              />
             ) : (
               <FontAwesome6
                 name={route.icon}

@@ -43,7 +43,7 @@ export default function InfoScreenTwo() {
   const SIS_BUTTON_SIZE = Math.min(SMALL_BUTTON_SIZE + 30, MAX_BUTTON);
 
   return (
-    <DrawerScreen banner={<PageBanner text="INFO" />}>
+    <DrawerScreen banner={<PageBanner text='INFO' />}>
       <ScreenBackground />
       <View style={styles.container}>
         <ScrollView
