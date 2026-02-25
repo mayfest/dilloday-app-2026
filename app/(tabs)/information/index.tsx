@@ -1,4 +1,5 @@
 import InfoPageBanner from '@/components/banners/info-banner';
+import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import NineOneOneButton from '@/components/information/911-button';
 import ContactMayfestIcon from '@/components/information/contact-mayfest';
@@ -42,7 +43,7 @@ export default function InfoScreenTwo() {
   const SIS_BUTTON_SIZE = Math.min(SMALL_BUTTON_SIZE + 30, MAX_BUTTON);
 
   return (
-    <DrawerScreen banner={<InfoPageBanner />}>
+    <DrawerScreen banner={<PageBanner text="INFO" />}>
       <ScreenBackground />
       <View style={styles.container}>
         <ScrollView
