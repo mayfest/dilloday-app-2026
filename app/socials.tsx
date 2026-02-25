@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import SocialsPageBanner from '@/components/banners/socials-banner';
+import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { SOCIALS } from '@/constants/socials';
@@ -39,7 +39,7 @@ export default function SocialsPage() {
   };
 
   return (
-    <DrawerScreen banner={<SocialsPageBanner />}>
+    <DrawerScreen banner={<PageBanner text="SOCIALS" />}>
       <ScrollView contentContainerStyle={styles.container}>
         {SOCIALS.map(({ label, handle, url, icon }, i) => (
           <TouchableOpacity

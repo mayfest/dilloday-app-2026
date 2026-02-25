@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { ThemedText } from '@/components/ThemedText';
-import FoodPageBanner from '@/components/banners/food-banner copy';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { FOOD_TRUCKS } from '@/constants/food-trucks';
@@ -14,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import PageBanner from '@/components/banners/page-banner';
 
 const { width } = Dimensions.get('window');
 const H_GUTTER = 12;
@@ -69,7 +69,7 @@ export default function FoodTrucksScreen() {
   };
 
   return (
-    <DrawerScreen banner={<FoodPageBanner />}>
+    <DrawerScreen banner={<PageBanner text="FOOD" />}>
       <FlatList
         data={FOOD_TRUCKS}
         keyExtractor={(item) => item.id}
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   },
   infoBar: {
     height: INFO_BAR_HEIGHT,
-    backgroundColor: Colors.light.text,
+    backgroundColor: Colors.general.crimsonDark,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 8,

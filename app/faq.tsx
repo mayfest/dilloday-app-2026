@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import FAQPageBanner from '@/components/banners/faq-banner';
+import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import FAQCategorySection from '@/components/faq/faq-category-section';
 import SearchBar from '@/components/faq/faq-search-bar';
@@ -37,7 +37,7 @@ export default function FAQScreen() {
   };
 
   return (
-    <DrawerScreen banner={<FAQPageBanner />}>
+    <DrawerScreen banner={<PageBanner text="FAQ" />}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}

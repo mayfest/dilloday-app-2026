@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import SMARTPageBanner from '@/components/banners/SMART-banner';
+import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import {
@@ -214,15 +214,11 @@ export default function SmartDilloScreen() {
   }, [dotPosition]);
 
   return (
-    <DrawerScreen>
+    <DrawerScreen banner={<PageBanner text="SMART DILLO" fontSize={28} textY={90} />}>
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.bannerWrapper}>
-          <SMARTPageBanner />
-        </View>
-
         <View style={styles.container}>
           <FlatList
             ref={flatListRef}

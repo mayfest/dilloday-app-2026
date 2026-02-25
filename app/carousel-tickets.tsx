@@ -3,7 +3,7 @@ import React from 'react';
 
 import DilloDayAppIcon from '@/assets/icons/app-icon.png';
 import LineLeapLogo from '@/assets/images/company-logos/line-leap-logo.png';
-import CarouselTicketsBanner from '@/components/banners/carousel-tickets-banner';
+import PageBanner from '@/components/banners/page-banner';
 import CarouselIcon from '@/components/carousel-tickets/carousel-icon';
 import DrawerScreen from '@/components/drawer-screen';
 import AccordionItem from '@/components/faq/accordion-item';
@@ -78,7 +78,7 @@ export default function CarouselPartnerPage() {
   ];
 
   return (
-    <DrawerScreen banner={<CarouselTicketsBanner />}>
+    <DrawerScreen banner={<PageBanner text="CAROUSEL TICKETS" />}>
       <StatusBar style='dark' />
       <ScrollView
         contentContainerStyle={[

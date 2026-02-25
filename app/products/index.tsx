@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import StorePageBanner from '@/components/banners/store-banner';
+import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
@@ -111,7 +111,7 @@ export default function ProductsScreen() {
   // );
 
   return (
-    <DrawerScreen banner={<StorePageBanner />}>
+    <DrawerScreen banner={<PageBanner text="DILLO STORE" />}>
       {loading ? (
         <View style={styles.centerContainer}>
           <ActivityIndicator size='large' color='#173885' />

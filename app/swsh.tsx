@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import SwshPageBanner from '@/components/banners/swsh-banner';
+import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import { CircularReel } from '@/components/swsh-integration/circle-reel';
 import { CurvedHeader } from '@/components/swsh-integration/curved-text-view';
@@ -55,7 +55,7 @@ export default function SwshPage() {
   }, []);
 
   return (
-    <DrawerScreen banner={<SwshPageBanner />}>
+    <DrawerScreen banner={<PageBanner text="PHOTO ALBUM" />}>
       <StatusBar style='dark' />
       <ScrollView
         contentContainerStyle={[

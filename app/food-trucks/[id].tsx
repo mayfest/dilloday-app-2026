@@ -142,12 +142,12 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     textAlign: 'center',
-    color: Colors.light.text,
+    color: Colors.light.background,
     marginBottom: 8,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.light.text,
+    backgroundColor: Colors.light.background,
     marginVertical: 12,
   },
   menuRow: {
@@ -156,29 +156,29 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.light.text,
+    borderBottomColor: Colors.light.background,
   },
   item: {
     flex: 1, // allow wrapping
     fontSize: 18,
-    color: Colors.light.text,
+    color: Colors.light.background,
     flexWrap: 'wrap',
     marginRight: 12, // space before price
   },
   price: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.light.text,
+    color: Colors.light.background,
     flexShrink: 0, // prevent shrinking price
   },
   emptyText: {
     textAlign: 'center',
-    color: Colors.light.text,
+    color: Colors.light.background,
     marginTop: 20,
   },
   noticeText: {
     textAlign: 'center',
-    color: Colors.light.text,
+    color: Colors.light.background,
     marginTop: 20,
     fontSize: 16,
   },

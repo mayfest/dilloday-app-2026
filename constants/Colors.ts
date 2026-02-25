@@ -1,15 +1,21 @@
 // Brand book colors — Dillo Day 2026
+
+// Reds
 const crimsonDark = '#8a1e1b';
 const crimsonMid = '#b52025';
 const crimsonLight = '#e13f3f';
+// Blues
 const blueDark = '#14375f';
 const blueMid = '#084e8a';
 const blueLight = '#1672b9';
+// Yellows
 const gold = '#fcb415';
 const yellow = '#ffcd46';
+// Pinks
 const magenta = '#df4d9b';
 const pink = '#e882b5';
-const nearBlack = '#150c0c';
+// Neutrals
+const nearBlack = '#150c0c'; 
 const cream = '#fffbeb';
 
 export const Colors = {
@@ -41,6 +47,20 @@ export const Colors = {
     actionText: cream,
     alert: crimsonMid,
   },
+  general: {
+    crimsonDark,
+    crimsonMid,
+    crimsonLight,
+    blueDark,
+    blueMid,
+    blueLight,
+    gold,
+    yellow,
+    magenta,
+    pink,
+    nearBlack,
+    cream,
+  }
 };
 
 export const SemanticColors = {

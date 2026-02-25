@@ -1,7 +1,7 @@
 // app/sponsors/index.tsx
 import React from 'react';
 
-import SponsorsPageBanner from '@/components/banners/sponsors-banner';
+import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { SPONSOR_BOOTHS } from '@/constants/sponsor-booths';
@@ -27,7 +27,7 @@ export default function SponsorsScreen() {
   };
 
   return (
-    <DrawerScreen banner={<SponsorsPageBanner />}>
+    <DrawerScreen banner={<PageBanner text="SPONSORS" />}>
       <ScrollView contentContainerStyle={styles.container}>
         <Link href='/sponsors/claim-promo' asChild>
           <TouchableOpacity style={styles.promoContainer}>

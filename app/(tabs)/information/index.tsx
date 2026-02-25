@@ -1,4 +1,3 @@
-import InfoPageBanner from '@/components/banners/info-banner';
 import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import NineOneOneButton from '@/components/information/911-button';

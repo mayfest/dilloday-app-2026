@@ -194,7 +194,7 @@ export default function RootLayout() {
                 ),
               }}
             />
-            <Drawer.Screen
+            {/* <Drawer.Screen
               name='carousel-tickets'
               options={{
                 title: 'Carousel Tickets',
@@ -206,7 +206,7 @@ export default function RootLayout() {
                   />
                 ),
               }}
-            />
+            /> */}
             {/* <Drawer.Screen
               name='activities'
               options={{

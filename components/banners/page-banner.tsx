@@ -6,9 +6,11 @@ import Svg from 'react-native-svg';
 
 interface PageBannerProps {
   text: string;
+  fontSize?: number;
+  textY?: number;
 }
 
-export default function PageBanner({ text }: PageBannerProps) {
+export default function PageBanner({ text, fontSize = 40, textY = 95 }: PageBannerProps) {
   return (
     <Svg width='393' height='110' viewBox='0 0 393 110' fill='none'>
       <G x='98'>
@@ -22,10 +24,10 @@ export default function PageBanner({ text }: PageBannerProps) {
         />
         <Text
           x='196'
-          y='90'
+          y={textY}
           textAnchor='middle'
           fontFamily='SofachromeIt'
-          fontSize='28'
+          fontSize={fontSize}
           fontWeight='900'
           fill='#150c0c'
         >
