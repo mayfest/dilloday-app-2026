@@ -68,7 +68,7 @@ export default function ArtistPanel(): React.ReactElement {
     const calculateCountdown = () => {
       try {
         // strict ISO-8601 string
-        const dilloDay = Date.parse('2025-05-18T00:00:00');
+        const dilloDay = Date.parse('2026-05-16T00:00:00');
 
         const now = new Date().getTime();
         const difference = dilloDay - now;

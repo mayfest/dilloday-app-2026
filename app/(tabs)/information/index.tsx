@@ -1,4 +1,5 @@
 import InfoPageBanner from '@/components/banners/info-banner';
+import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import NineOneOneButton from '@/components/information/911-button';
 import ContactMayfestIcon from '@/components/information/contact-mayfest';
@@ -42,7 +43,7 @@ export default function InfoScreenTwo() {
   const SIS_BUTTON_SIZE = Math.min(SMALL_BUTTON_SIZE + 30, MAX_BUTTON);
 
   return (
-    <DrawerScreen banner={<InfoPageBanner />}>
+    <DrawerScreen banner={<PageBanner text='INFO' />}>
       <ScreenBackground />
       <View style={styles.container}>
         <ScrollView
@@ -76,8 +77,8 @@ export default function InfoScreenTwo() {
             >
               <NineOneOneButton
                 style={styles.svg}
-                height={BUTTON_SIZE - (isIpad ? 25 : 20)}
-                width={BUTTON_SIZE - (isIpad ? 25 : 20)}
+                height={BUTTON_SIZE + 20}
+                width={BUTTON_SIZE + 20}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -99,8 +100,8 @@ export default function InfoScreenTwo() {
             >
               <SisFormIcon
                 style={styles.svg}
-                height={SIS_BUTTON_SIZE + 50}
-                width={SIS_BUTTON_SIZE + 50}
+                height={SIS_BUTTON_SIZE}
+                width={SIS_BUTTON_SIZE + 150}
               />
             </TouchableOpacity>
           </View>
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingVertical: 40,
+    paddingVertical: 30,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
@@ -128,11 +129,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 5,
-    gap: 25,
+    gap: 0,
     width: '100%',
   },
   buttonWrapper: {
-    marginHorizontal: 15,
+    marginHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },

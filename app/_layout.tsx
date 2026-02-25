@@ -48,6 +48,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SofachromeIt: require('../assets/fonts/Sofachrome-Rg-It.otf'),
     Rye_400Regular,
     Poppins_400Regular,
     Cabin_400Regular,
@@ -154,7 +155,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='house-chimney'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -175,7 +176,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='bullhorn'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -188,7 +189,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='utensils'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -201,7 +202,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='ticket-simple'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -227,7 +228,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='camera'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -241,7 +242,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='shield'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -261,7 +262,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='circle-info'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -274,7 +275,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='share-nodes'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -288,7 +289,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='bag-shopping'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
@@ -301,7 +302,7 @@ export default function RootLayout() {
                   <FontAwesome6
                     name='handshake'
                     size={20}
-                    color={Colors.light.tint}
+                    color={Colors.light.cardAlt}
                   />
                 ),
               }}
