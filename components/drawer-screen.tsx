@@ -67,5 +67,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // marginLeft: 4,
+    paddingBottom: 10,
   },
 });

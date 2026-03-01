@@ -49,6 +49,8 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     SofachromeIt: require('../assets/fonts/Sofachrome-Rg-It.otf'),
+    Futura: require('../assets/fonts/FuturaCyrillicMedium.ttf'),
+    FuturaBold: require('../assets/fonts/FuturaCyrillicBold.ttf'),
     Rye_400Regular,
     Poppins_400Regular,
     Cabin_400Regular,
