@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import AnnouncementFrame from '@/components/announcements/announcement-frame';
 import AnnouncementItem from '@/components/announcements/announcement-item';
+import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import LoadingIndicator from '@/components/loading-indicator';
 import { Announcement, getAnnouncements } from '@/lib/announcement';
@@ -60,11 +60,13 @@ export default function AnnouncementScreen() {
   }
 
   return (
-    <DrawerScreen banner={<AnnouncementFrame />}>
+    <DrawerScreen banner={<PageBanner text='ANNOUNCEMENTS' />}>
       <FlatList
         data={announcements!}
         keyExtractor={(item) => `announcement-${item.id}`}
-        renderItem={({ item }) => <AnnouncementItem data={item} />}
+        renderItem={({ item, index }) => (
+          <AnnouncementItem data={item} index={index} />
+        )}
         contentContainerStyle={styles.content}
         refreshing={state === 'loading'}
         onRefresh={load}
