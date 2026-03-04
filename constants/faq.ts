@@ -153,14 +153,16 @@ export const FAQ_DATA: FAQCategory[] = [
   {
     category: 'Dillo Day Mobile App',
     items: [
-      {
-        title: 'Dillosonas',
-        content: [
-          'Dillo Cabin Mates is a feature that connects members to other members based on music taste. Only Northwestern-affiliated members are eligible to participate, including undergraduate students, graduate students, alumni, faculty, and staff. You will only be matched with another Northwestern-affiliated member of the same type, where types are as follows: Undergraduate, Graduate and Alumni, and Faculty and Staff. A Google account with a Northwestern domain primary email address is required to participate.',
-          'Registration can be done up until Friday, May 17, 2024 at 8:00 PM. Matches will be made and shared on the morning of Dillo Day, Saturday, May 18, 2024. Enable push notifications within the app for updates.',
-          'Both Spotify and Apple Music are supported.',
-        ],
-      },
+      // TODO: replace with this year's equivalent, if we have one
+      // likely not if we do the racing thing though!
+      // {
+      //   title: 'Dillosonas',
+      //   content: [
+      //     'Dillo Cabin Mates is a feature that connects members to other members based on music taste. Only Northwestern-affiliated members are eligible to participate, including undergraduate students, graduate students, alumni, faculty, and staff. You will only be matched with another Northwestern-affiliated member of the same type, where types are as follows: Undergraduate, Graduate and Alumni, and Faculty and Staff. A Google account with a Northwestern domain primary email address is required to participate.',
+      //     'Registration can be done up until Friday, May 17, 2024 at 8:00 PM. Matches will be made and shared on the morning of Dillo Day, Saturday, May 18, 2024. Enable push notifications within the app for updates.',
+      //     'Both Spotify and Apple Music are supported.',
+      //   ],
+      // },
       {
         title: 'App Data Privacy',
         content: [

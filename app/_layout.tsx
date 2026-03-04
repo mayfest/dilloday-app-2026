@@ -220,7 +220,7 @@ export default function RootLayout() {
                 ),
               }}
             /> */}
-            <Drawer.Screen
+            {/* <Drawer.Screen
               name='swsh'
               options={{
                 title: 'Photo Album',
@@ -232,7 +232,7 @@ export default function RootLayout() {
                   />
                 ),
               }}
-            />
+            /> */}
 
             <Drawer.Screen
               name='smart-dillo'
@@ -305,6 +305,18 @@ export default function RootLayout() {
                     color={Colors.light.cardAlt}
                   />
                 ),
+              }}
+            />
+            <Drawer.Screen
+              name='swsh'
+              options={{
+                drawerItemStyle: { display: 'none' },
+              }}
+            />
+            <Drawer.Screen
+              name='carousel-tickets'
+              options={{
+                drawerItemStyle: { display: 'none' },
               }}
             />
             <Drawer.Screen

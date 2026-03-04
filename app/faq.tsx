@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   noResultsText: {
     fontSize: 16,
-    color: '#666',
+    color: Colors.general.crimsonMid,
     textAlign: 'center',
   },
 });

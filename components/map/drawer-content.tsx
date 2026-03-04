@@ -124,14 +124,6 @@ const LOCATION_INFO: Record<
     details:
       'Merchandise is available for purchase at the designated booth on the map. Merchandise will be available until supplies last.',
   },
-  carousel: {
-    title: 'Carousel',
-    description: 'Take a break and enjoy the first ever Dillo Day carousel!',
-    details:
-      'Rides are free and open to all that have a valid signup timeslot. Please check our Instagram for more information on how to sign up for a timeslot.',
-    linkLabel: 'See carousel timeslots',
-    linkTarget: '/carousel-tickets',
-  },
   beerGarden: {
     title: 'Beer Garden',
     description:

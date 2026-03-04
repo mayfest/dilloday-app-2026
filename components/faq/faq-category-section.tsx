@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontFamily: 'Poppins_700Bold',
     marginBottom: 16,
-    color: Colors.light.text,
+    color: Colors.light.background,
     paddingBottom: 8,
     letterSpacing: 0.5,
   },

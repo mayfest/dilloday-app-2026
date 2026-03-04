@@ -55,7 +55,7 @@ export default function SwshPage() {
   }, []);
 
   return (
-    <DrawerScreen banner={<PageBanner text="PHOTO ALBUM" />}>
+    <DrawerScreen banner={<PageBanner text='PHOTO ALBUM' />}>
       <StatusBar style='dark' />
       <ScrollView
         contentContainerStyle={[
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '100%',
     height: '80%',
-    backgroundColor: Colors.light.text,
+    backgroundColor: Colors.light.background,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     position: 'absolute',
