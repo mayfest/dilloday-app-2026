@@ -19,6 +19,7 @@ export default function FAQScreen() {
       return;
     }
 
+    
     const lowercaseQuery = query.toLowerCase();
     const filtered = FAQ_DATA.map((category) => {
       const filteredItems = category.items.filter(
