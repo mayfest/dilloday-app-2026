@@ -1,8 +1,7 @@
 import * as React from 'react';
 
 import Flags from '@/assets/images/flags.svg';
-import { ClipPath, Defs, G, Path, Text } from 'react-native-svg';
-import Svg from 'react-native-svg';
+import Svg, { ClipPath, Defs, G, Path, Text } from 'react-native-svg';
 
 interface PageBannerProps {
   text: string;
@@ -11,6 +10,20 @@ interface PageBannerProps {
 }
 
 export default function PageBanner({ text, fontSize = 40, textY = 95 }: PageBannerProps) {
+  const getFontSize = (str: string) => {
+    const maxLength = 9;
+    const baseSize = 28;
+    const minSize = 16;
+
+    if (str.length <= maxLength) return baseSize;
+
+    const scaledSize = (maxLength / str.length) * baseSize;
+
+    return Math.max(scaledSize, minSize);
+  };
+
+  const dynamicFontSize = getFontSize(text);
+  
   return (
     <Svg width='393' height='110' viewBox='0 0 393 110' fill='none'>
       <G x='98'>
