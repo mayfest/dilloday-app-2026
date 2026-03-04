@@ -17,6 +17,7 @@ import {
   View,
 } from 'react-native';
 
+// TODO update images with this year's (from promo)
 const smartDilloImages = [
   {
     source: require('@/assets/images/smart-dillo/smart-dillo-cover.png'),

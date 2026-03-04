@@ -6,7 +6,7 @@ import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { SPONSOR_BOOTHS } from '@/constants/sponsor-booths';
 import { SPONSORS } from '@/constants/sponsors';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import {
   Image,
   Linking,
@@ -27,19 +27,18 @@ export default function SponsorsScreen() {
   };
 
   return (
-    <DrawerScreen banner={<PageBanner text="SPONSORS" />}>
+    <DrawerScreen banner={<PageBanner text="SPONSORS" textY={92} fontSize={33}/>}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Link href='/sponsors/claim-promo' asChild>
+        {/* <Link href='/sponsors/claim-promo' asChild>
           <TouchableOpacity style={styles.promoContainer}>
             <Text style={styles.promoText}>
               Exclusive claim deal — tap to learn more
             </Text>
           </TouchableOpacity>
-        </Link>
-
-        <View style={styles.underline} />
-
+        </Link> */}
+        
         {SPONSORS.map(({ name, logo, url }, i) => {
+          // TODO: update sponsors with this year's actual sponsors
           console.log('name', name);
           const hasBooth = SPONSOR_BOOTHS.some((b) => b.name === name);
 
@@ -94,11 +93,11 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
     paddingTop: 24,
-    paddingBottom: 40,
+    paddingBottom: 60,
   },
   underline: {
     height: 1,
-    backgroundColor: Colors.light.text,
+    backgroundColor: Colors.light.background,
     marginVertical: 16,
   },
   row: {
@@ -106,7 +105,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 18,
     borderBottomWidth: 1.25,
-    borderBottomColor: Colors.light.text,
+    borderBottomColor: Colors.light.background,
   },
   logoWrapper: {
     width: 80,
@@ -133,14 +132,14 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     fontSize: 18,
     fontWeight: '800',
-    color: Colors.light.text,
+    color: Colors.light.background,
     fontFamily: 'Poppins_600SemiBold',
   },
   promoContainer: {
     width: '100%',
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: Colors.light.text,
+    backgroundColor: Colors.light.background,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 16,

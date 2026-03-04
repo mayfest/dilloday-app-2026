@@ -171,24 +171,24 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.light.text,
+    color: Colors.light.cardText,
     marginBottom: 8,
   },
   description: {
     fontSize: 16,
-    color: Colors.light.text,
+    color: Colors.light.cardText,
     marginBottom: 12,
     lineHeight: 22,
   },
   details: {
     fontSize: 14,
-    color: Colors.light.text,
+    color: Colors.light.cardText,
     lineHeight: 20,
     marginBottom: 12,
   },
   link: {
     fontSize: 14,
-    color: Colors.light.primary,
+    color: Colors.light.cardText,
     textDecorationLine: 'underline',
   },
 });

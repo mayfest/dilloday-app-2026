@@ -54,19 +54,19 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.light.text,
+    color: Colors.light.background,
     marginBottom: 8,
     textAlign: 'center',
   },
   location: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.light.text,
+    color: Colors.light.background,
     marginBottom: 16,
   },
   description: {
     fontSize: 16,
-    color: Colors.light.text,
+    color: Colors.light.background,
     lineHeight: 22,
     textAlign: 'center',
     marginBottom: 24,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 12,
     paddingHorizontal: 24,
-    backgroundColor: Colors.light.text,
+    backgroundColor: Colors.light.background,
     borderRadius: 8,
   },
   buttonText: {
@@ -89,6 +89,6 @@ const styles = StyleSheet.create({
   },
   error: {
     fontSize: 16,
-    color: Colors.light.text,
+    color: Colors.light.background,
   },
 });
