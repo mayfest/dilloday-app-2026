@@ -101,12 +101,12 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '700',
     textAlign: 'center',
-    color: Colors.light.text,
+    color: Colors.general.nearBlack,
     fontFamily: 'Rye_400Regular',
   },
   underline: {
     height: 1,
-    backgroundColor: Colors.light.text,
+    backgroundColor: Colors.general.nearBlack,
     marginVertical: 16,
   },
   row: {
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 18,
     borderBottomWidth: 1.25,
-    borderBottomColor: Colors.light.text,
+    borderBottomColor: Colors.general.nearBlack,
   },
   smallScreenRow: {
     flexDirection: 'column',
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.light.text,
+    color: Colors.general.nearBlack,
     fontFamily: 'Poppins_700Bold',
   },
   handle: {

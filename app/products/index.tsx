@@ -111,7 +111,7 @@ export default function ProductsScreen() {
   // );
 
   return (
-    <DrawerScreen banner={<PageBanner text="DILLO STORE" />}>
+    <DrawerScreen banner={<PageBanner text="DILLO STORE" fontSize={28} textY={91}/>}>
       {loading ? (
         <View style={styles.centerContainer}>
           <ActivityIndicator size='large' color='#173885' />
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   },
   infoBar: {
     height: INFO_BAR_HEIGHT,
-    backgroundColor: Colors.light.text,
+    backgroundColor: Colors.light.background,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 8,
