@@ -13,6 +13,7 @@ import {
   RefreshControl,
   ScrollView,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -91,6 +92,14 @@ export default function HomeScreen() {
               <DilloSonaBall />
             </TouchableOpacity>
           </View>
+
+          <TouchableOpacity
+            style={styles.racingButton}
+            onPress={() => router.push('/racing-game')}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.racingButtonText}>Play Racing Game</Text>
+          </TouchableOpacity>
         </ScrollView>
       </View>
     </TabScreen>
@@ -116,6 +125,19 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     flexDirection: 'row',
     justifyContent: 'center',
+    marginBottom: 24,
+  },
+  racingButton: {
+    alignSelf: 'center',
+    backgroundColor: '#0a7ea4',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 10,
     marginBottom: 80,
+  },
+  racingButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
