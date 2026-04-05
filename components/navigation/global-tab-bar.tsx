@@ -7,7 +7,7 @@ import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const SpeedsterLogo = require('@/assets/images/temp_speedster_logo.png');
 
-type ValidRoutePath = '/' | '/schedule' | '/map' | '/information';
+type ValidRoutePath = '/' | '/lineup' | '/map' | '/information';
 
 type TabRoute = {
   key: string;
@@ -23,7 +23,7 @@ export default function GlobalTabBar() {
 
   const tabRoutes: TabRoute[] = [
     { key: 'more', name: 'more', icon: 'bars', path: null },
-    { key: 'schedule', name: 'schedule', icon: 'calendar', path: '/schedule' },
+    { key: 'schedule', name: 'schedule', icon: 'calendar', path: '/lineup' },
     { key: 'index', name: 'index', icon: 'house-chimney', path: '/' },
     { key: 'map', name: 'map', icon: 'map', path: '/map' },
     {

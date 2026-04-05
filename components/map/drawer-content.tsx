@@ -55,7 +55,7 @@ const LOCATION_INFO: Record<
     details:
       'With a diverse lineup of genres, there’s something for everyone. Check the schedule for performance times and artist details.',
     linkLabel: 'View Main Stage lineup',
-    linkTarget: '/(tabs)/schedule',
+    linkTarget: '/lineup',
   },
   fmo: {
     title: 'For Members Only Stage',
@@ -64,7 +64,7 @@ const LOCATION_INFO: Record<
     details:
       'The For Members Only Stage is located in the middle of the Dillo Day Carnival grounds. Please make sure to check out the schedule for the lineup of performers.',
     linkLabel: 'See FMO stage lineup',
-    linkTarget: '/(tabs)/schedule',
+    linkTarget: '/lineup',
   },
   food: {
     title: 'Food Trucks',

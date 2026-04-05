@@ -48,6 +48,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    Sofachrome: require('../assets/fonts/Sofachrome-Rg.otf'),
     SofachromeIt: require('../assets/fonts/Sofachrome-Rg-It.otf'),
     Futura: require('../assets/fonts/FuturaCyrillicMedium.ttf'),
     FuturaBold: require('../assets/fonts/FuturaCyrillicBold.ttf'),
@@ -181,6 +182,13 @@ export default function RootLayout() {
                     color={Colors.light.cardAlt}
                   />
                 ),
+              }}
+            />
+            <Drawer.Screen
+              name='lineup'
+              options={{
+                title: 'Lineup',
+                drawerItemStyle: { display: 'none' },
               }}
             />
             <Drawer.Screen

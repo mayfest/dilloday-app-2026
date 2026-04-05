@@ -7,7 +7,7 @@ export default function NavigationPanel() {
   const router = useRouter();
 
   const onPress = (
-    key: '/announcements' | '/schedule' | '/map' | '/information'
+    key: '/announcements' | '/lineup' | '/map' | '/information'
   ) => {
     router.navigate({
       pathname: key,
@@ -26,7 +26,7 @@ export default function NavigationPanel() {
       <View style={styles.divider} />
       <TouchableOpacity
         style={styles.button}
-        onPress={() => onPress('/schedule')}
+        onPress={() => onPress('/lineup')}
       >
         <FontAwesome6 name='calendar' size={16} color={theme.tabBarColor} />
         <Text style={styles.text}>Schedule</Text>
