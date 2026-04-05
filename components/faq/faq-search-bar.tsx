@@ -52,6 +52,5 @@ const styles = StyleSheet.create({
     height: '100%',
     fontSize: 16,
     color: '#000',
-    fontFamily: 'Rye_400Regular',
   },
 });

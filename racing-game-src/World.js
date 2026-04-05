@@ -1,53 +1,52 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
-import {StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { router } from 'expo-router';
 import Matter from 'matter-js';
-import {GameEngine} from 'react-native-game-engine';
-import {router} from 'expo-router';
+import { GameEngine } from 'react-native-game-engine';
 
-import {Accelerometer} from 'expo-sensors';
+import { Accelerometer } from 'expo-sensors';
 
-import {recordLeaderboardScore} from '../lib/racing-leaderboard';
+import { recordLeaderboardScore } from '../lib/racing-leaderboard';
 
-import randomInt from 'random-int';
 import sampleSize from 'lodash.samplesize';
+import randomInt from 'random-int';
 
-import Car from './components/Car';
 import Box from './components/Box';
+import Car from './components/Car';
 import Road from './components/Road';
 
 import getRandomDecimal from './helpers/getRandomDecimal';
 
 import {
-  CAR_WIDTH,
   CAR_HEIGHT,
-  MID_POINT,
+  CAR_WIDTH,
   DEVICE_HEIGHT,
   DEVICE_WIDTH,
-  RACING_CARS_PER_SPEED_TIER,
-  RACING_ROAD_SCROLL_BASE,
-  RACING_ROAD_SCROLL_PER_TIER,
-  RACING_GRAVITY_BASE,
-  RACING_GRAVITY_PER_TIER,
-  RACING_MAX_ROAD_SCROLL,
-  RACING_MAX_GRAVITY,
-  RACING_BLUE_CAR_MIN_TIER,
-  RACING_BLUE_CAR_BASE_SPEED,
-  RACING_BLUE_CAR_SPEED_PER_TIER,
-  RACING_BLUE_CAR_MAX_SPEED,
-  RACING_BLUE_CAR_BASE_SPIN,
-  RACING_BLUE_CAR_SPIN_PER_TIER,
-  RACING_BLUE_CAR_MAX_SPIN,
+  MATTER_CAT_BLUE_HAZARD,
   MATTER_CAT_FLOOR,
   MATTER_CAT_OPPOSING,
   MATTER_CAT_PLAYER,
-  MATTER_CAT_BLUE_HAZARD,
+  RACING_BLUE_CAR_BASE_SPEED,
+  RACING_BLUE_CAR_BASE_SPIN,
+  RACING_BLUE_CAR_MAX_SPEED,
+  RACING_BLUE_CAR_MAX_SPIN,
+  RACING_BLUE_CAR_MIN_TIER,
+  RACING_BLUE_CAR_SPEED_PER_TIER,
+  RACING_BLUE_CAR_SPIN_PER_TIER,
+  RACING_CARS_PER_SPEED_TIER,
+  RACING_GRAVITY_BASE,
+  RACING_GRAVITY_PER_TIER,
+  RACING_MAX_GRAVITY,
+  RACING_MAX_ROAD_SCROLL,
+  RACING_ROAD_SCROLL_BASE,
+  RACING_ROAD_SCROLL_PER_TIER,
 } from './Constants';
 
-import {OPPOSING_CAR_IMAGES} from './Images';
+import { OPPOSING_CAR_IMAGES } from './Images';
 
-import {car, floor, road} from './Objects';
+import { car, floor, road } from './Objects';
 
 function getSpeedTier(score) {
   return Math.floor(score / RACING_CARS_PER_SPEED_TIER);
@@ -78,10 +77,8 @@ function getBlueCarSpinForTier(tier) {
 
 export default class World extends Component {
   state = {
-    x: 0,
-    y: DEVICE_HEIGHT - 200,
-    isGameSetup: false,
-    isGamePaused: false,
+    x: DEVICE_WIDTH / 2,
+    gamePhase: 'pre', // 'pre' | 'playing' | 'confirmexit' | 'gameover'
     score: 0,
   };
 
@@ -98,7 +95,10 @@ export default class World extends Component {
     const {engine, world} = this.addObjectsToWorld(car);
     this.entities = this.getEntities(engine, world, car, road);
 
-    this.physics = (entities, {time}) => {
+    this.physics = (entities, {time: {delta}}) => {
+      if (this.state.gamePhase === 'confirmexit') {
+        return entities;
+      }
       let engine = entities['physics'].engine;
       const tier = getSpeedTier(this.state.score);
       engine.world.gravity.y = getGravityForTier(tier);
@@ -193,41 +193,30 @@ export default class World extends Component {
 
     try {
       Accelerometer.setUpdateInterval(15);
-      this.accelerometer = Accelerometer.addListener(({ x }) => {
-        if (!this.state.isGamePaused) {
+      this.accelerometer = Accelerometer.addListener(({x}) => {
+        if (this.state.gamePhase === 'playing') {
+          const newX = this.state.x + x;
+
           Matter.Body.setPosition(car, {
-            x: this.state.x + x,
+            x: newX,
             y: DEVICE_HEIGHT - 200,
           });
 
-          this.setState(
-            state => ({
-              x: x + state.x,
-            }),
-            () => {
-              if (this.state.x < 0 || this.state.x > DEVICE_WIDTH) {
-                Matter.Body.setPosition(car, {
-                  x: MID_POINT,
-                  y: DEVICE_HEIGHT - 30,
-                });
-
-                this.setState({
-                  x: MID_POINT,
-                });
-
-                this.gameOver('You hit the side of the road!');
-              }
-            },
-          );
+          this.setState({x: newX}, () => {
+            if (this.state.x < 0 || this.state.x > DEVICE_WIDTH) {
+              Matter.Body.setPosition(car, {
+                x: MID_POINT,
+                y: DEVICE_HEIGHT - 200,
+              });
+              this.setState({x: MID_POINT});
+              this.gameOver();
+            }
+          });
         }
       });
     } catch (e) {
-      // Sensors not available (e.g. simulator) - game will show but car won't move
+      // Sensors not available (e.g. simulator)
     }
-
-    this.setState({
-      isGameSetup: true,
-    });
   }
 
   componentWillUnmount() {
@@ -264,7 +253,7 @@ export default class World extends Component {
         },
       );
 
-      this.opposing_cars.push(opposing_cars);
+      this.opposing_cars.push(opposing_car);
     }
 
     objects = objects.concat(this.opposing_cars);
@@ -288,10 +277,7 @@ export default class World extends Component {
 
     Matter.World.add(world, objects);
 
-    return {
-      engine,
-      world,
-    };
+    return {engine, world};
   };
 
   setupCollisionHandler = engine => {
@@ -369,10 +355,7 @@ export default class World extends Component {
 
   getEntities = (engine, world, car, road) => {
     const entities = {
-      physics: {
-        engine,
-        world,
-      },
+      physics: {engine, world},
 
       theRoad: {
         body: road,
@@ -382,6 +365,7 @@ export default class World extends Component {
 
       playerCar: {
         body: car,
+        size: [CAR_WIDTH, CAR_HEIGHT],
         size: [CAR_WIDTH, CAR_HEIGHT],
         image: require('../assets/racing-game/red-car.png'),
         renderer: Car,
@@ -459,15 +443,47 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'gray',
   },
-  centered: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
+  preTitle: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 12,
+  },
+  preSubtitle: {
+    fontSize: 16,
+    color: '#aaa',
+    textAlign: 'center',
+    marginBottom: 48,
+    lineHeight: 24,
+  },
+  primaryButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 16,
+    paddingHorizontal: 48,
+    borderRadius: 12,
+    width: '100%',
     alignItems: 'center',
   },
-  text: {
-    fontSize: 20,
+  primaryButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
+  secondaryButton: {
+    marginTop: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 48,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#555',
+    width: '100%',
+    alignItems: 'center',
+  },
+  secondaryButtonText: {
+    color: '#aaa',
+    fontSize: 18,
+  },
+  // In-game HUD
   infoWrapper: {
     flex: 1,
     flexDirection: 'row',
@@ -476,7 +492,7 @@ const styles = StyleSheet.create({
   scoreContainer: {
     position: 'absolute',
     top: 50,
-    right: 50,
+    right: 20,
   },
   scoreText: {
     fontSize: 25,
