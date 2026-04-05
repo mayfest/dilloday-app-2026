@@ -1,26 +1,28 @@
 import React from 'react';
-import {Image} from 'react-native';
+import { Image } from 'react-native';
 
-import {DEVICE_WIDTH, DEVICE_HEIGHT} from '../Constants';
+import { CAR_HEIGHT, CAR_WIDTH } from '../Constants';
 
-const BODY_DIAMETER = Math.trunc(Math.max(DEVICE_WIDTH, DEVICE_HEIGHT) * 0.05);
+function Car({ body, image }) {
+  const { position, angle = 0 } = body;
+  const width = CAR_WIDTH;
+  const height = CAR_HEIGHT;
 
-function Car({body, image}) {
-  const {position} = body;
-
-  const x = position.x - BODY_DIAMETER / 2;
-  const y = position.y - BODY_DIAMETER / 2;
+  const x = position.x - width / 2;
+  const y = position.y - height / 2;
+  const deg = (angle * 180) / Math.PI;
 
   return (
     <Image
       source={image}
       resizeMode="contain"
       style={{
-        width: BODY_DIAMETER,
-        height: BODY_DIAMETER,
+        width,
+        height,
         position: 'absolute',
         left: x,
         top: y,
+        transform: [{ rotate: `${deg}deg` }],
       }}
     />
   );

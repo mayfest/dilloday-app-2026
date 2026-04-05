@@ -148,7 +148,7 @@ export default function RootLayout() {
               swipeEnabled: !DISABLED_SWIPE_ROUTES.includes(route.name),
             })}
           >
-            <Drawer.Screen
+            {/* <Drawer.Screen
               name='(tabs)'
               options={{
                 drawerLabel: 'Home',
@@ -161,7 +161,7 @@ export default function RootLayout() {
                   />
                 ),
               }}
-            />
+            /> */}
 
             {/* <Drawer.Screen
               name='product/[id]'
@@ -196,7 +196,7 @@ export default function RootLayout() {
                 ),
               }}
             />
-            <Drawer.Screen
+            {/* <Drawer.Screen
               name='carousel-tickets'
               options={{
                 title: 'Carousel Tickets',
@@ -208,7 +208,7 @@ export default function RootLayout() {
                   />
                 ),
               }}
-            />
+            /> */}
             {/* <Drawer.Screen
               name='activities'
               options={{
@@ -222,7 +222,7 @@ export default function RootLayout() {
                 ),
               }}
             /> */}
-            <Drawer.Screen
+            {/* <Drawer.Screen
               name='swsh'
               options={{
                 title: 'Photo Album',
@@ -234,7 +234,7 @@ export default function RootLayout() {
                   />
                 ),
               }}
-            />
+            /> */}
 
             <Drawer.Screen
               name='smart-dillo'
@@ -309,6 +309,13 @@ export default function RootLayout() {
                 ),
               }}
             />
+            {/* <Drawer.Screen
+              name='racing-game'
+              options={{
+                title: 'Racing game',
+                drawerItemStyle: { display: 'none' },
+              }}
+            /> */}
             <Drawer.Screen
               name='+not-found'
               options={{

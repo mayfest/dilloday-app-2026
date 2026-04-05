@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
 
-import {StyleSheet, Text, View, Alert} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
 import Matter from 'matter-js';
 import {GameEngine} from 'react-native-game-engine';
+import {router} from 'expo-router';
 
-import { Accelerometer } from 'expo-sensors';
+import {Accelerometer} from 'expo-sensors';
+
+import {recordLeaderboardScore} from '../lib/racing-leaderboard';
 
 import randomInt from 'random-int';
 import sampleSize from 'lodash.samplesize';
@@ -22,11 +25,56 @@ import {
   MID_POINT,
   DEVICE_HEIGHT,
   DEVICE_WIDTH,
+  RACING_CARS_PER_SPEED_TIER,
+  RACING_ROAD_SCROLL_BASE,
+  RACING_ROAD_SCROLL_PER_TIER,
+  RACING_GRAVITY_BASE,
+  RACING_GRAVITY_PER_TIER,
+  RACING_MAX_ROAD_SCROLL,
+  RACING_MAX_GRAVITY,
+  RACING_BLUE_CAR_MIN_TIER,
+  RACING_BLUE_CAR_BASE_SPEED,
+  RACING_BLUE_CAR_SPEED_PER_TIER,
+  RACING_BLUE_CAR_MAX_SPEED,
+  RACING_BLUE_CAR_BASE_SPIN,
+  RACING_BLUE_CAR_SPIN_PER_TIER,
+  RACING_BLUE_CAR_MAX_SPIN,
+  MATTER_CAT_FLOOR,
+  MATTER_CAT_OPPOSING,
+  MATTER_CAT_PLAYER,
+  MATTER_CAT_BLUE_HAZARD,
 } from './Constants';
 
 import {OPPOSING_CAR_IMAGES} from './Images';
 
 import {car, floor, road} from './Objects';
+
+function getSpeedTier(score) {
+  return Math.floor(score / RACING_CARS_PER_SPEED_TIER);
+}
+
+function getRoadScrollForTier(tier) {
+  const v =
+    RACING_ROAD_SCROLL_BASE + tier * RACING_ROAD_SCROLL_PER_TIER;
+  return Math.min(v, RACING_MAX_ROAD_SCROLL);
+}
+
+function getGravityForTier(tier) {
+  const g = RACING_GRAVITY_BASE + tier * RACING_GRAVITY_PER_TIER;
+  return Math.min(g, RACING_MAX_GRAVITY);
+}
+
+function getBlueCarSpeedForTier(tier) {
+  const v =
+    RACING_BLUE_CAR_BASE_SPEED + tier * RACING_BLUE_CAR_SPEED_PER_TIER;
+  return Math.min(v, RACING_BLUE_CAR_MAX_SPEED);
+}
+
+function getBlueCarSpinForTier(tier) {
+  const w =
+    RACING_BLUE_CAR_BASE_SPIN + tier * RACING_BLUE_CAR_SPIN_PER_TIER;
+  return Math.min(w, RACING_BLUE_CAR_MAX_SPIN);
+}
 
 export default class World extends Component {
   state = {
@@ -40,24 +88,31 @@ export default class World extends Component {
   constructor(props) {
     super(props);
 
+    this._gameOverDone = false;
     this.opposing_cars = [];
+    this.blueCarY = DEVICE_HEIGHT * 0.4;
+    this.blueCarDir = 1;
+    this.blueCarSpinDir = 1;
+    this._blueCarWasActive = false;
 
     const {engine, world} = this.addObjectsToWorld(car);
     this.entities = this.getEntities(engine, world, car, road);
 
     this.physics = (entities, {time}) => {
       let engine = entities['physics'].engine;
-
-      engine.world.gravity.y = 0.5; // .0625, .125, .25, .5, .75, 1
+      const tier = getSpeedTier(this.state.score);
+      engine.world.gravity.y = getGravityForTier(tier);
       Matter.Engine.update(engine, time.delta);
       return entities;
     };
 
     this.roadTranslation = (entities, {time}) => {
       if (!this.state.isGamePaused) {
+        const tier = getSpeedTier(this.state.score);
+        const roadStep = getRoadScrollForTier(tier);
         Matter.Body.setPosition(road, {
           x: road.position.x,
-          y: road.position.y + 1,
+          y: road.position.y + roadStep,
         });
 
         if (road.position.y >= DEVICE_HEIGHT / 5) {
@@ -67,6 +122,63 @@ export default class World extends Component {
           });
         }
       }
+      return entities;
+    };
+
+    this.blueCarMotion = (entities, {time}) => {
+      if (this.state.isGamePaused) {
+        return entities;
+      }
+
+      const tier = getSpeedTier(this.state.score);
+      const blueActive = tier >= RACING_BLUE_CAR_MIN_TIER;
+
+      if (!blueActive) {
+        Matter.Body.setPosition(this.blueCar, {x: -500, y: -500});
+        Matter.Body.setAngle(this.blueCar, 0);
+        this._blueCarWasActive = false;
+        return entities;
+      }
+
+      const dt = Math.min(time.delta / 1000, 0.064);
+      const speed = getBlueCarSpeedForTier(tier);
+      const spin = getBlueCarSpinForTier(tier);
+      const margin = CAR_WIDTH + 16;
+
+      if (!this._blueCarWasActive) {
+        this.blueCarDir = Math.random() < 0.5 ? 1 : -1;
+        this.blueCarSpinDir = Math.random() < 0.5 ? 1 : -1;
+        Matter.Body.setPosition(this.blueCar, {
+          x: this.blueCarDir > 0 ? -margin : DEVICE_WIDTH + margin,
+          y: this.blueCarY,
+        });
+        Matter.Body.setAngle(this.blueCar, 0);
+        this._blueCarWasActive = true;
+        return entities;
+      }
+
+      let x = this.blueCar.position.x + this.blueCarDir * speed * dt;
+      const y = this.blueCarY;
+      let ang =
+        this.blueCar.angle + this.blueCarSpinDir * spin * dt;
+
+      if (this.blueCarDir > 0 && x > DEVICE_WIDTH + margin) {
+        x = -margin;
+        this.blueCarDir = Math.random() < 0.5 ? 1 : -1;
+        this.blueCarSpinDir = Math.random() < 0.5 ? 1 : -1;
+      } else if (this.blueCarDir < 0 && x < -margin) {
+        x = DEVICE_WIDTH + margin;
+        this.blueCarDir = Math.random() < 0.5 ? 1 : -1;
+        this.blueCarSpinDir = Math.random() < 0.5 ? 1 : -1;
+      }
+
+      Matter.Body.setPosition(this.blueCar, {x, y});
+      Matter.Body.setAngle(this.blueCar, ang);
+
+      if (Matter.Bounds.overlaps(car.bounds, this.blueCar.bounds)) {
+        this.gameOver('You hit the crossing car!');
+      }
+
       return entities;
     };
 
@@ -132,13 +244,23 @@ export default class World extends Component {
 
     for (let x = 0; x <= 4; x++) {
       const opposing_cars = Matter.Bodies.rectangle(
-        randomInt(1, DEVICE_WIDTH - 10),
+        randomInt(
+          Math.ceil(CAR_WIDTH / 2) + 8,
+          Math.floor(DEVICE_WIDTH - CAR_WIDTH / 2) - 8
+        ),
         0,
         CAR_WIDTH,
         CAR_HEIGHT,
         {
           frictionAir: getRandomDecimal(0.05, 0.25),
           label: 'opposing_car',
+          collisionFilter: {
+            category: MATTER_CAT_OPPOSING,
+            mask:
+              MATTER_CAT_FLOOR |
+              MATTER_CAT_PLAYER |
+              MATTER_CAT_OPPOSING,
+          },
         },
       );
 
@@ -146,6 +268,23 @@ export default class World extends Component {
     }
 
     objects = objects.concat(this.opposing_cars);
+
+    this.blueCar = Matter.Bodies.rectangle(
+      -500,
+      -500,
+      CAR_WIDTH,
+      CAR_HEIGHT,
+      {
+        isStatic: true,
+        isSensor: true,
+        label: 'blue_hazard',
+        collisionFilter: {
+          category: MATTER_CAT_BLUE_HAZARD,
+          mask: MATTER_CAT_PLAYER,
+        },
+      },
+    );
+    objects.push(this.blueCar);
 
     Matter.World.add(world, objects);
 
@@ -157,78 +296,74 @@ export default class World extends Component {
 
   setupCollisionHandler = engine => {
     Matter.Events.on(engine, 'collisionStart', event => {
-      var pairs = event.pairs;
-
-      var objA = pairs[0].bodyA.label;
-      var objB = pairs[0].bodyB.label;
-
-      console.log(objA + ' -> ' + objB);
-
-      if (objA === 'floor' && objB === 'opposing_car') {
-        Matter.Body.setPosition(pairs[0].bodyB, {
-          x: randomInt(20, DEVICE_WIDTH - 20),
-          y: 0,
-        });
-
-        this.setState(state => ({
-          score: state.score + 1,
-        }));
+      if (this.state.isGamePaused) {
+        return;
       }
 
-      if (objA === 'car' && objB === 'opposing_car') {
-        this.gameOver('You bumped to another car!');
+      for (const pair of event.pairs) {
+        const { bodyA, bodyB } = pair;
+        const a = bodyA.label;
+        const b = bodyB.label;
+
+        const floorOpp =
+          (a === 'floor' && b === 'opposing_car') ||
+          (a === 'opposing_car' && b === 'floor');
+        if (floorOpp) {
+          const opp = a === 'opposing_car' ? bodyA : bodyB;
+          Matter.Body.setPosition(opp, {
+            x: randomInt(20, DEVICE_WIDTH - 20),
+            y: 0,
+          });
+
+          this.setState(state => ({
+            score: state.score + 1,
+          }));
+        }
+
+        const playerHit =
+          (a === 'car' && b === 'opposing_car') ||
+          (a === 'opposing_car' && b === 'car');
+        if (playerHit) {
+          this.gameOver('You bumped to another car!');
+          return;
+        }
+
       }
     });
   };
 
-  gameOver = msg => {
+  gameOver = async msg => {
+    if (this._gameOverDone) {
+      return;
+    }
+    this._gameOverDone = true;
+
     this.opposing_cars.forEach(item => {
       Matter.Body.set(item, {
         isStatic: true,
       });
     });
+    Matter.Body.set(this.blueCar, {isStatic: true});
+
+    const finalScore = this.state.score;
 
     this.setState({
       isGamePaused: true,
     });
 
-    Alert.alert(`Game Over, ${msg}`, 'Want to play again?', [
-      {
-        text: 'Cancel',
-        onPress: () => {
-          this.accelerometer.unsubscribe();
-          Alert.alert(
-            'Bye!',
-            'Just relaunch the app if you want to play again.',
-          );
-        },
+    try {
+      await recordLeaderboardScore(finalScore);
+    } catch (e) {
+      console.warn('Racing leaderboard save failed', e);
+    }
+
+    router.replace({
+      pathname: '/racing-game/game-over',
+      params: {
+        score: String(finalScore),
+        reason: msg,
+        endedAt: String(Date.now()),
       },
-      {
-        text: 'OK',
-        onPress: () => {
-          this.resetGame();
-        },
-      },
-    ]);
-  };
-
-  resetGame = () => {
-    this.setState({
-      isGamePaused: false,
-    });
-
-    this.opposing_cars.forEach(item => {
-      Matter.Body.set(item, {
-        isStatic: false,
-      });
-      Matter.Body.setPosition(item, {
-        x: randomInt(20, DEVICE_WIDTH - 20),
-        y: 0,
-      });
-    });
-
-    this.setState({
-      score: 0,
     });
   };
 
@@ -247,7 +382,7 @@ export default class World extends Component {
 
       playerCar: {
         body: car,
-        size: [CAR_WIDTH, CAR_WIDTH],
+        size: [CAR_WIDTH, CAR_HEIGHT],
         image: require('../assets/racing-game/red-car.png'),
         renderer: Car,
       },
@@ -257,6 +392,13 @@ export default class World extends Component {
         size: [DEVICE_WIDTH, 10],
         color: '#414448',
         renderer: Box,
+      },
+
+      blueHazard: {
+        body: this.blueCar,
+        size: [CAR_WIDTH, CAR_HEIGHT],
+        image: require('../assets/racing-game/blue-car.png'),
+        renderer: Car,
       },
     };
 
@@ -278,17 +420,26 @@ export default class World extends Component {
 
   render() {
     const {isGameSetup, score} = this.state;
+    const tier = getSpeedTier(score);
 
     if (isGameSetup) {
       return (
         <GameEngine
           style={styles.container}
-          systems={[this.physics, this.roadTranslation]}
+          systems={[
+            this.physics,
+            this.roadTranslation,
+            this.blueCarMotion,
+          ]}
           entities={this.entities}
         >
           <View style={styles.infoWrapper}>
             <View style={styles.scoreContainer}>
               <Text style={styles.scoreText}>Score: {score}</Text>
+              <Text style={styles.speedText}>
+                Speed tier {tier + 1} · next at{' '}
+                {(tier + 1) * RACING_CARS_PER_SPEED_TIER}
+              </Text>
             </View>
           </View>
         </GameEngine>
@@ -331,5 +482,10 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'bold',
     color: '#fff',
+  },
+  speedText: {
+    marginTop: 6,
+    fontSize: 14,
+    color: '#e0e0e0',
   },
 });

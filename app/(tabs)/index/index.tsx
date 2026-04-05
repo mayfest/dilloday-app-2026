@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import HomeWelcomeBanner from '@/components/banners/home-banner';
-import DilloSonaBall from '@/components/dillosonas/dillo-sona-ball';
 import AnnouncementPanel from '@/components/home/announcement-panel';
 import ArtistPanel from '@/components/home/artist-panel';
 import LoadingIndicator from '@/components/loading-indicator';
@@ -86,13 +85,6 @@ export default function HomeScreen() {
             />
           )}
           <ArtistPanel />
-
-          <View style={styles.tarotWrapper}>
-            <TouchableOpacity onPress={() => router.push('./modal')}>
-              <DilloSonaBall />
-            </TouchableOpacity>
-          </View>
-
           <TouchableOpacity
             style={styles.racingButton}
             onPress={() => router.push('/racing-game')}
