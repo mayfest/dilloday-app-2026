@@ -1,12 +1,12 @@
-import InfoPageBanner from '@/components/banners/info-banner';
-import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
-import NineOneOneButton from '@/components/information/911-button';
-import ContactMayfestIcon from '@/components/information/contact-mayfest';
-import NUPDIcon from '@/components/information/nupud';
-import SisFormIcon from '@/components/information/sis-icon';
-import SmartDilloIcon from '@/components/information/smart-dillo-icon';
-import ScreenBackground from '@/components/screen-background';
+
+import Call911 from '@/assets/images/911.svg';
+import CallMayfest from '@/assets/images/call-mayfest.svg';
+import CallNUPD from '@/assets/images/call-NUPD.svg';
+import SIS from '@/assets/images/call-SIS.svg';
+import SmartDillo from '@/assets/images/smart-dillo.svg';
+
+
 import { VERSION } from '@/lib/app';
 import { call } from '@/lib/link';
 import { Link, useRouter } from 'expo-router';
@@ -43,31 +43,34 @@ export default function InfoScreenTwo() {
   const SIS_BUTTON_SIZE = Math.min(SMALL_BUTTON_SIZE + 30, MAX_BUTTON);
 
   return (
-    <DrawerScreen banner={<PageBanner text='INFO' />}>
-      <ScreenBackground />
+    <DrawerScreen>
+      <View style={styles.titleContainer}>
+        <Text style={styles.lineupTitle}>INFO</Text>
+      </View>
+      {/* <ScreenBackground /> */}
       <View style={styles.container}>
         <ScrollView
           contentContainerStyle={styles.contentContainer}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.buttonRow}>
+            <TouchableOpacity
+                onPress={() => router.push('/smart-dillo')}
+                style={styles.buttonWrapper}
+              >
+                <SmartDillo
+                  style={styles.svg}
+                  height={SMALL_BUTTON_SIZE+40}
+                  width={SMALL_BUTTON_SIZE+40}
+                />
+            </TouchableOpacity>
             <Link href='/information/contact' style={styles.buttonWrapper}>
-              <ContactMayfestIcon
+              <CallMayfest
                 style={styles.svg}
                 height={BUTTON_SIZE}
                 width={BUTTON_SIZE}
               />
             </Link>
-            <TouchableOpacity
-              onPress={() => call('18474913456')}
-              style={styles.buttonWrapper}
-            >
-              <NUPDIcon
-                style={styles.svg}
-                height={BUTTON_SIZE}
-                width={BUTTON_SIZE}
-              />
-            </TouchableOpacity>
           </View>
 
           <View style={styles.buttonRow}>
@@ -75,22 +78,23 @@ export default function InfoScreenTwo() {
               onPress={() => call('911')}
               style={styles.buttonWrapper}
             >
-              <NineOneOneButton
+              <Call911
                 style={styles.svg}
                 height={BUTTON_SIZE + 20}
                 width={BUTTON_SIZE + 20}
               />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => router.push('/smart-dillo')}
+              onPress={() => call('18474913456')}
               style={styles.buttonWrapper}
             >
-              <SmartDilloIcon
+              <CallNUPD
                 style={styles.svg}
-                height={SMALL_BUTTON_SIZE}
-                width={SMALL_BUTTON_SIZE}
+                height={BUTTON_SIZE+20}
+                width={BUTTON_SIZE+20}
               />
             </TouchableOpacity>
+            
           </View>
 
           <View style={styles.buttonRow}>
@@ -98,10 +102,10 @@ export default function InfoScreenTwo() {
               onPress={() => Linking.openURL('https://tally.so/r/w258Ej')}
               style={styles.buttonWrapper}
             >
-              <SisFormIcon
+              <SIS
                 style={styles.svg}
                 height={SIS_BUTTON_SIZE}
-                width={SIS_BUTTON_SIZE + 150}
+                width={SIS_BUTTON_SIZE + 375}
               />
             </TouchableOpacity>
           </View>
@@ -118,7 +122,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingVertical: 30,
+    // paddingVertical: 30,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
@@ -128,7 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 5,
+    marginVertical: -13,
     gap: 0,
     width: '100%',
   },
@@ -147,5 +151,16 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 20,
     opacity: 0.5,
+  },
+  titleContainer: {
+    alignItems: 'center',
+    marginTop: 40,
+    marginBottom: 30,
+  },
+  lineupTitle: {
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 38,
+    letterSpacing: 1,
   },
 });
