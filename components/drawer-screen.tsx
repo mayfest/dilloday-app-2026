@@ -37,7 +37,7 @@ export default function DrawerScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#faf6f0',
+    backgroundColor: '#000',
   },
   screen: {
     flex: 1,

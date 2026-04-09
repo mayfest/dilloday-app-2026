@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import ArtistDetailModal from '@/components/home/artist-detail-modal';
+import { Rectangle } from '@/components/home/artist-ann-grid';
 import LoadingIndicator from '@/components/loading-indicator';
 import { Colors } from '@/constants/Colors';
 import { useConfig } from '@/lib/config';
@@ -23,9 +24,37 @@ interface DotPosition {
 
 type PatternFunction = (dots: DotPosition[]) => NodeJS.Timeout;
 
-export default function ArtistPanel(): React.ReactElement {
+type SimpleNowNext = {
+  artist: string;
+  time: string;
+};
+
+type ArtistPanelProps = {
+  /** If provided, ArtistPanel renders the home "NOW/NEXT" rectangles. */
+  now?: SimpleNowNext;
+  next?: SimpleNowNext;
+};
+
+export default function ArtistPanel({
+  now,
+  next,
+}: ArtistPanelProps): React.ReactElement {
+  if (now && next) {
+    return (
+      <View style={styles.simpleNowNextWrap}>
+        <Rectangle artist={now.artist} time={now.time} />
+        <Rectangle
+          when='NEXT'
+          artist={next.artist}
+          time={next.time}
+          rectangleOpacity={0.5}
+        />
+      </View>
+    );
+  }
+
   const { height: screenHeight } = useWindowDimensions();
-  const { config, loading } = useConfig();
+  const { config } = useConfig();
   const panels = config?.home?.panels ?? [];
   const nowKey = panels.find((p) => p.type === 'schedule-now')?.value;
   const nextKey = panels.find((p) => p.type === 'schedule-next')?.value;
@@ -290,7 +319,7 @@ export default function ArtistPanel(): React.ReactElement {
     setSelectedKey(null);
   };
 
-  if (loading || !config?.home?.panels?.length) {
+  if (!config?.home?.panels?.length) {
     return <LoadingIndicator />;
   }
 
@@ -334,26 +363,28 @@ export default function ArtistPanel(): React.ReactElement {
 
       <ArtistDetailModal
         visible={modalVisible}
-        artist={selectedKey ? config.artists[selectedKey] : null}
+        artist={
+          selectedKey
+            ? {
+                name: config.artists[selectedKey]?.name ?? 'Artist',
+                time: config.artists[selectedKey]?.time ?? '',
+                image: config.artists[selectedKey]?.image ?? '',
+                description: config.artists[selectedKey]?.description,
+              }
+            : null
+        }
         onClose={closeModal}
       />
     </>
   );
 }
 
-interface Styles {
-  container: ViewStyle;
-  marquee: ViewStyle;
-  content: ViewStyle;
-  header: TextStyle;
-  artistName: TextStyle;
-  artistTime: TextStyle;
-  countdownText: TextStyle;
-  divider: ViewStyle;
-  dot: ViewStyle;
-  dotBright: ViewStyle;
-}
-const styles = StyleSheet.create<Styles>({
+const styles = StyleSheet.create({
+  simpleNowNextWrap: {
+    width: '100%',
+    gap: 3,
+    marginBottom: 0,
+  },
   container: {
     width: '100%',
     alignItems: 'center',

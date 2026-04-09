@@ -46,6 +46,15 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const baseTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
+  const appTheme = {
+    ...baseTheme,
+    colors: {
+      ...baseTheme.colors,
+      background: '#000',
+      card: '#000',
+    },
+  };
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     Sofachrome: require('../assets/fonts/Sofachrome-Rg.otf'),
@@ -123,7 +132,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ConfigContextProvider>
         <ThemeProvider
-          value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+          value={appTheme}
         >
           <Drawer
             screenOptions={({ route }) => ({
@@ -325,7 +334,7 @@ export default function RootLayout() {
               }}
             />
           </Drawer>
-          <StatusBar style='auto' />
+          <StatusBar style='light' />
         </ThemeProvider>
       </ConfigContextProvider>
     </GestureHandlerRootView>
