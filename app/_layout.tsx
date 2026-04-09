@@ -309,13 +309,13 @@ export default function RootLayout() {
                 ),
               }}
             />
-            {/* <Drawer.Screen
+            <Drawer.Screen
               name='racing-game'
               options={{
                 title: 'Racing game',
                 drawerItemStyle: { display: 'none' },
               }}
-            /> */}
+            />
             <Drawer.Screen
               name='+not-found'
               options={{

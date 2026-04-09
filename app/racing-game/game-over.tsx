@@ -79,9 +79,35 @@ export default function RacingGameOverScreen() {
       <Text style={styles.title}>Game over</Text>
       {reason ? <Text style={styles.subtitle}>{reason}</Text> : null}
 
-      <View style={styles.scoreCard}>
-        <Text style={styles.scoreLabel}>Your score</Text>
-        <Text style={styles.scoreValue}>{score}</Text>
+      <View style={styles.scoreBorderOuter}>
+        <View style={styles.curbRow}>
+          {Array.from({ length: 24 }).map((_, i) => (
+            <View
+              key={`score-top-${i}`}
+              style={[
+                styles.curbBlock,
+                { backgroundColor: i % 2 === 0 ? '#D62828' : '#F4F4F4' },
+              ]}
+            />
+          ))}
+        </View>
+
+        <View style={styles.scoreCard}>
+          <Text style={styles.scoreLabel}>Your score</Text>
+          <Text style={styles.scoreValue}>{score}</Text>
+        </View>
+
+        <View style={styles.curbRow}>
+          {Array.from({ length: 24 }).map((_, i) => (
+            <View
+              key={`score-bottom-${i}`}
+              style={[
+                styles.curbBlock,
+                { backgroundColor: i % 2 === 0 ? '#D62828' : '#F4F4F4' },
+              ]}
+            />
+          ))}
+        </View>
       </View>
 
       <Text style={styles.sectionTitle}>Top 10 scores</Text>
@@ -129,7 +155,7 @@ export default function RacingGameOverScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#2a2a2e',
+    backgroundColor: '#000000',
     paddingTop: 56,
     paddingHorizontal: 24,
   },
@@ -152,10 +178,25 @@ const styles = StyleSheet.create({
     color: '#c8c8cc',
     textAlign: 'center',
   },
-  scoreCard: {
+  scoreBorderOuter: {
     marginTop: 28,
-    padding: 20,
     borderRadius: 14,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#4a4a4a',
+  },
+  curbRow: {
+    flexDirection: 'row',
+    width: '100%',
+    height: 10,
+    overflow: 'hidden',
+  },
+  curbBlock: {
+    flex: 1,
+    height: '100%',
+  },
+  scoreCard: {
+    padding: 20,
     backgroundColor: '#3d3d42',
     alignItems: 'center',
   },

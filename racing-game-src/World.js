@@ -78,6 +78,8 @@ function getBlueCarSpinForTier(tier) {
 export default class World extends Component {
   state = {
     x: DEVICE_WIDTH / 2,
+    isGameSetup: true,
+    isGamePaused: false,
     gamePhase: 'pre', // 'pre' | 'playing' | 'confirmexit' | 'gameover'
     score: 0,
   };
@@ -102,7 +104,7 @@ export default class World extends Component {
       let engine = entities['physics'].engine;
       const tier = getSpeedTier(this.state.score);
       engine.world.gravity.y = getGravityForTier(tier);
-      Matter.Engine.update(engine, time.delta);
+      Matter.Engine.update(engine, delta);
       return entities;
     };
 
@@ -186,6 +188,12 @@ export default class World extends Component {
   }
 
   componentDidMount() {
+    this.setState({
+      gamePhase: 'playing',
+      isGameSetup: true,
+      isGamePaused: false,
+    });
+
     Matter.Body.setPosition(car, {
       x: DEVICE_WIDTH / 2,
       y: DEVICE_HEIGHT - 200,
@@ -232,7 +240,7 @@ export default class World extends Component {
     let objects = [road, car, floor];
 
     for (let x = 0; x <= 4; x++) {
-      const opposing_cars = Matter.Bodies.rectangle(
+      const opposing_car = Matter.Bodies.rectangle(
         randomInt(
           Math.ceil(CAR_WIDTH / 2) + 8,
           Math.floor(DEVICE_WIDTH - CAR_WIDTH / 2) - 8
