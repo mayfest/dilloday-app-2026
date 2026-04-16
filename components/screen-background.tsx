@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     opacity: 0.8,
-    backgroundColor: '#faf6f0',
+    backgroundColor: '#000',
   },
   image: {
     width: '100%',

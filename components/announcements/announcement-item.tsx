@@ -36,9 +36,20 @@ export default function AnnouncementItem({ data, index }: AnnouncementProps) {
       >
         <View style={styles.headerTextContainer}>
           <Text style={[styles.title, textColor]}>{data.title}</Text>
-          <Text style={[styles.time, textColor]}>
-            {data.sent.toDate().toLocaleDateString()}
+          <Text style={[styles.fullTime, textColor]}>
+            {/* Sent:{' '} */}
+            {data.sent.toDate().toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true,
+            })}
           </Text>
+          {/* <Text style={[styles.time, textColor]}>
+            {data.sent.toDate().toLocaleDateString()}
+          </Text> */}
         </View>
 
         <Ionicons
@@ -53,7 +64,7 @@ export default function AnnouncementItem({ data, index }: AnnouncementProps) {
           <View style={styles.divider} />
           <Text style={[styles.message, textColor]}>{data.message}</Text>
 
-          <Text style={[styles.fullTime, textColor]}>
+          {/* <Text style={[styles.fullTime, textColor]}>
             Sent:{' '}
             {data.sent.toDate().toLocaleString('en-US', {
               month: 'short',
@@ -63,7 +74,7 @@ export default function AnnouncementItem({ data, index }: AnnouncementProps) {
               minute: 'numeric',
               hour12: true,
             })}
-          </Text>
+          </Text> */}
         </View>
       )}
     </View>
@@ -72,7 +83,8 @@ export default function AnnouncementItem({ data, index }: AnnouncementProps) {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 12,
+    borderTopLeftRadius: 20,
+    borderBottomRightRadius: 20,
     marginVertical: 8,
     marginHorizontal: 16,
     overflow: 'hidden',
@@ -105,18 +117,19 @@ const styles = StyleSheet.create({
   backgroundLevel2: { backgroundColor: Colors.light.alert },
   backgroundLevel3: { backgroundColor: Colors.light.alert },
   title: {
-    fontSize: 23,
+    fontSize: 20,
     fontFamily: 'FuturaBold',
-    textAlign: 'center',
+    textAlign: 'left',
     fontStyle: 'italic',
-    padding: 10,
+    paddingVertical: 8,
   },
   message: {
-    fontSize: 19,
+    fontSize: 15,
     fontFamily: 'Futura',
     lineHeight: 20,
-    textAlign: 'center',
-    padding: 10,
+    textAlign: 'left',
+    // padding: 10,
+    paddingVertical: 8,
   },
   time: {
     fontSize: 11,
@@ -127,7 +140,7 @@ const styles = StyleSheet.create({
   fullTime: {
     fontSize: 10,
     marginTop: 12,
-    textAlign: 'right',
+    textAlign: 'left',
     opacity: 0.6,
     fontFamily: 'Futura',
     textTransform: 'uppercase',

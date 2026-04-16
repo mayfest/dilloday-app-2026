@@ -46,8 +46,18 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const baseTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
+  const appTheme = {
+    ...baseTheme,
+    colors: {
+      ...baseTheme.colors,
+      background: '#000',
+      card: '#000',
+    },
+  };
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    Sofachrome: require('../assets/fonts/Sofachrome-Rg.otf'),
     SofachromeIt: require('../assets/fonts/Sofachrome-Rg-It.otf'),
     Futura: require('../assets/fonts/FuturaCyrillicMedium.ttf'),
     FuturaBold: require('../assets/fonts/FuturaCyrillicBold.ttf'),
@@ -121,9 +131,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ConfigContextProvider>
-        <ThemeProvider
-          value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-        >
+        <ThemeProvider value={appTheme}>
           <Drawer
             screenOptions={({ route }) => ({
               headerShown: false,
@@ -181,6 +189,13 @@ export default function RootLayout() {
                     color={Colors.light.cardAlt}
                   />
                 ),
+              }}
+            />
+            <Drawer.Screen
+              name='lineup'
+              options={{
+                title: 'Lineup',
+                drawerItemStyle: { display: 'none' },
               }}
             />
             <Drawer.Screen
@@ -317,7 +332,7 @@ export default function RootLayout() {
               }}
             />
           </Drawer>
-          <StatusBar style='auto' />
+          <StatusBar style='light' />
         </ThemeProvider>
       </ConfigContextProvider>
     </GestureHandlerRootView>

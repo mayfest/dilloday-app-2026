@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import NupdWildcat from '@/assets/images/nupd_wildcat.svg';
 import Svg, { Path, Rect } from 'react-native-svg';
 
 interface NUPDIconProps {
