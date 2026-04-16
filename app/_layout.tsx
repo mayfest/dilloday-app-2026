@@ -131,9 +131,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ConfigContextProvider>
-        <ThemeProvider
-          value={appTheme}
-        >
+        <ThemeProvider value={appTheme}>
           <Drawer
             screenOptions={({ route }) => ({
               headerShown: false,

@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+
 import InfoSpeedwayHome from '@/assets/images/info-speedway-home.svg';
 import MapSpeedwayHome from '@/assets/images/map-speedway-home.svg';
 import AnnouncementPanel from '@/components/home/announcement-panel';
@@ -8,7 +10,6 @@ import TabScreen from '@/components/tab-screen';
 import { getAnnouncements } from '@/lib/announcement';
 import { useConfig } from '@/lib/config';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
 import {
   RefreshControl,
   ScrollView,
@@ -68,16 +69,20 @@ export default function HomeScreen() {
     .filter((a) => a?.available !== false)
     .map((a) => ({ artist: a, minutes: parseClockMinutes(a.time) }))
     .filter(
-      (x): x is { artist: NonNullable<(typeof allArtists)[number]>; minutes: number } =>
-        typeof x.minutes === 'number'
+      (
+        x
+      ): x is {
+        artist: NonNullable<(typeof allArtists)[number]>;
+        minutes: number;
+      } => typeof x.minutes === 'number'
     )
     .sort((a, b) => a.minutes - b.minutes);
 
   const currentTimed =
     timedArtists.length === 0
       ? null
-      : [...timedArtists].reverse().find((x) => x.minutes <= nowMinutes) ??
-        timedArtists[0];
+      : ([...timedArtists].reverse().find((x) => x.minutes <= nowMinutes) ??
+        timedArtists[0]);
 
   const currentArtistName = currentTimed?.artist?.name ?? 'TBA';
   const currentArtistTime = currentTimed?.artist?.time ?? '';
@@ -85,7 +90,7 @@ export default function HomeScreen() {
   const nextTimed =
     timedArtists.length === 0
       ? null
-      : timedArtists.find((x) => x.minutes > nowMinutes) ?? timedArtists[0];
+      : (timedArtists.find((x) => x.minutes > nowMinutes) ?? timedArtists[0]);
 
   const nextArtistName = nextTimed?.artist?.name ?? 'TBA';
   const nextArtistTime = nextTimed?.artist?.time ?? '';

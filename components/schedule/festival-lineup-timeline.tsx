@@ -1,10 +1,11 @@
-import { FontAwesome6 } from '@expo/vector-icons';
 import React, {
   forwardRef,
   useCallback,
   useImperativeHandle,
   useRef,
 } from 'react';
+
+import { FontAwesome6 } from '@expo/vector-icons';
 import {
   Image,
   NativeScrollEvent,
@@ -13,8 +14,8 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
+  useWindowDimensions,
 } from 'react-native';
 
 const HOUR_WIDTH = 132;
@@ -212,7 +213,9 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
               scrollEventThrottle={16}
               onScroll={handleScroll(stage.key)}
             >
-              <View style={[styles.timelineTrackWrap, { width: timelineWidth }]}>
+              <View
+                style={[styles.timelineTrackWrap, { width: timelineWidth }]}
+              >
                 <RacingBorder width={timelineWidth} position='top' />
                 <RacingBorder width={timelineWidth} position='bottom' />
 

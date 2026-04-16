@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import ArtistDetailModal from '@/components/home/artist-detail-modal';
 import { Rectangle } from '@/components/home/artist-ann-grid';
+import ArtistDetailModal from '@/components/home/artist-detail-modal';
 import LoadingIndicator from '@/components/loading-indicator';
 import { Colors } from '@/constants/Colors';
 import { useConfig } from '@/lib/config';

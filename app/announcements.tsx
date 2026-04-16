@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 5,
+    marginTop: -8,
     paddingBottom: 20,
   },
   errorText: {

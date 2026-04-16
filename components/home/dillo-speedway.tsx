@@ -1,26 +1,23 @@
-import CarButton from '@/assets/racing-game/car-button.svg';
-import { useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useRef } from 'react';
+
+import CarButton from '@/assets/racing-game/car-button.svg';
+import { useFocusEffect } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import {
   Animated,
   Easing,
   StyleSheet,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
+  useWindowDimensions,
 } from 'react-native';
 
 interface DilloSpeedwayButtonProps {
   // value: string;
 }
 
-function RacingBorder({
-  position,
-}: {
-  position: 'top' | 'bottom';
-}) {
+function RacingBorder({ position }: { position: 'top' | 'bottom' }) {
   return (
     <View
       pointerEvents='none'
