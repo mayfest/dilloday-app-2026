@@ -40,8 +40,11 @@ import {
   RACING_GRAVITY_PER_TIER,
   RACING_MAX_GRAVITY,
   RACING_MAX_ROAD_SCROLL,
+  RACING_PLAYER_MAX_SPEED,
   RACING_ROAD_SCROLL_BASE,
   RACING_ROAD_SCROLL_PER_TIER,
+  RACING_TILT_DEADZONE,
+  RACING_TILT_SENSITIVITY,
 } from './Constants';
 
 import { OPPOSING_CAR_IMAGES } from './Images';
@@ -77,7 +80,6 @@ function getBlueCarSpinForTier(tier) {
 
 export default class World extends Component {
   state = {
-    x: DEVICE_WIDTH / 2,
     isGameSetup: true,
     isGamePaused: false,
     gamePhase: 'pre', // 'pre' | 'playing' | 'confirmexit' | 'gameover'
@@ -93,6 +95,8 @@ export default class World extends Component {
     this.blueCarDir = 1;
     this.blueCarSpinDir = 1;
     this._blueCarWasActive = false;
+    this.tiltX = 0;
+    this.playerX = DEVICE_WIDTH / 2;
 
     const {engine, world} = this.addObjectsToWorld(car);
     this.entities = this.getEntities(engine, world, car, road);
@@ -105,6 +109,34 @@ export default class World extends Component {
       const tier = getSpeedTier(this.state.score);
       engine.world.gravity.y = getGravityForTier(tier);
       Matter.Engine.update(engine, delta);
+      return entities;
+    };
+
+    this.playerMotion = (entities, {time}) => {
+      if (this.state.isGamePaused || this.state.gamePhase !== 'playing') {
+        return entities;
+      }
+
+      const dt = Math.min(time.delta / 1000, 0.064);
+      const raw = this.tiltX;
+      const mag = Math.abs(raw);
+      let speed = 0;
+      if (mag > RACING_TILT_DEADZONE) {
+        const signed = Math.sign(raw) * (mag - RACING_TILT_DEADZONE);
+        speed = signed * RACING_TILT_SENSITIVITY;
+        if (speed > RACING_PLAYER_MAX_SPEED) speed = RACING_PLAYER_MAX_SPEED;
+        if (speed < -RACING_PLAYER_MAX_SPEED) speed = -RACING_PLAYER_MAX_SPEED;
+      }
+
+      const halfCar = CAR_WIDTH / 2;
+      const minX = halfCar;
+      const maxX = DEVICE_WIDTH - halfCar;
+      let nextX = this.playerX + speed * dt;
+      if (nextX < minX) nextX = minX;
+      if (nextX > maxX) nextX = maxX;
+      this.playerX = nextX;
+
+      Matter.Body.setPosition(car, {x: nextX, y: DEVICE_HEIGHT - 200});
       return entities;
     };
 
@@ -194,33 +226,16 @@ export default class World extends Component {
       isGamePaused: false,
     });
 
+    this.playerX = DEVICE_WIDTH / 2;
     Matter.Body.setPosition(car, {
-      x: DEVICE_WIDTH / 2,
+      x: this.playerX,
       y: DEVICE_HEIGHT - 200,
     });
 
     try {
       Accelerometer.setUpdateInterval(15);
       this.accelerometer = Accelerometer.addListener(({x}) => {
-        if (this.state.gamePhase === 'playing') {
-          const newX = this.state.x + x;
-
-          Matter.Body.setPosition(car, {
-            x: newX,
-            y: DEVICE_HEIGHT - 200,
-          });
-
-          this.setState({x: newX}, () => {
-            if (this.state.x < 0 || this.state.x > DEVICE_WIDTH) {
-              Matter.Body.setPosition(car, {
-                x: MID_POINT,
-                y: DEVICE_HEIGHT - 200,
-              });
-              this.setState({x: MID_POINT});
-              this.gameOver();
-            }
-          });
-        }
+        this.tiltX = x;
       });
     } catch (e) {
       // Sensors not available (e.g. simulator)
@@ -374,7 +389,6 @@ export default class World extends Component {
       playerCar: {
         body: car,
         size: [CAR_WIDTH, CAR_HEIGHT],
-        size: [CAR_WIDTH, CAR_HEIGHT],
         image: require('../assets/racing-game/red-car.png'),
         renderer: Car,
       },
@@ -420,6 +434,7 @@ export default class World extends Component {
           style={styles.container}
           systems={[
             this.physics,
+            this.playerMotion,
             this.roadTranslation,
             this.blueCarMotion,
           ]}
@@ -451,47 +466,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'gray',
   },
-  preTitle: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 12,
-  },
-  preSubtitle: {
-    fontSize: 16,
-    color: '#aaa',
-    textAlign: 'center',
-    marginBottom: 48,
-    lineHeight: 24,
-  },
-  primaryButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 16,
-    paddingHorizontal: 48,
-    borderRadius: 12,
-    width: '100%',
-    alignItems: 'center',
-  },
-  primaryButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  secondaryButton: {
-    marginTop: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 48,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#555',
-    width: '100%',
-    alignItems: 'center',
-  },
-  secondaryButtonText: {
-    color: '#aaa',
-    fontSize: 18,
-  },
-  // In-game HUD
   infoWrapper: {
     flex: 1,
     flexDirection: 'row',

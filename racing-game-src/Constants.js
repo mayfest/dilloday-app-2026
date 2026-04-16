@@ -50,6 +50,14 @@ export const RACING_BLUE_CAR_BASE_SPIN = 0.9;
 export const RACING_BLUE_CAR_SPIN_PER_TIER = 0.4;
 export const RACING_BLUE_CAR_MAX_SPIN = 3.25;
 
+/** Player tilt controls */
+/** Pixels/sec of lateral speed per 1g of tilt past the deadzone */
+export const RACING_TILT_SENSITIVITY = 900;
+/** Ignore tilt below this magnitude (in g) — kills drift when phone is flat-ish */
+export const RACING_TILT_DEADZONE = 0.04;
+/** Cap on lateral speed (px/s) regardless of tilt */
+export const RACING_PLAYER_MAX_SPEED = 700;
+
 /** Matter.js collision categories (must not overlap bits) */
 export const MATTER_CAT_FLOOR = 0x0001;
 export const MATTER_CAT_PLAYER = 0x0002;
