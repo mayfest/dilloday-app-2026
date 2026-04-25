@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   selected: {
-    backgroundColor: Colors.light.action,
+    backgroundColor: '#FF2A2A',
     color: '#fff',
   },
   label: {
