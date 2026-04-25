@@ -152,11 +152,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 30,
+    overflow: 'visible',
   },
   lineupTitle: {
     color: '#FFEB3B',
     fontFamily: 'SofachromeIt',
     fontSize: 38,
     letterSpacing: 1,
+    paddingRight: 8,
   },
 });

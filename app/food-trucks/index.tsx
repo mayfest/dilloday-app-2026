@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { ThemedText } from '@/components/ThemedText';
-import FoodPageBanner from '@/components/banners/food-banner copy';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { FOOD_TRUCKS } from '@/constants/food-trucks';
@@ -11,6 +10,7 @@ import {
   FlatList,
   Image,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -69,7 +69,10 @@ export default function FoodTrucksScreen() {
   };
 
   return (
-    <DrawerScreen banner={<FoodPageBanner />}>
+    <DrawerScreen>
+      <View style={styles.titleContainer}>
+        <Text style={styles.foodTitle}>Food</Text>
+      </View>
       <FlatList
         data={FOOD_TRUCKS}
         keyExtractor={(item) => item.id}
@@ -90,6 +93,18 @@ const styles = StyleSheet.create({
     // paddingLeft: 15,
     paddingBottom: 15,
     width: '100%',
+  },
+  titleContainer: {
+    alignItems: 'center',
+    marginVertical: 16,
+    overflow: 'visible',
+  },
+  foodTitle: {
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 38,
+    letterSpacing: 1,
+    paddingRight: 8,
   },
   listContainer: {
     paddingHorizontal: H_GUTTER,

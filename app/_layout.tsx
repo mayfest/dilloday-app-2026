@@ -170,7 +170,7 @@ export default function RootLayout() {
                 paddingLeft: 12,
                 paddingVertical: 0,
                 marginRight: 12,
-                marginVertical: 4,
+                marginVertical: 8,
                 minHeight: 52,
                 justifyContent: 'center',
               },
@@ -181,7 +181,8 @@ export default function RootLayout() {
               drawerLabelStyle: {
                 color: '#000',
                 fontSize: 20,
-                fontFamily: 'Poppins_500Medium',
+                fontFamily: 'Futura',
+                textTransform: 'none',
                 marginVertical: 0,
                 includeFontPadding: false,
               },
