@@ -1,12 +1,9 @@
-import DrawerScreen from '@/components/drawer-screen';
-
 import Call911 from '@/assets/images/911.svg';
-import CallMayfest from '@/assets/images/call-mayfest.svg';
 import CallNUPD from '@/assets/images/call-NUPD.svg';
 import SIS from '@/assets/images/call-SIS.svg';
+import CallMayfest from '@/assets/images/call-mayfest.svg';
 import SmartDillo from '@/assets/images/smart-dillo.svg';
-
-
+import DrawerScreen from '@/components/drawer-screen';
 import { VERSION } from '@/lib/app';
 import { call } from '@/lib/link';
 import { Link, useRouter } from 'expo-router';
@@ -55,14 +52,14 @@ export default function InfoScreenTwo() {
         >
           <View style={styles.buttonRow}>
             <TouchableOpacity
-                onPress={() => router.push('/smart-dillo')}
-                style={styles.buttonWrapper}
-              >
-                <SmartDillo
-                  style={styles.svg}
-                  height={SMALL_BUTTON_SIZE+40}
-                  width={SMALL_BUTTON_SIZE+40}
-                />
+              onPress={() => router.push('/smart-dillo')}
+              style={styles.buttonWrapper}
+            >
+              <SmartDillo
+                style={styles.svg}
+                height={SMALL_BUTTON_SIZE + 40}
+                width={SMALL_BUTTON_SIZE + 40}
+              />
             </TouchableOpacity>
             <Link href='/information/contact' style={styles.buttonWrapper}>
               <CallMayfest
@@ -90,11 +87,10 @@ export default function InfoScreenTwo() {
             >
               <CallNUPD
                 style={styles.svg}
-                height={BUTTON_SIZE+20}
-                width={BUTTON_SIZE+20}
+                height={BUTTON_SIZE + 20}
+                width={BUTTON_SIZE + 20}
               />
             </TouchableOpacity>
-            
           </View>
 
           <View style={styles.buttonRow}>

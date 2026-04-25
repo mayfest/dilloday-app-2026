@@ -1,3 +1,5 @@
+import React, { useCallback, useMemo } from 'react';
+
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
 import FestivalLineupTimeline, {
   type FestivalSlot,
@@ -7,14 +9,7 @@ import { type Config, useConfig } from '@/lib/config';
 import type { Stage } from '@/lib/schedule';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useCallback, useMemo } from 'react';
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const TAB_BAR_CLEARANCE = 88;
@@ -116,7 +111,8 @@ function stageSortRank(key: string, stage: Stage): number {
   const n = stage.name.toLowerCase();
 
   if (k.includes('main') || n.includes('main')) return 10;
-  if (k.includes('fmo') || n.includes('fmo') || n.includes('members only')) return 20;
+  if (k.includes('fmo') || n.includes('fmo') || n.includes('members only'))
+    return 20;
   if (k.includes('lakefill') || n.includes('lakefill')) return 30;
 
   return 100;
@@ -142,8 +138,7 @@ function buildStagesFromConfig(config: Config): FestivalStage[] {
       const a = config.artists[artistId];
       const parsed = parseArtistTime(a?.time);
 
-      let startMinutes =
-        parsed ?? startM + idx * 55 + Math.floor(idx / 2) * 12;
+      let startMinutes = parsed ?? startM + idx * 55 + Math.floor(idx / 2) * 12;
 
       if (startMinutes < startM) startMinutes = startM + idx * 40;
       if (startMinutes >= endM - 30) startMinutes = endM - 40 - idx * 5;

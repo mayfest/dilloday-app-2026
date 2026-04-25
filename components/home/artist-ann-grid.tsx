@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { StyleSheet, Text, View } from 'react-native';
 
 type RectangleProps = {
@@ -49,8 +50,8 @@ const styles = StyleSheet.create({
   },
   when: {
     color: '#fff',
-    fontFamily:'FuturaBold',
-    fontSize:18,
+    fontFamily: 'FuturaBold',
+    fontSize: 18,
   },
   rightAnnouncementRect: {
     flex: 1,
