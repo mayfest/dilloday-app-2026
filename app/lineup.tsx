@@ -232,12 +232,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
+    overflow: 'visible',
   },
   lineupTitle: {
     color: '#FFEB3B',
     fontFamily: 'Sofachrome',
-    fontSize: 22,
+    fontSize: 29,
+    fontStyle: 'italic',
     letterSpacing: 1,
+    paddingRight: 8,
   },
   timelineScroll: {
     flex: 1,

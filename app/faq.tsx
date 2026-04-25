@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import FAQPageBanner from '@/components/banners/faq-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import FAQCategorySection from '@/components/faq/faq-category-section';
 import SearchBar from '@/components/faq/faq-search-bar';
@@ -37,11 +36,14 @@ export default function FAQScreen() {
   };
 
   return (
-    <DrawerScreen banner={<FAQPageBanner />}>
+    <DrawerScreen>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
       >
+        <View style={styles.titleContainer}>
+          <Text style={styles.pageTitle}>FAQ</Text>
+        </View>
         <SearchBar onSearch={handleSearch} value={searchQuery} />
         {filteredData.length > 0 ? (
           filteredData.map((category, index) => (
@@ -65,11 +67,19 @@ export default function FAQScreen() {
 }
 
 const styles = StyleSheet.create({
-  bannerWrapper: {
+  titleContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginVertical: 10,
+    marginVertical: 16,
+    overflow: 'visible',
+  },
+  pageTitle: {
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 38,
+    letterSpacing: 1,
+    paddingRight: 8,
   },
   container: {
     flex: 1,

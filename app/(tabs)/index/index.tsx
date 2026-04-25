@@ -182,12 +182,14 @@ const styles = StyleSheet.create({
   titleContainer: {
     alignItems: 'center',
     marginVertical: 16,
+    overflow: 'visible',
   },
   lineupTitle: {
     color: '#FFEB3B',
     fontFamily: 'SofachromeIt',
     fontSize: 38,
     letterSpacing: 1,
+    paddingRight: 8,
   },
   lineup: {
     width: '100%',

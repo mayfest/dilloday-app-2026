@@ -1,16 +1,17 @@
 import React from 'react';
 
 import { ThemedText } from '@/components/ThemedText';
-import FoodPageBanner from '@/components/banners/food-banner copy';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { FOOD_TRUCKS } from '@/constants/food-trucks';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import {
   Dimensions,
   FlatList,
   Image,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -63,13 +64,24 @@ export default function FoodTrucksScreen() {
             </ThemedText>
           )}
           <ThemedText style={styles.infoType}>{item.tag}</ThemedText>
+          <View style={styles.infoChevronWrap}>
+            <FontAwesome6
+              name='chevron-down'
+              size={14}
+              color='#fff'
+              style={styles.infoChevron}
+            />
+          </View>
         </View>
       </TouchableOpacity>
     );
   };
 
   return (
-    <DrawerScreen banner={<FoodPageBanner />}>
+    <DrawerScreen>
+      <View style={styles.titleContainer}>
+        <Text style={styles.foodTitle}>Food</Text>
+      </View>
       <FlatList
         data={FOOD_TRUCKS}
         keyExtractor={(item) => item.id}
@@ -91,6 +103,18 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     width: '100%',
   },
+  titleContainer: {
+    alignItems: 'center',
+    marginVertical: 16,
+    overflow: 'visible',
+  },
+  foodTitle: {
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 38,
+    letterSpacing: 1,
+    paddingRight: 8,
+  },
   listContainer: {
     paddingHorizontal: H_GUTTER,
     paddingBottom: V_GUTTER * 2,
@@ -101,10 +125,12 @@ const styles = StyleSheet.create({
   },
   foodTruckCard: {
     width: CARD_WIDTH,
-    backgroundColor: 'white',
+    backgroundColor: '#000',
     borderRadius: 12,
     overflow: 'hidden',
     marginBottom: V_GUTTER,
+    borderWidth: 1,
+    borderColor: '#fff',
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -114,7 +140,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '100%',
     height: IMAGE_HEIGHT,
-    backgroundColor: '#f7f7f7',
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -128,7 +154,7 @@ const styles = StyleSheet.create({
   },
   infoBar: {
     height: INFO_BAR_HEIGHT,
-    backgroundColor: Colors.light.text,
+    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 8,
@@ -139,21 +165,32 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#fff',
     textAlign: 'center',
-    fontFamily: 'Poppins_600SemiBold',
+    fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
+  },
+  infoChevronWrap: {
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  infoChevron: {
+    marginVertical: 0,
   },
   infoSubtitle: {
     fontSize: 16,
     fontWeight: '700',
     color: '#fff',
     textAlign: 'center',
-    fontFamily: 'Poppins_600SemiBold',
+    fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
   },
   infoType: {
     fontSize: 14,
     fontWeight: '600',
     color: '#fff',
     paddingTop: 4,
-    fontFamily: 'Poppins_600SemiBold',
+    fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
   },
   favoriteIcon: {
     position: 'absolute',

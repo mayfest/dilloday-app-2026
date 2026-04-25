@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#FFF',
     fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
     flex: 1,
     paddingVertical: 10,
     paddingRight: 8,

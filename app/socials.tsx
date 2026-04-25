@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import SocialsPageBanner from '@/components/banners/socials-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { SOCIALS } from '@/constants/socials';
@@ -39,8 +38,11 @@ export default function SocialsPage() {
   };
 
   return (
-    <DrawerScreen banner={<SocialsPageBanner />}>
+    <DrawerScreen>
       <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.pageTitle}>Socials</Text>
+        </View>
         {SOCIALS.map(({ label, handle, url, icon }, i) => (
           <TouchableOpacity
             key={i}
@@ -86,11 +88,19 @@ export default function SocialsPage() {
 }
 
 const styles = StyleSheet.create({
-  bannerWrapper: {
+  titleContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 16,
+    overflow: 'visible',
+  },
+  pageTitle: {
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 38,
+    letterSpacing: 1,
+    paddingRight: 8,
   },
   container: {
     paddingHorizontal: 24,
