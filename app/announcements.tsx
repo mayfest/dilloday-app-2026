@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import AnnouncementItem from '@/components/announcements/announcement-item';
-import PageBanner from '@/components/banners/page-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import LoadingIndicator from '@/components/loading-indicator';
 import { Announcement, getAnnouncements } from '@/lib/announcement';
@@ -51,6 +50,7 @@ export default function AnnouncementScreen() {
         </Text>
         <FlatList
           data={[]}
+          renderItem={() => null}
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={load} />
           }
@@ -60,7 +60,8 @@ export default function AnnouncementScreen() {
   }
 
   return (
-    <DrawerScreen banner={<PageBanner text='ANNOUNCEMENTS' />}>
+    <DrawerScreen>
+      <Text style={styles.pageTitle}>ANNOUNCEMENTS</Text>
       <FlatList
         data={announcements!}
         keyExtractor={(item) => `announcement-${item.id}`}
@@ -86,8 +87,17 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 5,
-    marginTop: -8,
+    marginTop: 10,
     paddingBottom: 20,
+  },
+  pageTitle: {
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 20,
+    letterSpacing: 1,
+    textAlign: 'center',
+    marginTop: 34,
+    marginBottom: 16,
   },
   errorText: {
     flex: 1,

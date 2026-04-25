@@ -1,11 +1,10 @@
 import React from 'react';
 
+import DilloLogoHome from '@/assets/images/speedway-logo.svg';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { usePathname, useRouter } from 'expo-router';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-
-const SpeedsterLogo = require('@/assets/images/temp_speedster_logo.png');
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 type ValidRoutePath = '/' | '/lineup' | '/map' | '/information';
 
@@ -66,19 +65,27 @@ export default function GlobalTabBar() {
           <View
             style={[
               styles.iconContainer,
-              getIsActive(route.path) && styles.activeIconContainer,
+              route.name === 'index' && styles.homeIconContainer,
+              route.name !== 'index' &&
+                getIsActive(route.path) &&
+                styles.activeIconContainer,
+              route.name === 'index' &&
+                getIsActive(route.path) &&
+                styles.homeActiveIconContainer,
             ]}
           >
             {route.name === 'index' ? (
-              <Image
-                source={SpeedsterLogo}
-                style={{ width: 75, height: 75, borderRadius: 20 }}
+              <DilloLogoHome
+                width={38}
+                height={38}
+                color={getIsActive(route.path) ? '#FFEB3B' : '#000000'}
+                style={styles.homeLogo}
               />
             ) : (
               <FontAwesome6
                 name={route.icon}
                 size={22}
-                color={getIsActive(route.path) ? '#DF4D9B' : '#FFFBEB'}
+                color={getIsActive(route.path) ? '#FFEB3B' : '#000000'}
               />
             )}
           </View>
@@ -96,7 +103,7 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: '2.5%',
     right: 0,
-    backgroundColor: '#150c0c',
+    backgroundColor: '#FFEB3B',
     flexDirection: 'row',
     justifyContent: 'space-around',
     borderRadius: 100,
@@ -117,8 +124,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 20,
   },
+  homeIconContainer: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'transparent',
+  },
+  homeActiveIconContainer: {
+    backgroundColor: '#000000',
+  },
+  homeLogo: {
+    marginLeft: 1,
+  },
   activeIconContainer: {
-    backgroundColor: '#FFFBEB',
+    backgroundColor: '#000000',
     borderRadius: 20,
   },
 });
