@@ -55,11 +55,7 @@ export default function SocialsPage() {
             onPress={() => open(url)}
           >
             <View style={styles.iconWrapper}>
-              <FontAwesome6
-                name={icon as any}
-                size={25}
-                color='#1472B9'
-              />
+              <FontAwesome6 name={icon as any} size={25} color='#1472B9' />
             </View>
             <View style={styles.textContainer}>
               <Text
