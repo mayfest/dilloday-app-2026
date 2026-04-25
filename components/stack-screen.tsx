@@ -48,7 +48,12 @@ export default function StackScreen({
                     size={16}
                     color={backButtonColor}
                   />
-                  <Text style={[styles.navigationButtonText, { color: backButtonColor }]}>
+                  <Text
+                    style={[
+                      styles.navigationButtonText,
+                      { color: backButtonColor },
+                    ]}
+                  >
                     BACK
                   </Text>
                 </TouchableOpacity>
