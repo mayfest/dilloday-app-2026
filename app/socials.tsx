@@ -58,7 +58,7 @@ export default function SocialsPage() {
               <FontAwesome6
                 name={icon as any}
                 size={25}
-                color={Colors.light.action}
+                color='#1472B9'
               />
             </View>
             <View style={styles.textContainer}>
@@ -150,13 +150,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: Colors.light.text,
-    fontFamily: 'Poppins_700Bold',
+    fontFamily: 'Futura',
   },
   handle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.light.action,
-    fontFamily: 'Poppins_700Bold',
+    color: '#1472B9',
+    fontFamily: 'Futura',
     marginLeft: 8,
   },
   smallScreenLabel: {
