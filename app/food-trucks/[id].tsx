@@ -76,9 +76,7 @@ export default function FoodTruckDetail() {
           )}
 
           {/* Title constrained to one line */}
-          <Text style={styles.title}>
-            {meta.name} Menu
-          </Text>
+          <Text style={styles.title}>{meta.name} Menu</Text>
 
           <View style={styles.divider} />
 
