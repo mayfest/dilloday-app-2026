@@ -165,8 +165,10 @@ export default function LineupScreen() {
   const { config } = useConfig();
 
   const stages = useMemo(() => {
-    return MOCK_STAGES;
-  }, []);
+    if (!config) return MOCK_STAGES;
+    const configStages = buildStagesFromConfig(config);
+    return configStages.length > 0 ? configStages : MOCK_STAGES;
+  }, [config]);
 
   const onPressArtist = useCallback(
     (slot: FestivalSlot, stageName: string) => {
