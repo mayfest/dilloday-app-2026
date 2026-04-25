@@ -38,7 +38,6 @@ export default function ArtistPanel({
   next,
 }: ArtistPanelProps): React.ReactElement {
   const isSimpleNowNext = Boolean(now && next);
-
   const { height: screenHeight } = useWindowDimensions();
   const { config } = useConfig();
   const panels = config?.home?.panels ?? [];

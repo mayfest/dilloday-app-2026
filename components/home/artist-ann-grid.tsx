@@ -43,7 +43,8 @@ const styles = StyleSheet.create({
   },
   leftColorRect: {
     width: 80,
-    height: 50,
+    minHeight: 50,
+    alignSelf: 'stretch',
     // backgroundColor: '#FF2A2A',
     justifyContent: 'center',
     alignItems: 'center',
