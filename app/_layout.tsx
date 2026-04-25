@@ -28,11 +28,14 @@ import {
 } from '@expo-google-fonts/sofia-sans-condensed';
 import { FontAwesome6 } from '@expo/vector-icons';
 import {
+  DrawerContentScrollView,
+  DrawerItemList,
+} from '@react-navigation/drawer';
+import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
-import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { useFonts } from 'expo-font';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
@@ -214,11 +217,7 @@ export default function RootLayout() {
               options={{
                 title: 'Announcements',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='bullhorn'
-                    size={20}
-                    color='#FFEB3B'
-                  />
+                  <FontAwesome6 name='bullhorn' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -234,11 +233,7 @@ export default function RootLayout() {
               options={{
                 title: 'Food Trucks',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='utensils'
-                    size={20}
-                    color='#FFEB3B'
-                  />
+                  <FontAwesome6 name='utensils' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -275,11 +270,7 @@ export default function RootLayout() {
                 title: 'Photo Album',
                 drawerItemStyle: { display: 'none' },
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='camera'
-                    size={20}
-                    color='#FFEB3B'
-                  />
+                  <FontAwesome6 name='camera' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -289,11 +280,7 @@ export default function RootLayout() {
               options={{
                 title: 'Smart Dillo',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='shield'
-                    size={20}
-                    color='#FFEB3B'
-                  />
+                  <FontAwesome6 name='shield' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -309,11 +296,7 @@ export default function RootLayout() {
               options={{
                 title: 'FAQ',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='circle-info'
-                    size={20}
-                    color='#FFEB3B'
-                  />
+                  <FontAwesome6 name='circle-info' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -322,11 +305,7 @@ export default function RootLayout() {
               options={{
                 title: 'Socials',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='share-nodes'
-                    size={20}
-                    color='#FFEB3B'
-                  />
+                  <FontAwesome6 name='share-nodes' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -336,11 +315,7 @@ export default function RootLayout() {
                 drawerLabel: 'Dillo Store',
                 title: 'Products',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='bag-shopping'
-                    size={20}
-                    color='#FFEB3B'
-                  />
+                  <FontAwesome6 name='bag-shopping' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -349,11 +324,7 @@ export default function RootLayout() {
               options={{
                 title: 'Sponsors',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='handshake'
-                    size={20}
-                    color='#FFEB3B'
-                  />
+                  <FontAwesome6 name='handshake' size={20} color='#FFEB3B' />
                 ),
               }}
             />
