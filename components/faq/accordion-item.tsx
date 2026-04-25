@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 
-import { Colors } from '@/constants/Colors';
 import { highlightMatches } from '@/lib/faq-utils';
 import { FontAwesome6 } from '@expo/vector-icons';
 import {
@@ -91,11 +90,13 @@ export default function AccordionItem({
 const styles = StyleSheet.create({
   accordionContainer: {
     marginBottom: 12,
-    backgroundColor: Colors.light.background,
+    backgroundColor: '#000',
     borderRadius: 8,
+    borderTopLeftRadius: 0,
+    borderBottomRightRadius: 0,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#CCCCCC',
+    borderColor: '#fff',
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -111,9 +112,9 @@ const styles = StyleSheet.create({
   accordionTitle: {
     flex: 1,
     fontSize: 16,
-    fontWeight: '600',
     color: '#FFFFFF',
-    fontFamily: 'Poppins_600SemiBold',
+    fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
   },
   chevron: {
     width: 24,
@@ -126,15 +127,16 @@ const styles = StyleSheet.create({
   },
   accordionContent: {
     padding: 16,
-    backgroundColor: Colors.light.background,
+    backgroundColor: '#000',
     borderTopWidth: 1,
-    borderTopColor: '#CCCCCC',
+    borderTopColor: '#fff',
   },
   paragraph: {
     fontSize: 15,
     color: '#FFFFFF',
     marginBottom: 12,
     lineHeight: 22,
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'Futura',
+    textTransform: 'none',
   },
 });
