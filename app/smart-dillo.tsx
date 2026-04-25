@@ -205,7 +205,11 @@ export default function SmartDilloScreen() {
           accessibilityLabel={`Go to slide ${i + 1}: ${smartDilloImages[i].alt}`}
         >
           <Animated.View
-            style={[styles.dot, { opacity, width: size, height: size }]}
+            style={[
+              styles.dot,
+              i === currentIndex ? styles.dotActive : styles.dotInactive,
+              { opacity, width: size, height: size },
+            ]}
           />
         </TouchableOpacity>
       );
@@ -362,18 +366,25 @@ const styles = StyleSheet.create({
   dot: {
     borderRadius: 3,
     borderWidth: 0.5,
-    borderColor: '#331d58',
-    backgroundColor: '#4e2a84',
+    borderColor: '#D3D3D3',
     marginHorizontal: 2,
   },
+  dotActive: {
+    backgroundColor: '#1472B9',
+    borderColor: '#1472B9',
+  },
+  dotInactive: {
+    backgroundColor: '#1472B9',
+    borderColor: '#1472B9',
+  },
   description: {
-    fontSize: 12,
+    fontSize: 18,
     textAlign: 'left',
     color: Colors.light.text,
     marginTop: 10,
     marginBottom: 10,
     paddingHorizontal: 20,
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'Futura',
   },
   linkButton: {
     marginTop: 5,
