@@ -1,10 +1,11 @@
 import { goToTabHome } from '@/lib/go-tab-home';
 import {
-  getTopLeaderboard,
   recordLeaderboardScore,
+  subscribeTopLeaderboard,
   type RacingLeaderboardEntry,
 } from '@/lib/racing-leaderboard';
 import {
+  RACING_DEV_UNLIMITED_TRIES,
   RACING_REAL_TRIES,
   canPlayScored,
   getProfile,
@@ -51,16 +52,7 @@ export default function RacingGameOverScreen() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<RacingPlayerProfile | null>(null);
 
-  const loadBoard = useCallback(async () => {
-    setLoading(true);
-    try {
-      const rows = await getTopLeaderboard(10);
-      setTopScores(rows);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // Profile + score-record side-effect (runs once per mount per mode/score).
   useEffect(() => {
     let cancelled = false;
     void (async () => {
@@ -86,13 +78,20 @@ export default function RacingGameOverScreen() {
       } else {
         if (!cancelled) setProfile(p);
       }
-
-      if (!cancelled) await loadBoard();
     })();
     return () => {
       cancelled = true;
     };
-  }, [mode, score, loadBoard, endedAt]);
+  }, [mode, score, endedAt]);
+
+  // Live leaderboard subscription — same canonical view across devices.
+  useEffect(() => {
+    const unsub = subscribeTopLeaderboard(10, (rows) => {
+      setTopScores(rows);
+      setLoading(false);
+    });
+    return unsub;
+  }, []);
 
   const renderRow: ListRenderItem<RacingLeaderboardEntry> = useCallback(
     ({ item, index }) => {
@@ -201,7 +200,9 @@ export default function RacingGameOverScreen() {
           }
         >
           <Text style={styles.primaryText}>
-            Start attempt 1 of {RACING_REAL_TRIES}
+            {RACING_DEV_UNLIMITED_TRIES
+              ? 'Start scored run (dev unlimited)'
+              : `Start attempt 1 of ${RACING_REAL_TRIES}`}
           </Text>
         </Pressable>
       );
@@ -244,7 +245,9 @@ export default function RacingGameOverScreen() {
             }
           >
             <Text style={styles.primaryText}>
-              Start attempt {next} of {RACING_REAL_TRIES}
+              {RACING_DEV_UNLIMITED_TRIES
+                ? 'Start next run (dev unlimited)'
+                : `Start attempt ${next} of ${RACING_REAL_TRIES}`}
             </Text>
           </Pressable>
         ) : null}

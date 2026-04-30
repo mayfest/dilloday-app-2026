@@ -5,6 +5,15 @@ const STORAGE_KEY = 'racing-player-profile-v1';
 
 export const RACING_REAL_TRIES = 3;
 
+/** When true, the 3-try cap is bypassed: `canPlayScored` always allows another
+ *  attempt (after practice), `isLockedOut` never returns true, and
+ *  `incrementTriesUsed` does not consume a try. Defaults to __DEV__ so dev
+ *  builds get unlimited plays and release builds enforce the cap.
+ *
+ *  To exercise the locked-out flow in dev, flip this to `false` temporarily
+ *  and call `resetProfile()` (or set realTriesUsed = 3 manually). */
+export const RACING_DEV_UNLIMITED_TRIES = __DEV__;
+
 export type RacingPlayerProfile = {
   userId: string;
   displayName: string | null;
@@ -68,6 +77,7 @@ export async function markPracticeUsed(): Promise<RacingPlayerProfile> {
 
 export async function incrementTriesUsed(): Promise<RacingPlayerProfile> {
   const p = await getProfile();
+  if (RACING_DEV_UNLIMITED_TRIES) return p;
   const next = {
     ...p,
     realTriesUsed: Math.min(RACING_REAL_TRIES, p.realTriesUsed + 1),
@@ -77,10 +87,13 @@ export async function incrementTriesUsed(): Promise<RacingPlayerProfile> {
 }
 
 export function canPlayScored(p: RacingPlayerProfile): boolean {
-  return p.practiceUsed && p.realTriesUsed < RACING_REAL_TRIES;
+  if (!p.practiceUsed) return false;
+  if (RACING_DEV_UNLIMITED_TRIES) return true;
+  return p.realTriesUsed < RACING_REAL_TRIES;
 }
 
 export function isLockedOut(p: RacingPlayerProfile): boolean {
+  if (RACING_DEV_UNLIMITED_TRIES) return false;
   return p.realTriesUsed >= RACING_REAL_TRIES;
 }
 

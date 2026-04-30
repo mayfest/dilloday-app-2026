@@ -1,9 +1,10 @@
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
 import {
-  getTopLeaderboard,
+  subscribeTopLeaderboard,
   type RacingLeaderboardEntry,
 } from '@/lib/racing-leaderboard';
 import {
+  RACING_DEV_UNLIMITED_TRIES,
   RACING_REAL_TRIES,
   canPlayScored,
   getProfile,
@@ -13,7 +14,7 @@ import {
 } from '@/lib/racing-player-profile';
 import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -77,11 +78,7 @@ export default function RacingGameLobbyScreen() {
     null
   );
 
-  const loadBoard = useCallback(async () => {
-    const rows = await getTopLeaderboard(10);
-    setBoardRows(rows);
-  }, []);
-
+  // Profile is per-device; refresh on focus.
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;
@@ -92,8 +89,6 @@ export default function RacingGameLobbyScreen() {
           setProfile(p);
           if (p.displayName) setNameInput(p.displayName);
         }
-        const rows = await getTopLeaderboard(10);
-        if (!cancelled) setBoardRows(rows);
       })();
       return () => {
         cancelled = true;
@@ -101,12 +96,16 @@ export default function RacingGameLobbyScreen() {
     }, [])
   );
 
+  // Live leaderboard from Firestore — every device sees the same canonical
+  // top-10. Subscribe once on mount; the listener pushes updates whenever
+  // any user's score changes.
+  useEffect(() => {
+    const unsub = subscribeTopLeaderboard(10, (rows) => setBoardRows(rows));
+    return unsub;
+  }, []);
+
   const onToggleBoard = () => {
-    setBoardOpen((v) => {
-      const next = !v;
-      if (next) void loadBoard();
-      return next;
-    });
+    setBoardOpen((v) => !v);
   };
 
   const onSaveName = async () => {
@@ -208,15 +207,18 @@ export default function RacingGameLobbyScreen() {
     }
 
     if (canPlayScored(profile)) {
-      const next = profile.realTriesUsed + 1;
+      const next = Math.min(profile.realTriesUsed + 1, RACING_REAL_TRIES);
       return (
         <View>
           <Text style={styles.statusTitle}>
-            Attempt {next} of {RACING_REAL_TRIES}
+            {RACING_DEV_UNLIMITED_TRIES
+              ? 'Attempt (dev unlimited)'
+              : `Attempt ${next} of ${RACING_REAL_TRIES}`}
           </Text>
           <Text style={styles.statusBody}>
-            Your top score across your {RACING_REAL_TRIES} real attempts goes
-            on the leaderboard.
+            {RACING_DEV_UNLIMITED_TRIES
+              ? 'Dev mode: tries are not consumed and you cannot be locked out.'
+              : `Your top score across your ${RACING_REAL_TRIES} real attempts goes on the leaderboard.`}
           </Text>
           <Pressable
             style={({ pressed }) => [
