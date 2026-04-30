@@ -19,9 +19,13 @@ export const CAR_HEIGHT = Math.round(CAR_MODEL_H * CAR_SCALE);
  *  CAR_WIDTH × CAR_HEIGHT; Matter bodies use HITBOX_WIDTH × HITBOX_HEIGHT
  *  so transparent PNG padding + `resizeMode="contain"` letterboxing doesn't
  *  create phantom collisions. Tune this to match actual car art. */
-export const RACING_HITBOX_SCALE = 0.8;
+export const RACING_HITBOX_SCALE = 0.6;
 export const HITBOX_WIDTH = Math.round(CAR_WIDTH * RACING_HITBOX_SCALE);
 export const HITBOX_HEIGHT = Math.round(CAR_HEIGHT * RACING_HITBOX_SCALE);
+
+/** Toggle to draw a translucent red rectangle over each car at hitbox size,
+ *  for visually tuning RACING_HITBOX_SCALE. Keep false for production. */
+export const RACING_DEBUG_DRAW_HITBOX = false;
 
 /** Matter bodies use position = center; this is horizontal center of the road */
 export const MID_POINT = width / 2;
@@ -29,21 +33,28 @@ export const MID_POINT = width / 2;
 /** How many passed cars (score) before the game speeds up one tier */
 export const RACING_CARS_PER_SPEED_TIER = 5;
 
-/** Road scroll: pixels per frame at tier 0 — raise for a faster baseline */
-export const RACING_ROAD_SCROLL_BASE = 1;
+/** Single source of truth for world-scroll speed. Road scroll and falling-car
+ *  gravity both derive from this so the visual frame of reference stays
+ *  consistent (player stationary, world moving past). px/sec. */
+export const RACING_WORLD_SPEED_BASE = 60;
+export const RACING_WORLD_SPEED_PER_TIER = 22;
+export const RACING_WORLD_SPEED_MAX = 300;
 
-/** Added to road scroll for each tier after score crosses each multiple of RACING_CARS_PER_SPEED_TIER */
-export const RACING_ROAD_SCROLL_PER_TIER = 0.35;
+export function worldSpeedPxPerSec(tier) {
+  const v =
+    RACING_WORLD_SPEED_BASE + tier * RACING_WORLD_SPEED_PER_TIER;
+  return Math.min(v, RACING_WORLD_SPEED_MAX);
+}
 
-/** Matter gravity.y at tier 0 — opposing cars fall faster as this increases */
+/** Matter gravity.y at tier 0 — opposing cars fall faster as this increases.
+ *  Scaled by the same curve as world speed so the two stay coupled. */
 export const RACING_GRAVITY_BASE = 0.5;
-
-/** Added to gravity for each speed tier */
-export const RACING_GRAVITY_PER_TIER = 0.12;
-
-/** Optional caps so difficulty doesn’t explode */
-export const RACING_MAX_ROAD_SCROLL = 5;
 export const RACING_MAX_GRAVITY = 1.75;
+
+export function gravityForTier(tier) {
+  const ratio = worldSpeedPxPerSec(tier) / RACING_WORLD_SPEED_BASE;
+  return Math.min(RACING_GRAVITY_BASE * ratio, RACING_MAX_GRAVITY);
+}
 
 /** First speed tier (0-based) where the crossing blue hazard appears */
 export const RACING_BLUE_CAR_MIN_TIER = 2;

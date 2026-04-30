@@ -8,8 +8,6 @@ import { GameEngine } from 'react-native-game-engine';
 
 import { Accelerometer } from 'expo-sensors';
 
-import { recordLeaderboardScore } from '../lib/racing-leaderboard';
-
 import sampleSize from 'lodash.samplesize';
 import randomInt from 'random-int';
 
@@ -38,15 +36,11 @@ import {
   RACING_BLUE_CAR_SPEED_PER_TIER,
   RACING_BLUE_CAR_SPIN_PER_TIER,
   RACING_CARS_PER_SPEED_TIER,
-  RACING_GRAVITY_BASE,
-  RACING_GRAVITY_PER_TIER,
-  RACING_MAX_GRAVITY,
-  RACING_MAX_ROAD_SCROLL,
   RACING_PLAYER_MAX_SPEED,
-  RACING_ROAD_SCROLL_BASE,
-  RACING_ROAD_SCROLL_PER_TIER,
   RACING_TILT_DEADZONE,
   RACING_TILT_SENSITIVITY,
+  gravityForTier,
+  worldSpeedPxPerSec,
 } from './Constants';
 
 import { OPPOSING_CAR_IMAGES } from './Images';
@@ -55,17 +49,6 @@ import { car, floor, road } from './Objects';
 
 function getSpeedTier(score) {
   return Math.floor(score / RACING_CARS_PER_SPEED_TIER);
-}
-
-function getRoadScrollForTier(tier) {
-  const v =
-    RACING_ROAD_SCROLL_BASE + tier * RACING_ROAD_SCROLL_PER_TIER;
-  return Math.min(v, RACING_MAX_ROAD_SCROLL);
-}
-
-function getGravityForTier(tier) {
-  const g = RACING_GRAVITY_BASE + tier * RACING_GRAVITY_PER_TIER;
-  return Math.min(g, RACING_MAX_GRAVITY);
 }
 
 function getBlueCarSpeedForTier(tier) {
@@ -109,7 +92,7 @@ export default class World extends Component {
       }
       let engine = entities['physics'].engine;
       const tier = getSpeedTier(this.state.score);
-      engine.world.gravity.y = getGravityForTier(tier);
+      engine.world.gravity.y = gravityForTier(tier);
       Matter.Engine.update(engine, delta);
       return entities;
     };
@@ -143,20 +126,25 @@ export default class World extends Component {
     };
 
     this.roadTranslation = (entities, {time}) => {
-      if (!this.state.isGamePaused) {
-        const tier = getSpeedTier(this.state.score);
-        const roadStep = getRoadScrollForTier(tier);
-        // Dash cycle in Road.js is 44 (dashLength 30 + gapLength 14).
-        // Subtract a multiple of 44 instead of snapping to 0 so the
-        // `% 44` offset stays continuous across resets.
-        const WRAP = 44 * 10;
-        let nextY = road.position.y + roadStep;
-        if (nextY >= WRAP) nextY -= WRAP;
-        Matter.Body.setPosition(road, {
-          x: road.position.x,
-          y: nextY,
-        });
+      if (this.state.isGamePaused) {
+        return entities;
       }
+      // Time-based scroll: speed is px/sec, so multiply by delta. Position is
+      // kept fractional in Matter and floored at draw time in Road.js — that
+      // way a hitchy frame absorbs into the next without losing or doubling
+      // pixels.
+      const tier = getSpeedTier(this.state.score);
+      const speed = worldSpeedPxPerSec(tier);
+      const dt = Math.min(time.delta / 1000, 0.064);
+      // Dash cycle in Road.js is 44 (dashLength 30 + gapLength 14). Wrap by
+      // a multiple of 44 so the `% 44` offset stays continuous.
+      const WRAP = 44 * 10;
+      let nextY = (road.position.y + speed * dt) % WRAP;
+      if (nextY < 0) nextY += WRAP;
+      Matter.Body.setPosition(road, {
+        x: road.position.x,
+        y: nextY,
+      });
       return entities;
     };
 
@@ -366,18 +354,13 @@ export default class World extends Component {
       isGamePaused: true,
     });
 
-    try {
-      await recordLeaderboardScore(finalScore);
-    } catch (e) {
-      console.warn('Racing leaderboard save failed', e);
-    }
-
     router.replace({
       pathname: '/racing-game/game-over',
       params: {
         score: String(finalScore),
         reason: msg,
         endedAt: String(Date.now()),
+        mode: this.props.mode === 'practice' ? 'practice' : 'scored',
       },
     });
   };
@@ -454,6 +437,11 @@ export default class World extends Component {
                 {(tier + 1) * RACING_CARS_PER_SPEED_TIER}
               </Text>
             </View>
+            {this.props.mode === 'practice' ? (
+              <View style={styles.practiceBadge}>
+                <Text style={styles.practiceBadgeText}>PRACTICE</Text>
+              </View>
+            ) : null}
           </View>
           {__DEV__ && (
             <View style={styles.devControls} pointerEvents="box-none">
@@ -509,6 +497,21 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 14,
     color: '#e0e0e0',
+  },
+  practiceBadge: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255,196,0,0.92)',
+  },
+  practiceBadgeText: {
+    fontSize: 13,
+    fontWeight: '800',
+    letterSpacing: 1,
+    color: '#1a1a1a',
   },
   devControls: {
     position: 'absolute',
