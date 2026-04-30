@@ -1,7 +1,6 @@
 // app/sponsors/index.tsx
 import React from 'react';
 
-import SponsorsPageBanner from '@/components/banners/sponsors-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { SPONSOR_BOOTHS } from '@/constants/sponsor-booths';
@@ -27,8 +26,11 @@ export default function SponsorsScreen() {
   };
 
   return (
-    <DrawerScreen banner={<SponsorsPageBanner />}>
+    <DrawerScreen>
       <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.pageTitle}>Sponsors</Text>
+        </View>
         <Link href='/sponsors/claim-promo' asChild>
           <TouchableOpacity style={styles.promoContainer}>
             <Text style={styles.promoText}>
@@ -91,6 +93,20 @@ export default function SponsorsScreen() {
 }
 
 const styles = StyleSheet.create({
+  titleContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: 16,
+    overflow: 'visible',
+  },
+  pageTitle: {
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 32,
+    letterSpacing: 1,
+    paddingRight: 8,
+  },
   container: {
     paddingHorizontal: 24,
     paddingTop: 24,
@@ -134,13 +150,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '800',
     color: Colors.light.text,
-    fontFamily: 'Poppins_600SemiBold',
+    fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
   },
   promoContainer: {
     width: '100%',
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: Colors.light.text,
+    backgroundColor: '#FF2A2A',
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 16,
@@ -149,6 +166,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#fff',
-    fontFamily: 'Poppins_600SemiBold',
+    fontFamily: 'Futura',
   },
 });

@@ -277,7 +277,7 @@ export default function MapScreen() {
                   activeTab === tab && styles.activeTabText,
                 ]}
               >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {tab.toUpperCase()}
               </Text>
               {activeTab === tab && <View style={styles.activeTabIndicator} />}
             </TouchableOpacity>
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 100,
-    backgroundColor: '#faf6f0',
+    backgroundColor: '#000',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 100,
-    backgroundColor: '#faf6f0',
+    backgroundColor: '#000',
     elevation: 4,
   },
 
@@ -412,12 +412,12 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: Platform.OS === 'android' ? 16 : 18,
     fontWeight: '500',
-    color: '#888',
-    fontFamily: 'Poppins_600SemiBold',
+    color: '#fff',
+    fontFamily: 'FuturaBold',
   },
 
   activeTabText: {
-    color: '#000',
+    color: '#fff',
     fontWeight: '700',
   },
 
@@ -446,9 +446,9 @@ const styles = StyleSheet.create({
   item: {
     width: ITEM_WIDTH,
     marginHorizontal: ITEM_SPACING / 2,
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
     borderRadius: 12,
-    borderColor: Colors.light.text,
+    borderColor: '#000',
     borderWidth: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

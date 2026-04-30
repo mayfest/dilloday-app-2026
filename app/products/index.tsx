@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import StorePageBanner from '@/components/banners/store-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
@@ -11,6 +10,7 @@ import {
   Image,
   RefreshControl,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -111,7 +111,10 @@ export default function ProductsScreen() {
   // );
 
   return (
-    <DrawerScreen banner={<StorePageBanner />}>
+    <DrawerScreen>
+      <View style={styles.titleContainer}>
+        <Text style={styles.pageTitle}>Store</Text>
+      </View>
       {loading ? (
         <View style={styles.centerContainer}>
           <ActivityIndicator size='large' color='#173885' />
@@ -150,6 +153,20 @@ const styles = StyleSheet.create({
   bannerWrapper: {
     // paddingLeft: 15,
     paddingBottom: 15,
+  },
+  titleContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    marginVertical: 16,
+    overflow: 'visible',
+  },
+  pageTitle: {
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 38,
+    letterSpacing: 1,
+    paddingRight: 8,
   },
   centerContainer: {
     flex: 1,

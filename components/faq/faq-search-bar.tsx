@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { Colors } from '@/constants/Colors';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { StyleSheet, TextInput, View } from 'react-native';
 
@@ -15,13 +14,13 @@ export default function SearchBar({ onSearch, value }: SearchBarProps) {
       <FontAwesome6
         name='magnifying-glass'
         size={16}
-        color='#666'
+        color='#fff'
         style={styles.icon}
       />
       <TextInput
         style={styles.input}
-        placeholder='Search FAQs...'
-        placeholderTextColor='#6e6e6e'
+        placeholder='SEARCH FAQS...'
+        placeholderTextColor='#fff'
         value={value}
         onChangeText={onSearch}
         returnKeyType='search'
@@ -35,14 +34,14 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#faf6f0',
+    backgroundColor: '#000',
     borderRadius: 8,
     marginBottom: 20,
     paddingHorizontal: 12,
     height: 48,
-    marginTop: 40,
-    borderWidth: 2,
-    borderColor: Colors.light.background,
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: '#fff',
   },
   icon: {
     marginRight: 8,
@@ -51,6 +50,8 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     fontSize: 16,
-    color: '#000',
+    color: '#fff',
+    fontFamily: 'FuturaBold',
+    textTransform: 'none',
   },
 });

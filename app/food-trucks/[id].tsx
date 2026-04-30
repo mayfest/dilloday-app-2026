@@ -47,7 +47,7 @@ export default function FoodTruckDetail() {
   }
 
   return (
-    <StackScreen>
+    <StackScreen backgroundColor='#000' backButtonColor='#fff'>
       <View style={styles.container}>
         <ScrollView
           style={styles.scrollView}
@@ -76,9 +76,7 @@ export default function FoodTruckDetail() {
           )}
 
           {/* Title constrained to one line */}
-          <Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
-            {meta.name} Menu
-          </Text>
+          <Text style={styles.title}>{meta.name} Menu</Text>
 
           <View style={styles.divider} />
 
@@ -115,13 +113,16 @@ export default function FoodTruckDetail() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000',
   },
   scrollView: {
     flex: 1,
+    backgroundColor: '#000',
   },
   contentContainer: {
     padding: 24,
     paddingBottom: 60,
+    backgroundColor: '#000',
   },
   hero: {
     width: width * 0.8, // 80% of screen width
@@ -144,6 +145,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.light.text,
     marginBottom: 8,
+    fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
   },
   divider: {
     height: 1,
@@ -164,22 +167,30 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
     flexWrap: 'wrap',
     marginRight: 12, // space before price
+    fontFamily: 'Futura',
+    textTransform: 'none',
   },
   price: {
     fontSize: 18,
     fontWeight: '700',
     color: Colors.light.text,
     flexShrink: 0, // prevent shrinking price
+    fontFamily: 'Futura',
+    textTransform: 'none',
   },
   emptyText: {
     textAlign: 'center',
     color: Colors.light.text,
     marginTop: 20,
+    fontFamily: 'Futura',
+    textTransform: 'none',
   },
   noticeText: {
     textAlign: 'center',
     color: Colors.light.text,
     marginTop: 20,
     fontSize: 16,
+    fontFamily: 'Futura',
+    textTransform: 'none',
   },
 });

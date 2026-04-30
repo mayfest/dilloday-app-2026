@@ -1,4 +1,3 @@
-import { Colors } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -19,9 +18,13 @@ export default function AnnouncementPanel({ value }: AnnouncementPanelProps) {
       }}
     >
       <View style={styles.contentContainer}>
+        <View style={styles.textHeader}>
+          <Text style={styles.header}>
+            ANNOUNCEMENT <Text style={styles.headerCarrot}>›</Text>
+          </Text>
+        </View>
         <View style={styles.textContainer}>
           <Text style={styles.text}>{value}</Text>
-          <Text style={styles.note}>Tap to view more</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -30,38 +33,54 @@ export default function AnnouncementPanel({ value }: AnnouncementPanelProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.light.background,
+    // backgroundColor: Colors.light.background,
     borderRadius: 16,
     padding: 18,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    marginVertical: 8,
+    marginTop: 0,
+    marginBottom: 0,
     width: '100%',
   },
   contentContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: '100%',
+    alignSelf: 'center',
+    alignItems: 'stretch',
+    justifyContent: 'center',
   },
   icon: {
     marginRight: 12,
   },
   textContainer: {
+    padding: 10,
+    backgroundColor: '#FFF',
+    borderBottomLeftRadius: 30,
     flex: 1,
   },
   text: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#ffffff',
+    fontSize: 19,
+    color: '#000',
+    paddingLeft: 10,
+    fontFamily: 'Futura',
     marginBottom: 12,
   },
-  note: {
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    color: Colors.light.card,
-    opacity: 0.5,
-    textAlign: 'right',
+  textHeader: {
+    height: 45,
+    backgroundColor: '#1472B9',
+    borderTopRightRadius: 30,
+    justifyContent: 'center',
+    paddingLeft: 20,
+  },
+  header: {
+    fontSize: 20,
+    color: '#FFF',
+    fontFamily: 'FuturaBold',
+  },
+  headerCarrot: {
+    fontSize: 22,
+    color: '#FFF',
+    fontFamily: 'FuturaBold',
   },
 });

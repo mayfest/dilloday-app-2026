@@ -28,6 +28,10 @@ import {
 } from '@expo-google-fonts/sofia-sans-condensed';
 import { FontAwesome6 } from '@expo/vector-icons';
 import {
+  DrawerContentScrollView,
+  DrawerItemList,
+} from '@react-navigation/drawer';
+import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
@@ -36,7 +40,7 @@ import { useFonts } from 'expo-font';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { AppState } from 'react-native';
+import { AppState, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
@@ -46,8 +50,18 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const baseTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
+  const appTheme = {
+    ...baseTheme,
+    colors: {
+      ...baseTheme.colors,
+      background: '#000',
+      card: '#000',
+    },
+  };
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    Sofachrome: require('../assets/fonts/Sofachrome-Rg.otf'),
     SofachromeIt: require('../assets/fonts/Sofachrome-Rg-It.otf'),
     Futura: require('../assets/fonts/FuturaCyrillicMedium.ttf'),
     FuturaBold: require('../assets/fonts/FuturaCyrillicBold.ttf'),
@@ -121,10 +135,32 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ConfigContextProvider>
-        <ThemeProvider
-          value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-        >
+        <ThemeProvider value={appTheme}>
           <Drawer
+            drawerContent={(props) => (
+              <View style={styles.drawerContentRoot}>
+                <DrawerContentScrollView
+                  {...props}
+                  contentContainerStyle={styles.drawerScrollContent}
+                >
+                  <DrawerItemList {...props} />
+                </DrawerContentScrollView>
+
+                <View pointerEvents='none' style={styles.drawerRacingStripe}>
+                  {Array.from({ length: 24 }).map((_, i) => (
+                    <View
+                      key={`drawer-stripe-${i}`}
+                      style={[
+                        styles.drawerRacingStripeSegment,
+                        {
+                          backgroundColor: i % 2 === 0 ? '#D62828' : '#F4F4F4',
+                        },
+                      ]}
+                    />
+                  ))}
+                </View>
+              </View>
+            )}
             screenOptions={({ route }) => ({
               headerShown: false,
               drawerType: 'slide',
@@ -132,17 +168,23 @@ export default function RootLayout() {
               drawerInactiveTintColor: Colors.light.tabIconDefault,
               drawerItemStyle: {
                 paddingLeft: 12,
-                paddingVertical: 8,
+                paddingVertical: 0,
+                marginRight: 12,
+                marginVertical: 8,
+                minHeight: 52,
+                justifyContent: 'center',
               },
               drawerStyle: {
-                paddingTop: 40,
                 width: '80%',
-                backgroundColor: Colors.light.background,
+                backgroundColor: '#858687',
               },
               drawerLabelStyle: {
-                color: '#fff',
+                color: '#000',
                 fontSize: 20,
-                fontFamily: 'Poppins_500Medium',
+                fontFamily: 'Futura',
+                textTransform: 'none',
+                marginVertical: 0,
+                includeFontPadding: false,
               },
               // disable drawer-swipe whenever route.name is in our list
               swipeEnabled: !DISABLED_SWIPE_ROUTES.includes(route.name),
@@ -153,11 +195,12 @@ export default function RootLayout() {
               options={{
                 drawerLabel: 'Home',
                 title: 'Home',
+                drawerItemStyle: { display: 'none' },
                 drawerIcon: ({ color }) => (
                   <FontAwesome6
                     name='house-chimney'
                     size={20}
-                    color={Colors.light.cardAlt}
+                    color='#FFEB3B'
                   />
                 ),
               }}
@@ -175,12 +218,15 @@ export default function RootLayout() {
               options={{
                 title: 'Announcements',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='bullhorn'
-                    size={20}
-                    color={Colors.light.cardAlt}
-                  />
+                  <FontAwesome6 name='bullhorn' size={20} color='#FFEB3B' />
                 ),
+              }}
+            />
+            <Drawer.Screen
+              name='lineup'
+              options={{
+                title: 'Lineup',
+                drawerItemStyle: { display: 'none' },
               }}
             />
             <Drawer.Screen
@@ -188,11 +234,7 @@ export default function RootLayout() {
               options={{
                 title: 'Food Trucks',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='utensils'
-                    size={20}
-                    color={Colors.light.cardAlt}
-                  />
+                  <FontAwesome6 name='utensils' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -200,11 +242,12 @@ export default function RootLayout() {
               name='carousel-tickets'
               options={{
                 title: 'Carousel Tickets',
+                drawerItemStyle: { display: 'none' },
                 drawerIcon: ({ color }) => (
                   <FontAwesome6
                     name='ticket-simple'
                     size={20}
-                    color={Colors.light.cardAlt}
+                    color='#FFEB3B'
                   />
                 ),
               }}
@@ -226,12 +269,9 @@ export default function RootLayout() {
               name='swsh'
               options={{
                 title: 'Photo Album',
+                drawerItemStyle: { display: 'none' },
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='camera'
-                    size={20}
-                    color={Colors.light.cardAlt}
-                  />
+                  <FontAwesome6 name='camera' size={20} color='#FFEB3B' />
                 ),
               }}
             /> */}
@@ -241,11 +281,7 @@ export default function RootLayout() {
               options={{
                 title: 'Smart Dillo',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='shield'
-                    size={20}
-                    color={Colors.light.cardAlt}
-                  />
+                  <FontAwesome6 name='shield' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -261,11 +297,7 @@ export default function RootLayout() {
               options={{
                 title: 'FAQ',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='circle-info'
-                    size={20}
-                    color={Colors.light.cardAlt}
-                  />
+                  <FontAwesome6 name='circle-info' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -274,11 +306,7 @@ export default function RootLayout() {
               options={{
                 title: 'Socials',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='share-nodes'
-                    size={20}
-                    color={Colors.light.cardAlt}
-                  />
+                  <FontAwesome6 name='share-nodes' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -288,11 +316,7 @@ export default function RootLayout() {
                 drawerLabel: 'Dillo Store',
                 title: 'Products',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='bag-shopping'
-                    size={20}
-                    color={Colors.light.cardAlt}
-                  />
+                  <FontAwesome6 name='bag-shopping' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -301,11 +325,7 @@ export default function RootLayout() {
               options={{
                 title: 'Sponsors',
                 drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='handshake'
-                    size={20}
-                    color={Colors.light.cardAlt}
-                  />
+                  <FontAwesome6 name='handshake' size={20} color='#FFEB3B' />
                 ),
               }}
             />
@@ -324,9 +344,33 @@ export default function RootLayout() {
               }}
             />
           </Drawer>
-          <StatusBar style='auto' />
+          <StatusBar style='light' />
         </ThemeProvider>
       </ConfigContextProvider>
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  drawerContentRoot: {
+    flex: 1,
+    position: 'relative',
+  },
+  drawerScrollContent: {
+    paddingTop: 40,
+    paddingBottom: 20,
+    paddingRight: 16,
+  },
+  drawerRacingStripe: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    width: 8,
+    flexDirection: 'column',
+  },
+  drawerRacingStripeSegment: {
+    flex: 1,
+    width: '100%',
+  },
+});

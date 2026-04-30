@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import { Rectangle } from '@/components/home/artist-ann-grid';
 import ArtistDetailModal from '@/components/home/artist-detail-modal';
 import LoadingIndicator from '@/components/loading-indicator';
 import { Colors } from '@/constants/Colors';
@@ -9,10 +10,8 @@ import {
   LayoutChangeEvent,
   StyleSheet,
   Text,
-  TextStyle,
   TouchableOpacity,
   View,
-  ViewStyle,
   useWindowDimensions,
 } from 'react-native';
 
@@ -23,9 +22,24 @@ interface DotPosition {
 
 type PatternFunction = (dots: DotPosition[]) => NodeJS.Timeout;
 
-export default function ArtistPanel(): React.ReactElement {
+type SimpleNowNext = {
+  artist: string;
+  time: string;
+};
+
+type ArtistPanelProps = {
+  /** If provided, ArtistPanel renders the home "NOW/NEXT" rectangles. */
+  now?: SimpleNowNext;
+  next?: SimpleNowNext;
+};
+
+export default function ArtistPanel({
+  now,
+  next,
+}: ArtistPanelProps): React.ReactElement {
+  const isSimpleNowNext = Boolean(now && next);
   const { height: screenHeight } = useWindowDimensions();
-  const { config, loading } = useConfig();
+  const { config } = useConfig();
   const panels = config?.home?.panels ?? [];
   const nowKey = panels.find((p) => p.type === 'schedule-now')?.value;
   const nextKey = panels.find((p) => p.type === 'schedule-next')?.value;
@@ -64,6 +78,8 @@ export default function ArtistPanel(): React.ReactElement {
 
   // Calculate countdown to Dillo Day
   useEffect(() => {
+    if (isSimpleNowNext) return;
+
     // Calculate countdown initially to avoid flashing NaN
     const calculateCountdown = () => {
       try {
@@ -74,10 +90,10 @@ export default function ArtistPanel(): React.ReactElement {
         const difference = dilloDay - now;
 
         // Check if difference is valid before calculation
-        if (isNaN(difference) || difference < 0) {
-          console.error('Invalid countdown difference:', difference);
-          return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-        }
+        // if (isNaN(difference) || difference < 0) {
+        //   console.error('Invalid countdown difference:', difference);
+        //   return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+        // }
 
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor(
@@ -108,9 +124,11 @@ export default function ArtistPanel(): React.ReactElement {
     return () => {
       if (countdownId.current) clearInterval(countdownId.current);
     };
-  }, []);
+  }, [isSimpleNowNext]);
 
   useEffect(() => {
+    if (isSimpleNowNext) return;
+
     const { width: w, height: h } = layout;
     if (!w || !h) return;
 
@@ -141,7 +159,7 @@ export default function ArtistPanel(): React.ReactElement {
       newDots.push({ x: leftX, y: BORDER_TOP + i * stepY });
     }
     setDots(newDots);
-  }, [layout]);
+  }, [isSimpleNowNext, layout]);
 
   const patterns = React.useMemo<PatternFunction[]>(
     () => [
@@ -184,15 +202,19 @@ export default function ArtistPanel(): React.ReactElement {
   );
 
   useEffect(() => {
+    if (isSimpleNowNext) return;
+
     if (nowArtist?.image) {
       Image.prefetch(nowArtist.image);
     }
     if (nextArtist?.image) {
       Image.prefetch(nextArtist.image);
     }
-  }, [nowArtist, nextArtist]);
+  }, [isSimpleNowNext, nowArtist, nextArtist]);
 
   useEffect(() => {
+    if (isSimpleNowNext) return;
+
     if (dots.length === 0) return;
     if (intervalId.current) clearInterval(intervalId.current);
     if (timeoutId.current) clearTimeout(timeoutId.current);
@@ -210,7 +232,7 @@ export default function ArtistPanel(): React.ReactElement {
       if (intervalId.current) clearInterval(intervalId.current);
       if (timeoutId.current) clearTimeout(timeoutId.current);
     };
-  }, [dots, patterns]);
+  }, [dots, isSimpleNowNext, patterns]);
 
   // Render content based on whether nowKey/nextKey are 'countdown' or artist keys
   const renderNowContent = () => {
@@ -290,7 +312,21 @@ export default function ArtistPanel(): React.ReactElement {
     setSelectedKey(null);
   };
 
-  if (loading || !config?.home?.panels?.length) {
+  if (isSimpleNowNext && now && next) {
+    return (
+      <View style={styles.simpleNowNextWrap}>
+        <Rectangle artist={now.artist} time={now.time} />
+        <Rectangle
+          when='NEXT'
+          artist={next.artist}
+          time={next.time}
+          rectangleOpacity={0.5}
+        />
+      </View>
+    );
+  }
+
+  if (!config?.home?.panels?.length) {
     return <LoadingIndicator />;
   }
 
@@ -334,26 +370,28 @@ export default function ArtistPanel(): React.ReactElement {
 
       <ArtistDetailModal
         visible={modalVisible}
-        artist={selectedKey ? config.artists[selectedKey] : null}
+        artist={
+          selectedKey
+            ? {
+                name: config.artists[selectedKey]?.name ?? 'Artist',
+                time: config.artists[selectedKey]?.time ?? '',
+                image: config.artists[selectedKey]?.image ?? '',
+                description: config.artists[selectedKey]?.description,
+              }
+            : null
+        }
         onClose={closeModal}
       />
     </>
   );
 }
 
-interface Styles {
-  container: ViewStyle;
-  marquee: ViewStyle;
-  content: ViewStyle;
-  header: TextStyle;
-  artistName: TextStyle;
-  artistTime: TextStyle;
-  countdownText: TextStyle;
-  divider: ViewStyle;
-  dot: ViewStyle;
-  dotBright: ViewStyle;
-}
-const styles = StyleSheet.create<Styles>({
+const styles = StyleSheet.create({
+  simpleNowNextWrap: {
+    width: '100%',
+    gap: 3,
+    marginBottom: 0,
+  },
   container: {
     width: '100%',
     alignItems: 'center',

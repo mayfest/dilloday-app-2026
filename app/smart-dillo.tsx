@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import SMARTPageBanner from '@/components/banners/SMART-banner';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import {
@@ -206,7 +205,11 @@ export default function SmartDilloScreen() {
           accessibilityLabel={`Go to slide ${i + 1}: ${smartDilloImages[i].alt}`}
         >
           <Animated.View
-            style={[styles.dot, { opacity, width: size, height: size }]}
+            style={[
+              styles.dot,
+              i === currentIndex ? styles.dotActive : styles.dotInactive,
+              { opacity, width: size, height: size },
+            ]}
           />
         </TouchableOpacity>
       );
@@ -219,8 +222,8 @@ export default function SmartDilloScreen() {
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.bannerWrapper}>
-          <SMARTPageBanner />
+        <View style={styles.titleContainer}>
+          <Text style={styles.pageTitle}>Smart Dillo</Text>
         </View>
 
         <View style={styles.container}>
@@ -278,11 +281,19 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
   },
-  bannerWrapper: {
+  titleContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginVertical: 15,
+    marginVertical: 16,
+    overflow: 'visible',
+  },
+  pageTitle: {
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 27,
+    letterSpacing: 1,
+    paddingRight: 8,
   },
   container: {
     flex: 1,
@@ -355,18 +366,25 @@ const styles = StyleSheet.create({
   dot: {
     borderRadius: 3,
     borderWidth: 0.5,
-    borderColor: '#331d58',
-    backgroundColor: '#4e2a84',
+    borderColor: '#D3D3D3',
     marginHorizontal: 2,
   },
+  dotActive: {
+    backgroundColor: '#1472B9',
+    borderColor: '#1472B9',
+  },
+  dotInactive: {
+    backgroundColor: '#1472B9',
+    borderColor: '#1472B9',
+  },
   description: {
-    fontSize: 12,
+    fontSize: 18,
     textAlign: 'left',
     color: Colors.light.text,
     marginTop: 10,
     marginBottom: 10,
     paddingHorizontal: 20,
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'Futura',
   },
   linkButton: {
     marginTop: 5,

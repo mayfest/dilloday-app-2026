@@ -11,12 +11,16 @@ interface StackScreenProps {
   children?: React.ReactNode;
   hideNavBar?: boolean;
   banner?: React.ReactNode;
+  backgroundColor?: string;
+  backButtonColor?: string;
 }
 
 export default function StackScreen({
   children,
   hideNavBar = true,
   banner,
+  backgroundColor = '#faf6f0',
+  backButtonColor = Colors.light.background,
 }: StackScreenProps) {
   const navigation = useNavigation();
   const canGoBack = navigation.canGoBack();
@@ -30,6 +34,7 @@ export default function StackScreen({
   return (
     <GlobalNavivationWrapper hideNavBar={hideNavBar}>
       <View style={styles.container}>
+        <View style={[styles.backgroundLayer, { backgroundColor }]} />
         <SafeAreaView style={styles.screen}>
           <View style={styles.headerRow}>
             <View style={styles.backButtonContainer}>
@@ -41,9 +46,16 @@ export default function StackScreen({
                   <FontAwesome6
                     name='chevron-left'
                     size={16}
-                    color={Colors.light.background}
+                    color={backButtonColor}
                   />
-                  <Text style={styles.navigationButtonText}>BACK</Text>
+                  <Text
+                    style={[
+                      styles.navigationButtonText,
+                      { color: backButtonColor },
+                    ]}
+                  >
+                    BACK
+                  </Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -61,7 +73,9 @@ export default function StackScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#faf6f0',
+  },
+  backgroundLayer: {
+    ...StyleSheet.absoluteFillObject,
   },
   screen: {
     flex: 1,

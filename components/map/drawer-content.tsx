@@ -55,7 +55,7 @@ const LOCATION_INFO: Record<
     details:
       'With a diverse lineup of genres, there’s something for everyone. Check the schedule for performance times and artist details.',
     linkLabel: 'View Main Stage lineup',
-    linkTarget: '/(tabs)/schedule',
+    linkTarget: '/lineup',
   },
   fmo: {
     title: 'For Members Only Stage',
@@ -64,7 +64,7 @@ const LOCATION_INFO: Record<
     details:
       'The For Members Only Stage is located in the middle of the Dillo Day Carnival grounds. Please make sure to check out the schedule for the lineup of performers.',
     linkLabel: 'See FMO stage lineup',
-    linkTarget: '/(tabs)/schedule',
+    linkTarget: '/lineup',
   },
   food: {
     title: 'Food Trucks',
@@ -174,23 +174,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
   },
   title: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.light.text,
+    color: '#fff',
     marginBottom: 8,
+    textTransform: 'uppercase',
+    fontFamily: 'FuturaBold',
   },
   description: {
     fontSize: 16,
-    color: Colors.light.text,
+    color: '#fff',
     marginBottom: 12,
     lineHeight: 22,
   },
   details: {
     fontSize: 14,
-    color: Colors.light.text,
+    color: '#d3d3d3',
     lineHeight: 20,
     marginBottom: 12,
   },

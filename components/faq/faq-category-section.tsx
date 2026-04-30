@@ -1,7 +1,6 @@
 import React from 'react';
 
 import AccordionItem from '@/components/faq/accordion-item';
-import { Colors } from '@/constants/Colors';
 import { FAQItem } from '@/types/faq';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -38,11 +37,11 @@ const styles = StyleSheet.create({
   },
   categoryTitle: {
     fontSize: 22,
-    fontWeight: '800',
-    fontFamily: 'Poppins_700Bold',
-    marginBottom: 16,
-    color: Colors.light.text,
-    paddingBottom: 8,
+    fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
+    marginBottom: 8,
+    color: '#FFEB3B',
+    paddingBottom: 2,
     letterSpacing: 0.5,
   },
 });
