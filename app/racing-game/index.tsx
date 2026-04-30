@@ -1,4 +1,5 @@
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
+import AccordionItem from '@/components/faq/accordion-item';
 import {
   getTopLeaderboard,
   type RacingLeaderboardEntry,
@@ -22,6 +23,8 @@ import {
   Text,
   TextInput,
   View,
+  type StyleProp,
+  type ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -34,45 +37,12 @@ const PRIZES = `Prizes for top racers will be announced here. Check back closer 
 
 const LOBBY_TAB_BAR_CLEARANCE = 88;
 
-function Dropdown({
-  title,
-  open,
-  onToggle,
-  children,
-}: {
-  title: string;
-  open: boolean;
-  onToggle: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <View style={styles.dropdown}>
-      <Pressable
-        onPress={onToggle}
-        style={({ pressed }) => [
-          styles.dropdownHeader,
-          pressed && styles.dropdownHeaderPressed,
-        ]}
-      >
-        <View style={styles.dropdownHeaderRow}>
-          <Text style={styles.dropdownChevron}>{open ? '▼' : '▶'}</Text>
-          <Text style={styles.dropdownTitle}>{title}</Text>
-        </View>
-      </Pressable>
-      {open ? children : null}
-    </View>
-  );
-}
-
 export default function RacingGameLobbyScreen() {
   const insets = useSafeAreaInsets();
   const [profile, setProfile] = useState<RacingPlayerProfile | null>(null);
   const [nameInput, setNameInput] = useState('');
   const [savingName, setSavingName] = useState(false);
   const [starting, setStarting] = useState(false);
-  const [howToOpen, setHowToOpen] = useState(false);
-  const [prizesOpen, setPrizesOpen] = useState(false);
-  const [boardOpen, setBoardOpen] = useState(false);
   const [boardRows, setBoardRows] = useState<RacingLeaderboardEntry[] | null>(
     null
   );
@@ -100,14 +70,6 @@ export default function RacingGameLobbyScreen() {
       };
     }, [])
   );
-
-  const onToggleBoard = () => {
-    setBoardOpen((v) => {
-      const next = !v;
-      if (next) void loadBoard();
-      return next;
-    });
-  };
 
   const onSaveName = async () => {
     const trimmed = nameInput.trim();
@@ -218,19 +180,22 @@ export default function RacingGameLobbyScreen() {
             Your top score across your {RACING_REAL_TRIES} real attempts goes
             on the leaderboard.
           </Text>
+          <View style={styles.attemptSpacer} />
           <Pressable
             style={({ pressed }) => [
               styles.button,
-              styles.primary,
+              styles.attemptButton,
               starting && styles.buttonDisabled,
               pressed && styles.pressed,
             ]}
             onPress={onStartScored}
             disabled={starting}
           >
-            <Text style={styles.primaryText}>
-              {starting ? 'Starting…' : `Start attempt ${next}`}
-            </Text>
+            <View style={styles.attemptButtonLabelWrap}>
+              <Text style={styles.attemptButtonLabel}>
+                {starting ? 'Starting…' : 'Start'}
+              </Text>
+            </View>
           </Pressable>
         </View>
       );
@@ -272,7 +237,7 @@ export default function RacingGameLobbyScreen() {
         style={[
           styles.screen,
           {
-            paddingTop: Math.max(insets.top, 16),
+            paddingTop: Math.max(insets.top, 48),
             paddingBottom:
               Math.max(insets.bottom, 16) + LOBBY_TAB_BAR_CLEARANCE,
           },
@@ -283,8 +248,8 @@ export default function RacingGameLobbyScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          <Text style={styles.tagline}>Mayfest presents...</Text>
-          <Text style={styles.title}>Dillo Speedway</Text>
+          {/* <Text style={styles.tagline}>Mayfest presents...</Text> */}
+          <Text style={styles.title}>Speedway Dillo</Text>
 
           <View style={styles.statusBorderOuter}>
             <View style={styles.curbRow}>
@@ -314,59 +279,44 @@ export default function RacingGameLobbyScreen() {
             </View>
           </View>
 
-          <Dropdown
-            title="How to play"
-            open={howToOpen}
-            onToggle={() => setHowToOpen((v) => !v)}
-          >
-            <Text style={styles.dropdownBody}>{HOW_TO_PLAY}</Text>
-          </Dropdown>
-          <Dropdown
-            title="Prizes"
-            open={prizesOpen}
-            onToggle={() => setPrizesOpen((v) => !v)}
-          >
-            <Text style={styles.dropdownBody}>{PRIZES}</Text>
-          </Dropdown>
-          <Dropdown
+          <View style={styles.howToWrap}>
+            <AccordionItem title="How to play" content={[HOW_TO_PLAY]} />
+          </View>
+          <AccordionItem title="Prizes" content={[PRIZES]} />
+          <AccordionItem
             title="Leaderboard"
-            open={boardOpen}
-            onToggle={onToggleBoard}
-          >
-            <View style={styles.boardWrap}>
-              {boardRows === null ? (
-                <ActivityIndicator color="#fff" style={styles.boardLoader} />
-              ) : boardRows.length === 0 ? (
-                <Text style={styles.boardEmpty}>
-                  No scores yet. Be the first!
-                </Text>
-              ) : (
-                boardRows.map((row, idx) => {
-                  const isYou =
-                    profile && row.userId === profile.userId;
-                  return (
-                    <View
-                      key={row.userId}
-                      style={[styles.boardRow, idx === 0 && styles.boardRowFirst]}
-                    >
-                      <Text style={styles.boardRank}>{idx + 1}.</Text>
-                      <Text
-                        style={[
-                          styles.boardName,
-                          isYou && styles.boardNameYou,
-                        ]}
-                        numberOfLines={1}
+            content={[
+              <View key="leaderboard-content" style={styles.boardWrap}>
+                {boardRows === null ? (
+                  <ActivityIndicator color="#fff" style={styles.boardLoader} />
+                ) : boardRows.length === 0 ? (
+                  <Text style={styles.boardEmpty}>
+                    No scores yet. Be the first!
+                  </Text>
+                ) : (
+                  boardRows.map((row, idx) => {
+                    const isYou = profile && row.userId === profile.userId;
+                    return (
+                      <View
+                        key={row.userId}
+                        style={[styles.boardRow, idx === 0 && styles.boardRowFirst]}
                       >
-                        {row.name}
-                        {isYou ? ' (you)' : ''}
-                      </Text>
-                      <Text style={styles.boardScore}>{row.topScore}</Text>
-                    </View>
-                  );
-                })
-              )}
-            </View>
-          </Dropdown>
+                        <Text style={styles.boardRank}>{idx + 1}.</Text>
+                        <Text
+                          style={[styles.boardName, isYou && styles.boardNameYou]}
+                          numberOfLines={1}
+                        >
+                          {row.name}
+                          {isYou ? ' (you)' : ''}
+                        </Text>
+                        <Text style={styles.boardScore}>{row.topScore}</Text>
+                      </View>
+                    );
+                  })
+                )}
+              </View>,
+            ]}
+          />
         </ScrollView>
       </View>
     </GlobalNavivationWrapper>
@@ -383,9 +333,11 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   title: {
-    fontSize: 34,
-    fontWeight: '800',
-    color: '#fff',
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 30,
+    letterSpacing: 1,
+    paddingRight: 8,
     textAlign: 'center',
   },
   tagline: {
@@ -412,18 +364,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#3d3d42',
     padding: 18,
   },
+  howToWrap: {
+    marginTop: 12,
+  },
   statusTitle: {
     fontSize: 20,
-    fontWeight: '700',
+    fontFamily: 'FuturaBold',
     color: '#fff',
     textAlign: 'center',
+    textTransform: 'uppercase',
   },
   statusBody: {
     marginTop: 8,
     fontSize: 15,
     lineHeight: 22,
+    fontFamily: 'Futura',
     color: '#d0d0d4',
     textAlign: 'center',
+  },
+  attemptSpacer: {
+    height: 20,
   },
   input: {
     marginTop: 14,
@@ -433,47 +393,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 8,
     fontSize: 16,
-  },
-
-  dropdown: {
-    marginTop: 16,
-    borderTopLeftRadius: 12,
-    borderBottomRightRadius: 12,
-    backgroundColor: '#3d3d42',
-    overflow: 'hidden',
-  },
-  dropdownHeader: {
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-  },
-  dropdownHeaderRow: {
-    paddingHorizontal: 14,
-    paddingVertical: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  dropdownHeaderPressed: {
-    opacity: 0.85,
-  },
-  dropdownChevron: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    width: 24,
-    marginRight: 10,
-    textAlign: 'center',
-  },
-  dropdownTitle: {
-    flex: 1,
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#fff',
-  },
-  dropdownBody: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    fontSize: 15,
-    lineHeight: 22,
-    color: '#c8c8cc',
   },
 
   boardWrap: {
@@ -534,6 +453,11 @@ const styles = StyleSheet.create({
   primary: {
     backgroundColor: '#0a7ea4',
   },
+  attemptButton: {
+    backgroundColor: 'transparent',
+    alignSelf: 'center',
+    marginTop: 0,
+  },
   buttonDisabled: {
     backgroundColor: '#555',
     opacity: 0.7,
@@ -545,5 +469,21 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 17,
     fontWeight: '600',
+  },
+  attemptButtonLabelWrap: {
+    backgroundColor: '#FFEB3B',
+    transform: [{ skewX: '-14deg' }],
+    overflow: 'hidden',
+  },
+  attemptButtonLabel: {
+    color: '#001F54',
+    fontSize: 17,
+    fontWeight: '700',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    paddingVertical: 6,
+    paddingHorizontal: 4,
+    transform: [{ skewX: '14deg' }],
   },
 });

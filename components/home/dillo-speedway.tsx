@@ -89,7 +89,7 @@ export default function DilloSpeedwayButton({}: DilloSpeedwayButtonProps) {
       activeOpacity={0.8}
       onPress={() => {
         router.navigate({
-          pathname: '/announcements',
+          pathname: '/racing-game',
         });
       }}
     >
