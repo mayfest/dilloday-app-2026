@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { router } from 'expo-router';
 import Matter from 'matter-js';
@@ -24,6 +24,8 @@ import {
   CAR_WIDTH,
   DEVICE_HEIGHT,
   DEVICE_WIDTH,
+  HITBOX_HEIGHT,
+  HITBOX_WIDTH,
   MATTER_CAT_BLUE_HAZARD,
   MATTER_CAT_FLOOR,
   MATTER_CAT_OPPOSING,
@@ -144,17 +146,16 @@ export default class World extends Component {
       if (!this.state.isGamePaused) {
         const tier = getSpeedTier(this.state.score);
         const roadStep = getRoadScrollForTier(tier);
+        // Dash cycle in Road.js is 44 (dashLength 30 + gapLength 14).
+        // Subtract a multiple of 44 instead of snapping to 0 so the
+        // `% 44` offset stays continuous across resets.
+        const WRAP = 44 * 10;
+        let nextY = road.position.y + roadStep;
+        if (nextY >= WRAP) nextY -= WRAP;
         Matter.Body.setPosition(road, {
           x: road.position.x,
-          y: road.position.y + roadStep,
+          y: nextY,
         });
-
-        if (road.position.y >= DEVICE_HEIGHT / 5) {
-          Matter.Body.setPosition(road, {
-            x: road.position.x,
-            y: 0,
-          });
-        }
       }
       return entities;
     };
@@ -209,7 +210,7 @@ export default class World extends Component {
       Matter.Body.setPosition(this.blueCar, {x, y});
       Matter.Body.setAngle(this.blueCar, ang);
 
-      if (Matter.Bounds.overlaps(car.bounds, this.blueCar.bounds)) {
+      if (Matter.Query.collides(this.blueCar, [car]).length > 0) {
         this.gameOver('You hit the crossing car!');
       }
 
@@ -260,9 +261,9 @@ export default class World extends Component {
           Math.ceil(CAR_WIDTH / 2) + 8,
           Math.floor(DEVICE_WIDTH - CAR_WIDTH / 2) - 8
         ),
-        0,
-        CAR_WIDTH,
-        CAR_HEIGHT,
+        -randomInt(0, Math.floor(DEVICE_HEIGHT * 1.5)),
+        HITBOX_WIDTH,
+        HITBOX_HEIGHT,
         {
           frictionAir: getRandomDecimal(0.05, 0.25),
           label: 'opposing_car',
@@ -284,8 +285,8 @@ export default class World extends Component {
     this.blueCar = Matter.Bodies.rectangle(
       -500,
       -500,
-      CAR_WIDTH,
-      CAR_HEIGHT,
+      HITBOX_WIDTH,
+      HITBOX_HEIGHT,
       {
         isStatic: true,
         isSensor: true,
@@ -321,8 +322,13 @@ export default class World extends Component {
           const opp = a === 'opposing_car' ? bodyA : bodyB;
           Matter.Body.setPosition(opp, {
             x: randomInt(20, DEVICE_WIDTH - 20),
-            y: 0,
+            y: -randomInt(
+              Math.floor(DEVICE_HEIGHT * 0.2),
+              Math.floor(DEVICE_HEIGHT * 1.2)
+            ),
           });
+          Matter.Body.setVelocity(opp, {x: 0, y: 0});
+          Matter.Body.set(opp, {frictionAir: getRandomDecimal(0.05, 0.25)});
 
           this.setState(state => ({
             score: state.score + 1,
@@ -449,6 +455,24 @@ export default class World extends Component {
               </Text>
             </View>
           </View>
+          {__DEV__ && (
+            <View style={styles.devControls} pointerEvents="box-none">
+              <Pressable
+                style={[styles.devButton, styles.devButtonLeft]}
+                onPressIn={() => { this.tiltX = -0.15; }}
+                onPressOut={() => { this.tiltX = 0; }}
+              >
+                <Text style={styles.devButtonText}>◀</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.devButton, styles.devButtonRight]}
+                onPressIn={() => { this.tiltX = 0.15; }}
+                onPressOut={() => { this.tiltX = 0; }}
+              >
+                <Text style={styles.devButtonText}>▶</Text>
+              </Pressable>
+            </View>
+          )}
         </GameEngine>
       );
     }
@@ -485,5 +509,29 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 14,
     color: '#e0e0e0',
+  },
+  devControls: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 40,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+  },
+  devButton: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  devButtonLeft: {},
+  devButtonRight: {},
+  devButtonText: {
+    color: '#fff',
+    fontSize: 32,
+    fontWeight: 'bold',
   },
 });

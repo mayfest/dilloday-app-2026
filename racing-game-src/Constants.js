@@ -15,6 +15,14 @@ const CAR_SCALE =
 export const CAR_WIDTH = Math.round(CAR_MODEL_W * CAR_SCALE);
 export const CAR_HEIGHT = Math.round(CAR_MODEL_H * CAR_SCALE);
 
+/** Shrink physics rectangles relative to sprite bounds. Sprites render at
+ *  CAR_WIDTH × CAR_HEIGHT; Matter bodies use HITBOX_WIDTH × HITBOX_HEIGHT
+ *  so transparent PNG padding + `resizeMode="contain"` letterboxing doesn't
+ *  create phantom collisions. Tune this to match actual car art. */
+export const RACING_HITBOX_SCALE = 0.8;
+export const HITBOX_WIDTH = Math.round(CAR_WIDTH * RACING_HITBOX_SCALE);
+export const HITBOX_HEIGHT = Math.round(CAR_HEIGHT * RACING_HITBOX_SCALE);
+
 /** Matter bodies use position = center; this is horizontal center of the road */
 export const MID_POINT = width / 2;
 

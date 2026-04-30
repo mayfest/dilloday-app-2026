@@ -1,9 +1,9 @@
 import Matter from 'matter-js';
 import {
-  CAR_WIDTH,
-  CAR_HEIGHT,
   DEVICE_WIDTH,
   DEVICE_HEIGHT,
+  HITBOX_WIDTH,
+  HITBOX_HEIGHT,
   MATTER_CAT_FLOOR,
   MATTER_CAT_PLAYER,
   MATTER_CAT_OPPOSING,
@@ -13,8 +13,8 @@ import {
 export const car = Matter.Bodies.rectangle(
   0,
   DEVICE_HEIGHT - 30,
-  CAR_WIDTH,
-  CAR_HEIGHT,
+  HITBOX_WIDTH,
+  HITBOX_HEIGHT,
   {
     isStatic: true,
     label: 'car',
