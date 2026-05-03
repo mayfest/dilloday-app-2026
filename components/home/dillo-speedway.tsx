@@ -110,15 +110,10 @@ export default function DilloSpeedwayButton({}: DilloSpeedwayButtonProps) {
         >
           <CarButton width={carSize} height={carSize} />
         </Animated.View>
-        <RacingBorder position='bottom' />
-
-        {/* Optional content area if you want to add text later */}
-        {/* <View style={styles.textHeader}>
-          <Text style={styles.header}>ANNOUNCEMENT</Text>
+        <View pointerEvents='none' style={styles.roadLabelWrapper}>
+          <Text style={styles.roadLabel}>TAP TO PLAY</Text>
         </View>
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>{value}</Text>
-        </View> */}
+        <RacingBorder position='bottom' />
       </View>
     </TouchableOpacity>
   );
@@ -148,6 +143,19 @@ const styles = StyleSheet.create({
     top: '50%',
     left: 0,
     zIndex: 1,
+  },
+  roadLabelWrapper: {
+    position: 'absolute',
+    marginLeft: '10%',
+    top: '50%',
+    transform: [{ translateY: -11 }],
+    zIndex: 0,
+  },
+  roadLabel: {
+    color: 'rgba(255, 255, 255, 0.45)',
+    fontFamily: 'FuturaBold',
+    fontSize: 18,
+    letterSpacing: 4,
   },
   racingBorder: {
     position: 'absolute',
