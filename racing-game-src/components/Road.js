@@ -12,9 +12,8 @@ const INTERIOR_LINE_WIDTH = 4;
 const PATTERN_CANVAS_HEIGHT = DEVICE_HEIGHT * 1.6;
 
 const Road = ({body}) => {
-  // Floor only at draw time — World keeps fractional position for sub-pixel
-  // smoothness; React Native layout wants integer pixels.
-  const y = Math.floor(body.position.y % 44);
+  // Keep sub-pixel precision so dashed lines move smoothly frame-to-frame.
+  const y = body.position.y % 44;
 
   const leftCurbX = EDGE_MARGIN;
   const rightCurbX = DEVICE_WIDTH - EDGE_MARGIN - CURB_WIDTH;

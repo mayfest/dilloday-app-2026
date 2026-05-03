@@ -209,21 +209,6 @@ export default function RacingGameLobbyScreen() {
             You've used all {RACING_REAL_TRIES} attempts. Check the leaderboard
             to see how you placed.
           </Text>
-          <Pressable
-            style={({ pressed }) => [
-              styles.button,
-              styles.primary,
-              pressed && styles.pressed,
-            ]}
-            onPress={() =>
-              router.push({
-                pathname: '/racing-game/game-over',
-                params: { mode: 'view-only' },
-              })
-            }
-          >
-            <Text style={styles.primaryText}>View leaderboard</Text>
-          </Pressable>
         </View>
       );
     }
