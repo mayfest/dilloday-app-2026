@@ -62,7 +62,7 @@ export default function AccordionItem({
       </TouchableOpacity>
 
       {isExpanded && (
-        <View style={styles.accordionContentContainer}>
+        <View>
           <View style={styles.accordionContent}>
             {content.map((item, idx) => {
               // -- if it's a string, highlight and wrap in <Text>
@@ -122,14 +122,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  accordionContentContainer: {
-    overflow: 'hidden',
-  },
   accordionContent: {
     padding: 16,
+    paddingBottom: 18,
     backgroundColor: '#000',
     borderTopWidth: 1,
     borderTopColor: '#fff',
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 0,
   },
   paragraph: {
     fontSize: 15,

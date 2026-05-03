@@ -10,11 +10,14 @@ import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
 import FestivalLineupTimeline, {
   type FestivalSlot,
   type FestivalStage,
+  formatClock as formatAmPmClock,
 } from '@/components/schedule/festival-lineup-timeline';
 import { Colors } from '@/constants/Colors';
-import { useConfig } from '@/lib/config';
+import type { Artist } from '@/lib/artist';
+import { type Config, useConfig } from '@/lib/config';
 import { StatusBar } from 'expo-status-bar';
 import {
+  Alert,
   Animated,
   BackHandler,
   Dimensions,
@@ -30,8 +33,14 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const TAB_BAR_CLEARANCE = 88;
-const TIMELINE_START_HOUR = 14;
-const TIMELINE_HOUR_SPAN = 9;
+const TIMELINE_START_HOUR = 11;
+const TIMELINE_START_MINUTE = 30;
+/** Total window length in hours; ticks every 30 min (timeline starts at first tick). */
+const TIMELINE_HOUR_SPAN = 12;
+/** Fallback length (minutes) only when inference is impossible. */
+const DEFAULT_SLOT_DURATION = 50;
+const MIN_SET_DURATION_MINUTES = 15;
+const MAX_SET_DURATION_MINUTES = 8 * 60;
 
 const MOCK_STAGES: FestivalStage[] = [
   {
@@ -96,6 +105,170 @@ const MOCK_STAGES: FestivalStage[] = [
   },
 ];
 
+function parseArtistTime(time?: string): number | null {
+  if (!time) return null;
+
+  const t = time.trim().toUpperCase();
+  const match = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/);
+  if (!match) return null;
+
+  let h = parseInt(match[1], 10);
+  const m = parseInt(match[2], 10);
+  const ap = match[3];
+
+  if (ap === 'PM' && h !== 12) h += 12;
+  if (ap === 'AM' && h === 12) h = 0;
+
+  return h * 60 + m;
+}
+
+function stageSortRank(key: string, stage: Stage): number {
+  const p = stage.position;
+  if (typeof p === 'number' && !Number.isNaN(p)) return p;
+
+  const k = key.toLowerCase();
+  const n = stage.name.toLowerCase();
+
+  if (k.includes('main') || n.includes('main')) return 10;
+  if (k.includes('fmo') || n.includes('fmo') || n.includes('members only'))
+    return 20;
+  if (k.includes('lakefill') || n.includes('lakefill')) return 30;
+
+  return 100;
+}
+
+function buildStagesFromConfig(config: Config): FestivalStage[] {
+  if (!config.schedule) return [];
+
+  const sorted = Object.entries(config.schedule)
+    .map(([key, stage]) => ({ key, stage }))
+    .sort((a, b) => {
+      const ra = stageSortRank(a.key, a.stage);
+      const rb = stageSortRank(b.key, b.stage);
+      if (ra !== rb) return ra - rb;
+      return a.key.localeCompare(b.key);
+    });
+
+  const startM = TIMELINE_START_HOUR * 60 + TIMELINE_START_MINUTE;
+  const endM = startM + TIMELINE_HOUR_SPAN * 60;
+
+  return sorted.map(({ key, stage }) => {
+    type Row = {
+      idx: number;
+      id: string;
+      artist: Artist | undefined;
+      startMinutes: number;
+    };
+
+    const rows: Row[] = stage.artists
+      .map((artistId, idx) => {
+        const a = config.artists[artistId];
+        const parsed = parseArtistTime(a?.time);
+
+        let startMinutes =
+          parsed ?? startM + idx * 55 + Math.floor(idx / 2) * 12;
+
+        if (startMinutes < startM) startMinutes = startM + idx * 40;
+        if (startMinutes >= endM - 30) startMinutes = endM - 40 - idx * 5;
+
+        return {
+          idx,
+          id: artistId,
+          artist: a,
+          startMinutes,
+        };
+      })
+      .sort((a, b) => {
+        if (a.startMinutes !== b.startMinutes)
+          return a.startMinutes - b.startMinutes;
+        return a.idx - b.idx;
+      });
+
+    const slots: FestivalSlot[] = rows.map((row, i) => {
+      const nextStart = i < rows.length - 1 ? rows[i + 1].startMinutes : null;
+      const durationMinutes = resolveSetDurationMinutes(
+        row.startMinutes,
+        row.artist,
+        nextStart,
+        i >= rows.length - 1,
+        endM
+      );
+
+      return {
+        id: row.id,
+        name: row.artist?.name ?? 'Artist',
+        startMinutes: row.startMinutes,
+        durationMinutes,
+        imageUri: row.artist?.image,
+      };
+    });
+
+    return {
+      key,
+      name: stage.name.toUpperCase(),
+      slots,
+    };
+  });
+}
+
+/** Firestore may persist `durationMinutes` as number or (if mistyped) string. */
+function readExplicitDurationMinutes(artist?: Artist): number | null {
+  if (!artist) return null;
+  const raw = artist.durationMinutes as unknown;
+  if (typeof raw === 'number' && Number.isFinite(raw) && raw > 0) return raw;
+  if (typeof raw === 'string') {
+    const n = Number(raw.trim());
+    if (Number.isFinite(n) && n > 0) return n;
+  }
+  return null;
+}
+
+/** Length of each visual bar comes from explicit config, span to endTime, gap to next act, or a safe default. */
+function resolveSetDurationMinutes(
+  startMinutes: number,
+  artist: Artist | undefined,
+  nextStartMinutes: number | null,
+  isLast: boolean,
+  endBoundMinutes: number
+): number {
+  const clampBand = (d: number) =>
+    Math.max(
+      MIN_SET_DURATION_MINUTES,
+      Math.min(MAX_SET_DURATION_MINUTES, Math.round(d))
+    );
+
+  const explicit = readExplicitDurationMinutes(artist);
+
+  if (explicit != null) {
+    return clampBand(explicit);
+  }
+
+  const endParsed = artist?.endTime ? parseArtistTime(artist.endTime) : null;
+
+  if (endParsed != null) {
+    const span = endParsed - startMinutes;
+    if (span > 0) {
+      return clampBand(span);
+    }
+  }
+
+  if (!isLast && nextStartMinutes != null) {
+    const gap = nextStartMinutes - startMinutes;
+    if (gap >= MIN_SET_DURATION_MINUTES) {
+      return clampBand(gap);
+    }
+    return MIN_SET_DURATION_MINUTES;
+  }
+
+  const remainingTail = Math.max(
+    endBoundMinutes - startMinutes,
+    MIN_SET_DURATION_MINUTES
+  );
+  const fallbackLast = Math.min(DEFAULT_SLOT_DURATION, remainingTail);
+
+  return clampBand(Math.max(MIN_SET_DURATION_MINUTES, fallbackLast));
+}
+
 export default function LineupScreen() {
   const insets = useSafeAreaInsets();
   const { config } = useConfig();
@@ -126,7 +299,7 @@ export default function LineupScreen() {
   }, [backdropOpacity, sheetTranslateY]);
 
   useEffect(() => {
-    if (!selectedArtist) return;
+    if (!selectedArtist) if (!config) return;
 
     const h = Dimensions.get('window').height;
     backdropOpacity.setValue(0);
@@ -155,16 +328,34 @@ export default function LineupScreen() {
     return () => sub.remove();
   }, [selectedArtist, backdropOpacity, sheetTranslateY, closeArtistModal]);
 
-  const stages = useMemo(() => MOCK_STAGES, []);
+  const stages = useMemo(() => {
 
-  const onPressArtist = useCallback((slot: FestivalSlot, stageName: string) => {
-    setSelectedArtist({ slot, stage: stageName });
-  }, []);
+    if (!config) return MOCK_STAGES;
+      const configStages = buildStagesFromConfig(config);
+      return configStages.length > 0 ? configStages : MOCK_STAGES;}, [config]);
 
-  // Helper to get artist info from config
-  const artistData = selectedArtist
-    ? config?.artists?.[selectedArtist.slot.id]
-    : null;
+
+  const onPressArtist = useCallback(
+    (slot: FestivalSlot, stageName: string) => {
+      if (config?.artists?.[slot.id]) {
+        router.push({
+          pathname: '/(tabs)/schedule/artist',
+          params: {
+            artist: slot.id,
+            stage: stageName,
+          },
+        });
+      } else {
+        Alert.alert(
+          slot.name,
+          `${stageName}\n${formatAmPmClock(slot.startMinutes)}–${formatAmPmClock(
+            slot.startMinutes + slot.durationMinutes
+          )} (${slot.durationMinutes} min)`
+        );
+      }
+    },
+    [config]
+  );
 
   return (
     <GlobalNavivationWrapper>
@@ -190,6 +381,7 @@ export default function LineupScreen() {
           <FestivalLineupTimeline
             stages={stages}
             startHour={TIMELINE_START_HOUR}
+            startMinute={TIMELINE_START_MINUTE}
             hourSpan={TIMELINE_HOUR_SPAN}
             onPressArtist={onPressArtist}
           />
