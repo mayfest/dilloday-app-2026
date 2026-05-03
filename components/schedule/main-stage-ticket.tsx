@@ -3,6 +3,15 @@ import * as React from 'react';
 import { Dimensions } from 'react-native';
 import Svg, { ClipPath, Defs, G, Path, Rect } from 'react-native-svg';
 
+/** Horizontal margin total vs `Dimensions` / `useWindowDimensions` width (ticket SVG width). */
+export const MAIN_STAGE_TICKET_SCREEN_WIDTH_OFFSET = 64;
+/** Rendered SVG height passed to `MainStageTicket` art (matches view scaling). */
+export const MAIN_STAGE_TICKET_RENDERED_HEIGHT = 170;
+
+export function getMainStageTicketSvgWidth(screenWidth: number) {
+  return Math.max(0, screenWidth - MAIN_STAGE_TICKET_SCREEN_WIDTH_OFFSET);
+}
+
 interface MainStageTicketProps {
   artistName: string;
   time: string;
@@ -190,8 +199,8 @@ const renderArtistSvg = (
 );
 const MainStageTicket = ({ artistName, time }: MainStageTicketProps) => {
   const windowWith = Dimensions.get('window').width;
-  const svgWidth = windowWith - 64;
-  const svgHeight = 170;
+  const svgWidth = getMainStageTicketSvgWidth(windowWith);
+  const svgHeight = MAIN_STAGE_TICKET_RENDERED_HEIGHT;
   console.log('artistName', artistName);
   return renderArtistSvg(artistName, svgWidth, svgHeight);
 };
