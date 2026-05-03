@@ -5,7 +5,6 @@ import Svg, { Path, Rect } from 'react-native-svg';
 
 export default function CarouselTicketsBanner() {
   const windowWidth = Dimensions.get('window').width;
-  const windowHeight = Dimensions.get('window').height;
   const svgWidth = windowWidth - 32;
   const svgHeight = (svgWidth * 65) / 250;
   return (

@@ -1,7 +1,6 @@
 import BalloonLogo from '@/assets/images/balloonlogopink.svg';
 import { StatusBar } from 'expo-status-bar';
 import {
-  Dimensions,
   Image,
   Linking,
   StyleSheet,
@@ -18,7 +17,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const { width } = Dimensions.get('window');
 const REEL_SIZE = 480;
 const CENTER = REEL_SIZE / 2;
 const IMAGE_WIDTH = 96;

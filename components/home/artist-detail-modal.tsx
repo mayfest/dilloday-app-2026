@@ -118,7 +118,7 @@ export default function ArtistDetailModal({ visible, artist, onClose }: Props) {
           ]}
         >
           {/* navigation bar with CLOSE button */}
-          <View style={styles.navigationBar}>
+          <View style={styles.navigationBar} {...panResponder.panHandlers}>
             <TouchableOpacity
               style={styles.navigationButton}
               onPress={closeModal}

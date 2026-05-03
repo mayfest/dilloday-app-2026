@@ -11,9 +11,7 @@ import { fetchSwshPhotos } from '@/lib/swsh';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import {
-  Dimensions,
   Modal,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -26,12 +24,6 @@ export default function SwshPage() {
   const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const [defaultImages, setDefaultImages] = useState<string[]>([]);
-  const windowWidth = Dimensions.get('window').width;
-  const windowHeight = Dimensions.get('window').height;
-
-  // Check if device is an iPad
-  const isIPad =
-    Platform.OS === 'ios' && Math.min(windowWidth, windowHeight) >= 768;
 
   useEffect(() => {
     setModalVisible(true);

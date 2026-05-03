@@ -28,7 +28,7 @@ export default function ResultScreen() {
   const { width, height } = Dimensions.get('window');
 
   // pick winner + component
-  const winner = (Object.keys(tally) as Array<keyof typeof tally>).reduce(
+  const winner = (Object.keys(tally) as (keyof typeof tally)[]).reduce(
     (a, b) => (tally[a] >= tally[b] ? a : b)
   );
   const CardComponent = {
@@ -81,7 +81,7 @@ export default function ResultScreen() {
       });
     }, 3500);
     return () => clearTimeout(timer);
-  }, [skipLoading]);
+  }, [skipLoading, loadOpacity, resultOpacity, setSkipLoading]);
 
   const floatY = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -107,7 +107,7 @@ export default function ResultScreen() {
         }),
       ])
     ).start();
-  }, []);
+  }, [floatY]);
 
   const onMeaningPress = () => router.push('/modal/meaning');
 

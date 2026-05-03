@@ -61,25 +61,11 @@ function racingEntitiesRenderer(entities, screen, layout) {
       const R = entity.renderer;
 
       if (typeof R === 'function') {
-        return (
-          <R
-            key={key}
-            screen={screen}
-            layout={layout}
-            {...entity}
-          />
-        );
+        return <R key={key} screen={screen} layout={layout} {...entity} />;
       }
 
       const Type = R.type;
-      return (
-        <Type
-          key={key}
-          screen={screen}
-          layout={layout}
-          {...entity}
-        />
-      );
+      return <Type key={key} screen={screen} layout={layout} {...entity} />;
     });
 }
 
@@ -259,7 +245,7 @@ export default class World extends Component {
       this.accelerometer = Accelerometer.addListener(({ x }) => {
         this.tiltX = x;
       });
-    } catch (e) {
+    } catch (_e) {
       // Sensors not available (e.g. simulator)
     }
   }

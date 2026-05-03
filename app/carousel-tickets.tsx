@@ -30,10 +30,10 @@ export default function CarouselPartnerPage() {
     Linking.openURL(url).catch(() => console.warn('Could not open URL:', url));
   }
 
-  const STEPS: Array<{
+  const STEPS: {
     title: string;
-    content: Array<string | React.ReactNode>;
-  }> = [
+    content: (string | React.ReactNode)[];
+  }[] = [
     {
       title: 'Step 1: Install & Open LineLeap',
       content: [

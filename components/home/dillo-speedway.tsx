@@ -13,10 +13,6 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
-interface DilloSpeedwayButtonProps {
-  // value: string;
-}
-
 function RacingBorder({ position }: { position: 'top' | 'bottom' }) {
   return (
     <View
@@ -41,7 +37,7 @@ function RacingBorder({ position }: { position: 'top' | 'bottom' }) {
   );
 }
 
-export default function DilloSpeedwayButton({}: DilloSpeedwayButtonProps) {
+export default function DilloSpeedwayButton() {
   const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
   const carSize = 150;

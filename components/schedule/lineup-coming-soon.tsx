@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import MyDynamicSvg from '@/components/schedule/fmo-stage-ticket';
 import MainStageTicket from '@/components/schedule/main-stage-ticket';
@@ -29,66 +35,66 @@ export default function LineupComingSoonModal({ visible, onClose }) {
     extrapolate: 'clamp',
   });
 
-  // Reset the position when the modal becomes visible
-  useEffect(() => {
-    if (visible) {
-      resetPosition();
-    }
-  }, [visible]);
+  const handleBackNavigation = useCallback(() => {
+    onClose();
+    router.push('/(tabs)');
+  }, [onClose, router]);
 
-  const resetPosition = () => {
+  const resetPosition = useCallback(() => {
     Animated.spring(panY, {
       toValue: 0,
       useNativeDriver: true,
     }).start();
-  };
+  }, [panY]);
 
-  // Setup pan responder for swipe gestures
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (evt, gestureState) => {
-        // Only allow downward swipes
-        if (gestureState.dy > 0) {
-          panY.setValue(gestureState.dy);
-        }
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-        // If swipe distance is greater than threshold, close the modal
-        if (gestureState.dy > 50) {
-          closeModal();
-        } else {
-          resetPosition();
-        }
-      },
-    })
-  ).current;
-
-  const closeModal = () => {
-    // Animate the modal off-screen
+  const closeModal = useCallback(() => {
     Animated.timing(panY, {
       toValue: dimensions.height,
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
       panY.setValue(0);
-      handleBackNavigation(); // Use the navigation handler instead of just onClose
+      handleBackNavigation();
     });
-  };
+  }, [dimensions.height, handleBackNavigation, panY]);
+
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderMove: (_evt, gestureState) => {
+          if (gestureState.dy > 0) {
+            panY.setValue(gestureState.dy);
+          }
+        },
+        onPanResponderRelease: (_evt, gestureState) => {
+          if (gestureState.dy > 50) {
+            closeModal();
+          } else {
+            resetPosition();
+          }
+        },
+      }),
+    [closeModal, panY, resetPosition]
+  );
 
   useEffect(() => {
-    // Update dimensions on screen rotation or size change
+    if (visible) {
+      resetPosition();
+    }
+  }, [resetPosition, visible]);
+
+  useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
       setDimensions(window);
     });
 
-    // Handle hardware back button on Android
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
         if (visible) {
           handleBackNavigation();
-          return true; // Prevent default behavior
+          return true;
         }
         return false;
       }
@@ -98,15 +104,7 @@ export default function LineupComingSoonModal({ visible, onClose }) {
       subscription?.remove();
       backHandler.remove();
     };
-  }, [visible]);
-
-  const handleBackNavigation = () => {
-    // First close the modal
-    onClose();
-
-    // Navigate to the home tab
-    router.push('/(tabs)');
-  };
+  }, [handleBackNavigation, visible]);
 
   const { width, height } = dimensions;
 

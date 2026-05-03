@@ -1,25 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { Asset } from 'expo-asset';
 import { StyleSheet, View } from 'react-native';
 
 export default function ScreenBackground() {
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
-
   useEffect(() => {
     const preloadImage = async () => {
       try {
         await Asset.fromModule(
           require('../assets/images/off-white.png')
         ).downloadAsync();
-        setIsImageLoaded(true);
       } catch (error) {
         console.error('Error preloading image:', error);
-        setIsImageLoaded(true);
       }
     };
 
-    preloadImage();
+    void preloadImage();
   }, []);
 
   return (

@@ -214,7 +214,7 @@ export default function SmartDilloScreen() {
         </TouchableOpacity>
       );
     });
-  }, [dotPosition]);
+  }, [currentIndex, dotPosition]);
 
   return (
     <DrawerScreen>

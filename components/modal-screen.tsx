@@ -39,7 +39,7 @@ export default function ModalScreen({ children, closeRoute }: ScreenProps) {
       duration: 300,
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
   const handleClose = () => {
     Animated.parallel([

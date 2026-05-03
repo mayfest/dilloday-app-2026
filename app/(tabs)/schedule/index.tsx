@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
 import LineupComingSoonModal from '@/components/schedule/lineup-coming-soon';
@@ -11,23 +11,7 @@ export default function ScheduleScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Check lineup availability each time the screen comes into focus
-  useFocusEffect(
-    React.useCallback(() => {
-      checkLineupAvailability();
-
-      // No cleanup needed for this effect
-      return () => {};
-    }, [config])
-  );
-
-  // Also check on initial load and config changes`
-  useEffect(() => {
-    checkLineupAvailability();
-  }, [config]);
-
-  // Function to check if the lineup is available
-  const checkLineupAvailability = () => {
+  const checkLineupAvailability = useCallback(() => {
     if (config?.schedule) {
       const stages = Object.values(config.schedule);
       if (stages.length > 0) {
@@ -44,7 +28,22 @@ export default function ScheduleScreen() {
         setModalVisible(allUnavailable);
       }
     }
-  };
+  }, [config]);
+
+  // Check lineup availability each time the screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      checkLineupAvailability();
+
+      // No cleanup needed for this effect
+      return () => {};
+    }, [checkLineupAvailability])
+  );
+
+  // Also check on initial load and config changes`
+  useEffect(() => {
+    checkLineupAvailability();
+  }, [checkLineupAvailability]);
 
   const handlePageChange = (index) => {
     setCurrentIndex(index);
