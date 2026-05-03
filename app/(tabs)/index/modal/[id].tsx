@@ -41,7 +41,7 @@ export default function QuestionScreen() {
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start();
-  }, [id]);
+  }, [id, opacity]);
 
   if (!config) {
     return (

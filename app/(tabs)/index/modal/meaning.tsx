@@ -22,7 +22,7 @@ export default function MeaningScreen() {
   const { width, height } = Dimensions.get('window');
 
   // pick the winning key
-  const winner = (Object.keys(tally) as Array<keyof typeof tally>).reduce(
+  const winner = (Object.keys(tally) as (keyof typeof tally)[]).reduce(
     (a, b) => (tally[a] >= tally[b] ? a : b)
   ) as CardKey;
 
@@ -35,7 +35,7 @@ export default function MeaningScreen() {
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [opacity]);
 
   return (
     <DilloSonaStackScreen>

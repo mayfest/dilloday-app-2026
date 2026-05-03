@@ -24,8 +24,6 @@ export const ArrowSignSVG: React.FC<ArrowSignProps> = ({
   backgroundColor = '#f0e6c3',
   fontSize = 24,
 }) => {
-  // Calculate dimensions for the arrow
-  const arrowPointWidth = width * 0.1;
   const borderWidth = 10;
 
   // Calculate SVG path for outer arrow

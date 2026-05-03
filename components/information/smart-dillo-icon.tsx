@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
 interface SmartDilloIconProps {
   width?: number;

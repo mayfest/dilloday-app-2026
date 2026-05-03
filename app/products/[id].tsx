@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ThemedText } from '@/components/ThemedText';
 import StackScreen from '@/components/stack-screen';
@@ -45,32 +45,7 @@ export default function ProductDetail() {
 
   const STOREFRONT_TOKEN = 'ptkn_25057bc8-f67f-41c7-95a8-39d6f16d54d1';
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
-
-  useEffect(() => {
-    if (product && !selectedColor) {
-      const unique = new Map<string, Variant['attributes']>();
-      product.variants.forEach((v) => {
-        const name = v.attributes.color.name;
-        if (!unique.has(name)) unique.set(name, v.attributes);
-      });
-      const first = Array.from(unique.values())[0];
-      if (first) setSelectedColor(first.color.name);
-    }
-  }, [product]);
-
-  useEffect(() => {
-    if (selectedColor && product && !selectedVariant) {
-      const match = product.variants.find(
-        (v) => v.attributes.color.name === selectedColor
-      );
-      if (match) setSelectedVariant(match);
-    }
-  }, [selectedColor, product]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       const res = await fetch(
         `https://storefront-api.fourthwall.com/v1/products/${id}?storefront_token=${STOREFRONT_TOKEN}`,
@@ -85,7 +60,32 @@ export default function ProductDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    void fetchProduct();
+  }, [fetchProduct]);
+
+  useEffect(() => {
+    if (product && !selectedColor) {
+      const unique = new Map<string, Variant['attributes']>();
+      product.variants.forEach((v) => {
+        const name = v.attributes.color.name;
+        if (!unique.has(name)) unique.set(name, v.attributes);
+      });
+      const first = Array.from(unique.values())[0];
+      if (first) setSelectedColor(first.color.name);
+    }
+  }, [product, selectedColor]);
+
+  useEffect(() => {
+    if (selectedColor && product && !selectedVariant) {
+      const match = product.variants.find(
+        (v) => v.attributes.color.name === selectedColor
+      );
+      if (match) setSelectedVariant(match);
+    }
+  }, [selectedColor, product, selectedVariant]);
 
   const getDefaultImages = (variants: Variant[]) =>
     variants.length ? variants[0].images : [];

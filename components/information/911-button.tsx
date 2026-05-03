@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Svg, { Circle, Path, Rect } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
 interface NineOneOneButtonProps {
   width?: number;

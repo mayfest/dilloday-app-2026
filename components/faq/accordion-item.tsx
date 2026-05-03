@@ -17,7 +17,7 @@ interface AccordionItemProps {
    * Now accepts strings **or** React nodes, so you can
    * do things like `<Text onPress={…}>App Store</Text>` in your steps.
    */
-  content: Array<string | React.ReactNode>;
+  content: (string | React.ReactNode)[];
   highlightText?: string;
 }
 

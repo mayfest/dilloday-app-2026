@@ -33,6 +33,13 @@ type ArtistPanelProps = {
   next?: SimpleNowNext;
 };
 
+const DOT_SIZE = 20;
+const SPACING = DOT_SIZE + 15;
+const BORDER_TOP = 25;
+const BORDER_BOTTOM = 25;
+const BORDER_LEFT = 25;
+const BORDER_RIGHT = 25;
+
 export default function ArtistPanel({
   now,
   next,
@@ -65,13 +72,7 @@ export default function ArtistPanel({
   const timeoutId = useRef<NodeJS.Timeout | null>(null);
   const countdownId = useRef<NodeJS.Timeout | null>(null);
 
-  const DOT_SIZE = 20;
-  const SPACING = DOT_SIZE + 15;
   const PATTERN_DURATION = 3000;
-  const BORDER_TOP = 25;
-  const BORDER_BOTTOM = 25;
-  const BORDER_LEFT = 25;
-  const BORDER_RIGHT = 25;
 
   const handleLayout = (e: LayoutChangeEvent) =>
     setLayout(e.nativeEvent.layout);

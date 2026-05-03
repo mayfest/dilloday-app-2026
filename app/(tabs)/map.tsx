@@ -204,7 +204,7 @@ const northEast = {
 
 export default function MapScreen() {
   const mapRef = useRef<MapView>(null);
-  const markerRefs = useRef<Array<Marker | null>>([]);
+  const markerRefs = useRef<(Marker | null)[]>([]);
   const drawerRef = useRef<FlatList<MarkerData>>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -230,20 +230,25 @@ export default function MapScreen() {
   useEffect(() => {
     if (activeTab !== 'interactive') return;
     const m = markers[activeIndex];
-    markerRefs.current.forEach((r, i) => i !== activeIndex && r?.hideCallout());
-    mapRef.current?.animateCamera
-      ? mapRef.current.animateCamera(
-          { center: m.coordinate, pitch: 0, heading: 0, zoom: 15 },
-          { duration: 200 }
-        )
-      : mapRef.current?.animateToRegion(
-          {
-            ...m.coordinate,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA,
-          },
-          200
-        );
+    markerRefs.current.forEach((r, i) => {
+      if (i !== activeIndex) r?.hideCallout();
+    });
+    const map = mapRef.current;
+    if (map?.animateCamera) {
+      map.animateCamera(
+        { center: m.coordinate, pitch: 0, heading: 0, zoom: 15 },
+        { duration: 200 }
+      );
+    } else {
+      map?.animateToRegion(
+        {
+          ...m.coordinate,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+        },
+        200
+      );
+    }
     setTimeout(() => markerRefs.current[activeIndex]?.showCallout(), 200);
   }, [activeIndex, activeTab]);
 

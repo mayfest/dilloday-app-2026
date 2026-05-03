@@ -38,8 +38,8 @@ export default function ConfigContextProvider({
   const [notificationToken, setNotificationToken] = useState<string | null>(
     null
   );
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [, setLoading] = useState(true);
+  const [, setError] = useState<Error | null>(null);
 
   const reload = async () => {
     try {
@@ -111,10 +111,10 @@ export default function ConfigContextProvider({
       setLoading(false);
     });
     const changeEvent = AppState.addEventListener('change', (newState) => {
-      setState({
-        ...state,
+      setState((prev) => ({
+        ...prev,
         state: newState,
-      });
+      }));
     });
 
     // const interval = setInterval(() => {
@@ -146,6 +146,7 @@ export default function ConfigContextProvider({
       // clearInterval(interval);
       authUnsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount: auth + app state; reload intentionally not in deps to avoid reload loops
   }, []);
 
   return (

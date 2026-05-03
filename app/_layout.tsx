@@ -81,11 +81,11 @@ export default function RootLayout() {
     SofiaSans_800ExtraBold,
     SofiaSansCondensed_600SemiBold,
   });
-  const [state, setState] = useState<AppStateType>({});
+  const [, setAppStateSnapshot] = useState<AppStateType>({});
   const [notificationToken, setNotificationToken] = useState<string | null>(
     null
   );
-  const [config, setConfig] = useState<Config | null>(null);
+  const [, setRemoteConfig] = useState<Config | null>(null);
 
   const reload = async () => {
     if (!notificationToken) {
@@ -94,17 +94,17 @@ export default function RootLayout() {
         setNotificationToken(token);
       }
     }
-    const { config } = await getConfig();
-    if (config) {
-      setConfig(config);
+    const { config: nextConfig } = await getConfig();
+    if (nextConfig) {
+      setRemoteConfig(nextConfig);
     }
   };
 
   useEffect(() => {
-    reload();
+    void reload();
 
-    const changeEvent = AppState.addEventListener('change', (newState) => {
-      setState((prev) => ({ ...prev, state: newState }));
+    const appStateSub = AppState.addEventListener('change', (newState) => {
+      setAppStateSnapshot((prev) => ({ ...prev, state: newState }));
     });
 
     const init = async () => {
@@ -119,7 +119,9 @@ export default function RootLayout() {
       }
     };
 
-    init();
+    void init();
+    return () => appStateSub.remove();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fonts gate + push/config bootstrap; reload uses latest state via setters
   }, [loaded]);
 
   if (!loaded) {

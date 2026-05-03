@@ -40,6 +40,35 @@ import Car from './components/Car';
 import Road from './components/Road';
 import getRandomDecimal from './helpers/getRandomDecimal';
 
+/**
+ * Custom entity renderer: same idea as react-native-game-engine DefaultRenderer,
+ * but avoids rendering `<undefined />` when `renderer` is an object without a
+ * valid `type` (React then throws e.g. "Cannot read property 'displayName' of undefined").
+ */
+function racingEntitiesRenderer(entities, screen, layout) {
+  if (!entities || !screen || !layout) return null;
+
+  return Object.keys(entities)
+    .filter((key) => {
+      const r = entities[key]?.renderer;
+      if (r == null) return false;
+      if (typeof r === 'function') return true;
+      if (typeof r === 'object' && r.type != null) return true;
+      return false;
+    })
+    .map((key) => {
+      const entity = entities[key];
+      const R = entity.renderer;
+
+      if (typeof R === 'function') {
+        return <R key={key} screen={screen} layout={layout} {...entity} />;
+      }
+
+      const Type = R.type;
+      return <Type key={key} screen={screen} layout={layout} {...entity} />;
+    });
+}
+
 function getSpeedTier(score) {
   return Math.floor(score / RACING_CARS_PER_SPEED_TIER);
 }
@@ -216,7 +245,7 @@ export default class World extends Component {
       this.accelerometer = Accelerometer.addListener(({ x }) => {
         this.tiltX = x;
       });
-    } catch (e) {
+    } catch (_e) {
       // Sensors not available (e.g. simulator)
     }
   }
@@ -407,6 +436,7 @@ export default class World extends Component {
       return (
         <GameEngine
           style={styles.container}
+          renderer={racingEntitiesRenderer}
           systems={[
             this.physics,
             this.playerMotion,

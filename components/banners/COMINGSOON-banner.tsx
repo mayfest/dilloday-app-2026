@@ -6,7 +6,6 @@ import Svg, { Circle, Path } from 'react-native-svg';
 export default function COMINGSOONBanner() {
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
-  const svgWidth = windowWidth * 0.85; //0.85
 
   return (
     <Svg

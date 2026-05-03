@@ -67,7 +67,7 @@ export default function RacingGameOverScreen() {
         if (!cancelled) setProfile(next);
       } else if (mode === 'scored') {
         const next = await incrementTriesUsed();
-        if (p.displayName) {
+        if (p?.displayName) {
           try {
             await recordLeaderboardScore({
               userId: p.userId,

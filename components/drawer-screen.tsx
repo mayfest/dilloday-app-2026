@@ -2,7 +2,6 @@ import React from 'react';
 
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
 import { Colors } from '@/constants/Colors';
-import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -19,8 +18,6 @@ export default function DrawerScreen({
   hideNavBar = false,
   banner,
 }: StackScreenProps) {
-  const navigation = useNavigation();
-
   return (
     <GlobalNavivationWrapper hideNavBar={hideNavBar}>
       <View style={styles.container}>

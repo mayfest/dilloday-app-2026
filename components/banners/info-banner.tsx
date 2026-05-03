@@ -1,14 +1,9 @@
 import * as React from 'react';
 
 import Flags from '@/assets/images/flags.svg';
-import { Dimensions } from 'react-native';
 import Svg, { ClipPath, Defs, G, Path } from 'react-native-svg';
 
 export default function InfoPageBanner() {
-  const windowWidth = Dimensions.get('window').width;
-  const svgWidth = windowWidth - 32; // 32
-  const svgHeight = (svgWidth * 65) / 250;
-
   return (
     <Svg width='393' height='110' viewBox='0 0 393 110' fill='none'>
       <G x='98'>

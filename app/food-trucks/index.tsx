@@ -2,7 +2,6 @@ import React from 'react';
 
 import { ThemedText } from '@/components/ThemedText';
 import DrawerScreen from '@/components/drawer-screen';
-import { Colors } from '@/constants/Colors';
 import { FOOD_TRUCKS } from '@/constants/food-trucks';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';

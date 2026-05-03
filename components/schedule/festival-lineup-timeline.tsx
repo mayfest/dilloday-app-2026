@@ -322,6 +322,8 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
   }
 );
 
+FestivalLineupTimeline.displayName = 'FestivalLineupTimeline';
+
 export default FestivalLineupTimeline;
 
 const styles = StyleSheet.create({

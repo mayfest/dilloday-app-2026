@@ -27,7 +27,7 @@ export default function ArtistScreen() {
     }
 
     return config.artists[params.artist] || null;
-  }, []);
+  }, [config, params.artist]);
 
   return (
     <StackScreen>
