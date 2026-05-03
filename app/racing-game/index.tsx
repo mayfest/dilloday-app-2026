@@ -56,7 +56,7 @@ export default function RacingGameLobbyScreen() {
         const p = await getProfile();
         if (!cancelled) {
           setProfile(p);
-          if (p.displayName) setNameInput(p.displayName);
+          if (p?.displayName) setNameInput(p.displayName);
         }
       })();
       return () => {
@@ -526,12 +526,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     paddingVertical: 6,
-    paddingHorizontal: 28,
+    paddingHorizontal: 20,
     transform: [{ skewX: '10deg' }],
   },
   attemptRibbonCompactText: {
     fontSize: 15,
     paddingVertical: 5,
-    paddingHorizontal: 2,
   },
 });
