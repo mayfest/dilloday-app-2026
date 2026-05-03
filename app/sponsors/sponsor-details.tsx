@@ -1,9 +1,10 @@
 // app/sponsors/sponsor-details.tsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import StackScreen from '@/components/stack-screen';
 import { Colors } from '@/constants/Colors';
 import { SPONSOR_BOOTHS } from '@/constants/sponsor-booths';
+import { getSponsors } from '@/lib/sponsors';
 import { useLocalSearchParams } from 'expo-router';
 import {
   Image,
@@ -12,19 +13,51 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
+
+const WHITE_BG_SPONSORS = new Set([
+  'Crossroads',
+  "Stand Up by L'Oreal Paris",
+  'Postmates',
+  'Vacation',
+]);
 
 export default function SponsorDetailsModal() {
   const { name } = useLocalSearchParams<{ name: string }>();
-  console.log('name', name);
   const sponsor = SPONSOR_BOOTHS.find((b) => b.name === name)!;
+  const [logoUrl, setLogoUrl] = useState<string | undefined>(undefined);
 
-  const { activity, logo, url } = sponsor;
+  useEffect(() => {
+    getSponsors()
+      .then((sponsors) => {
+        const match = sponsors.find((s) => s.name === name);
+        if (match) setLogoUrl(match.logoUrl ?? undefined);
+      })
+      .catch((e) => console.error('Failed to load sponsor logo:', e));
+  }, [name]);
+
+  const { activity, url } = sponsor;
+  const needsWhiteBg = WHITE_BG_SPONSORS.has(name);
 
   return (
-    <StackScreen>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Image source={logo} style={styles.logo} resizeMode='contain' />
+    <StackScreen
+      backgroundColor={Colors.dark.background}
+      backButtonColor='#fff'
+    >
+      <ScrollView
+        contentContainerStyle={styles.container}
+        style={{ backgroundColor: Colors.dark.background }}
+      >
+        <View
+          style={[styles.logoWrapper, needsWhiteBg && styles.logoWrapperWhite]}
+        >
+          <Image
+            source={{ uri: logoUrl }}
+            style={styles.logo}
+            resizeMode='contain'
+          />
+        </View>
         <Text style={styles.title}>{activity.name}</Text>
         <Text style={styles.location}>{activity.location}</Text>
         <Text style={styles.description}>{activity.description}</Text>
@@ -45,11 +78,23 @@ const styles = StyleSheet.create({
   container: {
     padding: 24,
     alignItems: 'center',
+    height: '100%',
   },
-  logo: {
+  logoWrapper: {
     width: 120,
     height: 120,
     marginBottom: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoWrapperWhite: {
+    backgroundColor: '#fff',
+    padding: 8,
+  },
+  logo: {
+    width: '100%',
+    height: '100%',
   },
   title: {
     fontSize: 22,
@@ -74,11 +119,11 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 12,
     paddingHorizontal: 24,
-    backgroundColor: Colors.light.text,
+    backgroundColor: Colors.light.action,
     borderRadius: 8,
   },
   buttonText: {
-    color: '#fff',
+    color: Colors.light.text,
     fontWeight: '700',
     fontSize: 16,
   },

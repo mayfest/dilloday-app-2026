@@ -1,12 +1,13 @@
 // app/sponsors/index.tsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { SPONSOR_BOOTHS } from '@/constants/sponsor-booths';
-import { SPONSORS } from '@/constants/sponsors';
-import { Link, useRouter } from 'expo-router';
+import { Sponsor, getSponsors } from '@/lib/sponsors';
+import { useRouter } from 'expo-router';
 import {
+  ActivityIndicator,
   Image,
   Linking,
   ScrollView,
@@ -16,13 +17,27 @@ import {
   View,
 } from 'react-native';
 
+const WHITE_BG_SPONSORS = new Set([
+  'Crossroads',
+  "Stand Up by L'Oreal Paris",
+  'Postmates',
+  'Vacation',
+]);
+
 export default function SponsorsScreen() {
   const router = useRouter();
+  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getSponsors()
+      .then(setSponsors)
+      .catch((e) => console.error('Failed to load sponsors:', e))
+      .finally(() => setLoading(false));
+  }, []);
 
   const openUrl = (url?: string) => {
-    if (url) {
-      Linking.openURL(url);
-    }
+    if (url && url !== '---') Linking.openURL(url);
   };
 
   return (
@@ -31,62 +46,54 @@ export default function SponsorsScreen() {
         <View style={styles.titleContainer}>
           <Text style={styles.pageTitle}>Sponsors</Text>
         </View>
-        <Link href='/sponsors/claim-promo' asChild>
-          <TouchableOpacity style={styles.promoContainer}>
-            <Text style={styles.promoText}>
-              Exclusive claim deal — tap to learn more
-            </Text>
-          </TouchableOpacity>
-        </Link>
 
-        <View style={styles.underline} />
+        {loading ? (
+          <ActivityIndicator
+            color={Colors.light.text}
+            style={{ marginTop: 32 }}
+          />
+        ) : (
+          sponsors.map(({ name, logoUrl, url }, i) => {
+            const hasBooth = SPONSOR_BOOTHS.some((b) => b.name === name);
 
-        {SPONSORS.map(({ name, logo, url }, i) => {
-          console.log('name', name);
-          const hasBooth = SPONSOR_BOOTHS.some((b) => b.name === name);
+            const handlePress = () => {
+              if (hasBooth) {
+                router.push({
+                  pathname: '/sponsors/sponsor-details',
+                  params: { name, logoUrl },
+                });
+              } else {
+                openUrl(url);
+              }
+            };
 
-          const handlePress = () => {
-            if (hasBooth) {
-              router.push({
-                pathname: '/sponsors/sponsor-details',
-                params: { name },
-              });
-            } else {
-              openUrl(url);
-            }
-          };
-
-          return (
-            <TouchableOpacity
-              key={name}
-              activeOpacity={0.7}
-              onPress={handlePress}
-              style={[
-                styles.row,
-                i === SPONSORS.length - 1 && { borderBottomWidth: 0 },
-              ]}
-            >
-              {name === 'Pretty Cool Ice Cream' ? (
-                <View style={styles.logoWrapper}>
+            return (
+              <TouchableOpacity
+                key={name}
+                activeOpacity={0.7}
+                onPress={handlePress}
+                style={[
+                  styles.row,
+                  i === sponsors.length - 1 && { borderBottomWidth: 0 },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.logoWrapper,
+                    WHITE_BG_SPONSORS.has(name) && styles.logoWrapperWhite,
+                  ]}
+                >
                   <Image
-                    source={logo}
+                    source={{ uri: logoUrl }}
                     style={styles.logo}
                     resizeMode='contain'
                   />
                 </View>
-              ) : (
-                <View style={styles.logoWrapper}>
-                  <Image
-                    source={logo}
-                    style={styles.logo}
-                    resizeMode='contain'
-                  />
-                </View>
-              )}
-              <Text style={styles.name}>{name}</Text>
-            </TouchableOpacity>
-          );
-        })}
+                <Text style={styles.name}>{name}</Text>
+              </TouchableOpacity>
+            );
+          })
+        )}
       </ScrollView>
     </DrawerScreen>
   );
@@ -112,11 +119,6 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     paddingBottom: 40,
   },
-  underline: {
-    height: 1,
-    backgroundColor: Colors.light.text,
-    marginVertical: 16,
-  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -127,18 +129,12 @@ const styles = StyleSheet.create({
   logoWrapper: {
     width: 80,
     height: 40,
-    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  PrettyCoolBackground: {
-    width: 80,
-    height: 40,
-    padding: 8,
-    backgroundColor: '#f297a7',
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
+  logoWrapperWhite: {
+    backgroundColor: '#fff',
+    padding: 4,
   },
   logo: {
     width: '100%',
@@ -152,20 +148,5 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
     fontFamily: 'FuturaBold',
     textTransform: 'uppercase',
-  },
-  promoContainer: {
-    width: '100%',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    backgroundColor: '#FF2A2A',
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  promoText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#fff',
-    fontFamily: 'Futura',
   },
 });
