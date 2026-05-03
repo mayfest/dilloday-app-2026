@@ -327,7 +327,7 @@ export default class World extends Component {
           (a === 'car' && b === 'opposing_car') ||
           (a === 'opposing_car' && b === 'car');
         if (playerHit) {
-          this.gameOver('You bumped to another car!');
+          this.gameOver('YOU BUMPED ANOTHER CAR!');
           return;
         }
 

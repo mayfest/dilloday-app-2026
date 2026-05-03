@@ -72,10 +72,6 @@ export default function RacingGameLobbyScreen() {
     return unsub;
   }, []);
 
-  const onToggleBoard = () => {
-    setBoardOpen((v) => !v);
-  };
-
   const onSaveName = async () => {
     const trimmed = nameInput.trim();
     if (!trimmed || savingName) return;
@@ -132,16 +128,20 @@ export default function RacingGameLobbyScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.button,
-              styles.primary,
+              styles.attemptButton,
               (!nameInput.trim() || savingName) && styles.buttonDisabled,
               pressed && styles.pressed,
             ]}
             onPress={onSaveName}
             disabled={!nameInput.trim() || savingName}
           >
-            <Text style={styles.primaryText}>
-              {savingName ? 'Saving…' : 'Save and continue'}
-            </Text>
+            <View
+              style={[styles.attemptButtonLabelWrap, styles.attemptRibbonCompactWrap]}
+            >
+              <Text style={[styles.attemptButtonLabel, styles.attemptRibbonCompactText]}>
+                {savingName ? 'Saving…' : 'Continue'}
+              </Text>
+            </View>
           </Pressable>
         </View>
       );
@@ -156,19 +156,27 @@ export default function RacingGameLobbyScreen() {
             {RACING_REAL_TRIES} real attempts — only those count for the
             leaderboard.
           </Text>
+          <View
+            pointerEvents='none'
+            style={styles.gapPracticeIntroToStartButton}
+          />
           <Pressable
             style={({ pressed }) => [
               styles.button,
-              styles.primary,
+              styles.attemptButton,
               starting && styles.buttonDisabled,
               pressed && styles.pressed,
             ]}
             onPress={onStartPractice}
             disabled={starting}
           >
-            <Text style={styles.primaryText}>
-              {starting ? 'Starting…' : 'Start practice'}
-            </Text>
+            <View
+              style={[styles.attemptButtonLabelWrap, styles.attemptRibbonCompactWrap]}
+            >
+              <Text style={[styles.attemptButtonLabel, styles.attemptRibbonCompactText]}>
+                {starting ? 'Starting…' : 'Start practice'}
+              </Text>
+            </View>
           </Pressable>
         </View>
       );
@@ -237,6 +245,7 @@ export default function RacingGameLobbyScreen() {
         ]}
       >
         <ScrollView
+          removeClippedSubviews={false}
           contentContainerStyle={styles.scroll}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -294,7 +303,7 @@ export default function RacingGameLobbyScreen() {
                         key={row.userId}
                         style={[styles.boardRow, idx === 0 && styles.boardRowFirst]}
                       >
-                        <Text style={styles.boardRank}>{idx + 1}.</Text>
+                        <Text style={styles.boardRank}>#{idx + 1}</Text>
                         <Text
                           style={[styles.boardName, isYou && styles.boardNameYou]}
                           numberOfLines={1}
@@ -343,7 +352,7 @@ const styles = StyleSheet.create({
   statusBorderOuter: {
     marginTop: 28,
     borderRadius: 6,
-    overflow: 'hidden',
+    overflow: 'visible',
     backgroundColor: '#000',
   },
   curbRow: {
@@ -380,12 +389,15 @@ const styles = StyleSheet.create({
   },
   input: {
     marginTop: 14,
+    marginBottom: 15,
     backgroundColor: '#2a2a2e',
     color: '#fff',
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 8,
+    fontFamily: 'FuturaBold',
     fontSize: 16,
+    textAlign: 'left',
   },
 
   boardWrap: {
@@ -397,43 +409,48 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   boardEmpty: {
+    fontFamily: 'FuturaBold',
     paddingHorizontal: 4,
     paddingVertical: 12,
     color: '#888',
-    fontSize: 14,
+    fontSize: 15,
     textAlign: 'center',
   },
   boardRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 6,
-    marginBottom: 4,
-    backgroundColor: '#2a2a2e',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 0,
+    borderBottomLeftRadius: 10,
+    marginBottom: 6,
+    backgroundColor: '#3d3d42',
   },
   boardRowFirst: {
     borderWidth: 1,
-    borderColor: '#0a7ea4',
+    borderColor: '#FFEB3B',
   },
   boardRank: {
-    width: 28,
-    fontSize: 14,
-    fontWeight: '600',
+    minWidth: 40,
+    marginRight: 4,
+    fontFamily: 'FuturaBold',
+    fontSize: 16,
     color: '#a8a8ad',
   },
   boardName: {
     flex: 1,
-    fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'FuturaBold',
+    fontSize: 16,
     color: '#fff',
   },
   boardNameYou: {
-    color: '#0a7ea4',
+    color: '#FFEB3B',
   },
   boardScore: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontFamily: 'FuturaBold',
+    fontSize: 18,
     color: '#fff',
   },
 
@@ -450,6 +467,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     alignSelf: 'center',
     marginTop: 0,
+    paddingHorizontal: 22,
+    paddingVertical: 6,
+    overflow: 'visible',
+  },
+  gapPracticeIntroToStartButton: {
+    height: 19,
   },
   buttonDisabled: {
     backgroundColor: '#555',
@@ -464,9 +487,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   attemptButtonLabelWrap: {
+    alignSelf: 'center',
     backgroundColor: '#FFEB3B',
-    transform: [{ skewX: '-14deg' }],
-    overflow: 'hidden',
+    transform: [{ skewX: '-10deg' }],
+    overflow: 'visible',
+  },
+  attemptRibbonCompactWrap: {
+    maxWidth: 288,
   },
   attemptButtonLabel: {
     color: '#001F54',
@@ -476,7 +503,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     paddingVertical: 6,
-    paddingHorizontal: 4,
-    transform: [{ skewX: '14deg' }],
+    paddingHorizontal: 28,
+    transform: [{ skewX: '10deg' }],
+  },
+  attemptRibbonCompactText: {
+    fontSize: 15,
+    paddingVertical: 5,
+    paddingHorizontal: 2,
   },
 });

@@ -12,7 +12,7 @@ export const RACING_REAL_TRIES = 3;
  *
  *  To exercise the locked-out flow in dev, flip this to `false` temporarily
  *  and call `resetProfile()` (or set realTriesUsed = 3 manually). */
-export const RACING_DEV_UNLIMITED_TRIES = __DEV__;
+export const RACING_DEV_UNLIMITED_TRIES = false;
 
 export type RacingPlayerProfile = {
   userId: string;

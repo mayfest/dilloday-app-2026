@@ -1,4 +1,4 @@
-import { goToTabHome } from '@/lib/go-tab-home';
+import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
 import {
   recordLeaderboardScore,
   subscribeTopLeaderboard,
@@ -14,7 +14,6 @@ import {
   markPracticeUsed,
   type RacingPlayerProfile,
 } from '@/lib/racing-player-profile';
-import { useNavigation } from '@react-navigation/native';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -29,9 +28,9 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Mode = 'practice' | 'scored' | 'view-only';
+const LOBBY_TAB_BAR_CLEARANCE = 88;
 
 export default function RacingGameOverScreen() {
-  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { score: scoreParam, reason, endedAt, mode: modeParam } =
     useLocalSearchParams<{
@@ -98,7 +97,7 @@ export default function RacingGameOverScreen() {
       const isYou = profile && item.userId === profile.userId;
       return (
         <View style={[styles.row, index === 0 && styles.rowFirst]}>
-          <Text style={styles.rank}>{index + 1}.</Text>
+          <Text style={styles.rank}>#{index + 1}</Text>
           <Text style={[styles.rowName, isYou && styles.rowNameYou]} numberOfLines={1}>
             {item.name}
             {isYou ? ' (you)' : ''}
@@ -130,6 +129,8 @@ export default function RacingGameOverScreen() {
         : (reason ?? null);
 
   const showScoreCard = mode !== 'view-only';
+  const canContinueScored = mode === 'scored' && profile ? canPlayScored(profile) : false;
+  const nextAttempt = mode === 'scored' && profile ? profile.realTriesUsed + 1 : null;
 
   const listHeader = (
     <>
@@ -171,6 +172,62 @@ export default function RacingGameOverScreen() {
         </View>
       ) : null}
 
+      {showScoreCard && mode === 'practice' ? (
+        <View style={styles.gapBetweenScoreAndNextRun} />
+      ) : null}
+
+      {mode === 'practice' ? (
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            styles.attemptButton,
+            pressed && styles.pressed,
+          ]}
+          onPress={() =>
+            router.replace({
+              pathname: '/racing-game/play',
+              params: { nonce: String(Date.now()), mode: 'scored' },
+            })
+          }
+        >
+          <View style={styles.attemptButtonLabelWrap}>
+            <Text style={styles.attemptButtonLabel}>
+              {RACING_DEV_UNLIMITED_TRIES
+                ? 'Start scored run (dev unlimited)'
+                : `Start attempt 1 of ${RACING_REAL_TRIES}`}
+            </Text>
+          </View>
+        </Pressable>
+      ) : null}
+
+      {showScoreCard && canContinueScored && nextAttempt !== null ? (
+        <View style={styles.gapBetweenScoreAndNextRun} />
+      ) : null}
+
+      {canContinueScored && nextAttempt !== null ? (
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            styles.attemptButton,
+            pressed && styles.pressed,
+          ]}
+          onPress={() =>
+            router.replace({
+              pathname: '/racing-game/play',
+              params: { nonce: String(Date.now()), mode: 'scored' },
+            })
+          }
+        >
+          <View style={styles.attemptButtonLabelWrap}>
+            <Text style={styles.attemptButtonLabel}>
+              {RACING_DEV_UNLIMITED_TRIES
+                ? 'Start next run (dev unlimited)'
+                : `Start attempt ${nextAttempt} of ${RACING_REAL_TRIES}`}
+            </Text>
+          </View>
+        </Pressable>
+      ) : null}
+
       <Text style={styles.sectionTitle}>Top 10 scores</Text>
     </>
   );
@@ -182,75 +239,17 @@ export default function RacingGameOverScreen() {
       <Text style={styles.empty}>No scores yet. Play to set one!</Text>
     );
 
-  // Action buttons depend on mode + profile state.
+  // Action buttons depend on mode + profile state (scored only; practice CTA lives in header).
   const renderActions = () => {
-    if (mode === 'practice') {
-      return (
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            styles.primary,
-            pressed && styles.pressed,
-          ]}
-          onPress={() =>
-            router.replace({
-              pathname: '/racing-game/play',
-              params: { nonce: String(Date.now()), mode: 'scored' },
-            })
-          }
-        >
-          <Text style={styles.primaryText}>
-            {RACING_DEV_UNLIMITED_TRIES
-              ? 'Start scored run (dev unlimited)'
-              : `Start attempt 1 of ${RACING_REAL_TRIES}`}
-          </Text>
-        </Pressable>
-      );
-    }
-
     if (mode === 'view-only') {
-      return (
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            styles.secondary,
-            pressed && styles.pressed,
-          ]}
-          onPress={() => goToTabHome(navigation.dispatch)}
-        >
-          <Text style={styles.secondaryText}>Back to home</Text>
-        </Pressable>
-      );
+      return null;
     }
 
     // mode === 'scored'
-    const canContinue = profile ? canPlayScored(profile) : false;
     const locked = profile ? isLockedOut(profile) : false;
-    const next = profile ? profile.realTriesUsed + 1 : null;
 
     return (
       <>
-        {canContinue && next !== null ? (
-          <Pressable
-            style={({ pressed }) => [
-              styles.button,
-              styles.primary,
-              pressed && styles.pressed,
-            ]}
-            onPress={() =>
-              router.replace({
-                pathname: '/racing-game/play',
-                params: { nonce: String(Date.now()), mode: 'scored' },
-              })
-            }
-          >
-            <Text style={styles.primaryText}>
-              {RACING_DEV_UNLIMITED_TRIES
-                ? 'Start next run (dev unlimited)'
-                : `Start attempt ${next} of ${RACING_REAL_TRIES}`}
-            </Text>
-          </Pressable>
-        ) : null}
         {locked ? (
           <View style={styles.lockedNote}>
             <Text style={styles.lockedNoteText}>
@@ -258,35 +257,38 @@ export default function RacingGameOverScreen() {
             </Text>
           </View>
         ) : null}
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            styles.secondary,
-            pressed && styles.pressed,
-          ]}
-          onPress={() => goToTabHome(navigation.dispatch)}
-        >
-          <Text style={styles.secondaryText}>Back to home</Text>
-        </Pressable>
       </>
     );
   };
 
   return (
-    <View style={[styles.screen, { paddingBottom: Math.max(insets.bottom, 16) }]}>
-      <FlatList
-        style={styles.listFlex}
-        data={topScores}
-        keyExtractor={keyExtractor}
-        renderItem={renderRow}
-        ListHeaderComponent={listHeader}
-        ListEmptyComponent={listEmpty}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator
-      />
+    <GlobalNavivationWrapper>
+      <View
+        style={[
+          styles.screen,
+          {
+            paddingBottom:
+              Math.max(insets.bottom, 16) + LOBBY_TAB_BAR_CLEARANCE,
+          },
+        ]}
+      >
+        <FlatList
+          removeClippedSubviews={false}
+          style={styles.listFlex}
+          data={topScores}
+          keyExtractor={keyExtractor}
+          renderItem={renderRow}
+          ListHeaderComponent={listHeader}
+          ListEmptyComponent={listEmpty}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator
+        />
 
-      <View style={styles.actions}>{renderActions()}</View>
-    </View>
+        {mode === 'scored' ? (
+          <View style={styles.actions}>{renderActions()}</View>
+        ) : null}
+      </View>
+    </GlobalNavivationWrapper>
   );
 }
 
@@ -305,13 +307,17 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   title: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#fff',
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 30,
+    letterSpacing: 1,
+    paddingRight: 8,
     textAlign: 'center',
+    textTransform: 'uppercase',
   },
   subtitle: {
     marginTop: 8,
+    fontFamily: 'FuturaBold',
     fontSize: 16,
     color: '#c8c8cc',
     textAlign: 'center',
@@ -323,10 +329,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#4a4a4a',
   },
+  gapBetweenScoreAndNextRun: {
+    height: 23,
+  },
   curbRow: {
     flexDirection: 'row',
     width: '100%',
-    height: 10,
+    height: 5,
     overflow: 'hidden',
   },
   curbBlock: {
@@ -339,6 +348,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scoreLabel: {
+    fontFamily: 'FuturaBold',
     fontSize: 15,
     color: '#a8a8ad',
     textTransform: 'uppercase',
@@ -346,21 +356,23 @@ const styles = StyleSheet.create({
   },
   scoreValue: {
     marginTop: 6,
+    fontFamily: 'FuturaBold',
     fontSize: 44,
-    fontWeight: '700',
-    color: '#0a7ea4',
+    color: '#FFEB3B',
   },
   sectionTitle: {
     marginTop: 28,
     marginBottom: 12,
+    fontFamily: 'FuturaBold',
     fontSize: 18,
-    fontWeight: '600',
     color: '#fff',
+    textTransform: 'uppercase',
   },
   loader: {
     marginVertical: 24,
   },
   empty: {
+    fontFamily: 'FuturaBold',
     color: '#888',
     fontSize: 15,
     marginBottom: 16,
@@ -370,32 +382,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 0,
+    borderBottomLeftRadius: 10,
     marginBottom: 6,
     backgroundColor: '#3d3d42',
   },
   rowFirst: {
     borderWidth: 1,
-    borderColor: '#0a7ea4',
+    borderColor: '#FFEB3B',
   },
   rank: {
-    width: 32,
+    minWidth: 40,
+    marginRight: 4,
+    fontFamily: 'FuturaBold',
     fontSize: 16,
-    fontWeight: '600',
     color: '#a8a8ad',
   },
   rowName: {
     flex: 1,
+    fontFamily: 'FuturaBold',
     fontSize: 16,
-    fontWeight: '600',
     color: '#fff',
   },
   rowNameYou: {
-    color: '#0a7ea4',
+    color: '#FFEB3B',
   },
   rowScore: {
+    fontFamily: 'FuturaBold',
     fontSize: 18,
-    fontWeight: '700',
     color: '#fff',
   },
   actions: {
@@ -410,6 +426,32 @@ const styles = StyleSheet.create({
   primary: {
     backgroundColor: '#0a7ea4',
   },
+  attemptButton: {
+    backgroundColor: 'transparent',
+    alignSelf: 'center',
+    marginTop: 0,
+    paddingHorizontal: 22,
+    paddingVertical: 6,
+    overflow: 'visible',
+  },
+  attemptButtonLabelWrap: {
+    alignSelf: 'center',
+    maxWidth: 288,
+    backgroundColor: '#FFEB3B',
+    transform: [{ skewX: '-10deg' }],
+    overflow: 'visible',
+  },
+  attemptButtonLabel: {
+    color: '#001F54',
+    fontFamily: 'FuturaBold',
+    fontSize: 15,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    transform: [{ skewX: '10deg' }],
+  },
   secondary: {
     backgroundColor: 'transparent',
     borderWidth: 1,
@@ -419,20 +461,21 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   primaryText: {
+    fontFamily: 'FuturaBold',
     color: '#fff',
     fontSize: 17,
-    fontWeight: '600',
   },
   secondaryText: {
+    fontFamily: 'FuturaBold',
     color: '#fff',
     fontSize: 17,
-    fontWeight: '500',
   },
   lockedNote: {
     paddingVertical: 8,
     alignItems: 'center',
   },
   lockedNoteText: {
+    fontFamily: 'FuturaBold',
     color: '#d0d0d4',
     fontSize: 14,
   },
