@@ -190,28 +190,13 @@ export default function RootLayout() {
               swipeEnabled: !DISABLED_SWIPE_ROUTES.includes(route.name),
             })}
           >
-            {/* <Drawer.Screen
+            <Drawer.Screen
               name='(tabs)'
               options={{
-                drawerLabel: 'Home',
-                title: 'Home',
                 drawerItemStyle: { display: 'none' },
-                drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='house-chimney'
-                    size={20}
-                    color='#FFEB3B'
-                  />
-                ),
+                headerShown: false,
               }}
-            /> */}
-
-            {/* <Drawer.Screen
-              name='product/[id]'
-              options={{
-                drawerItemStyle: { display: 'none' },
-              }}
-            /> */}
+            />
 
             <Drawer.Screen
               name='announcements'
@@ -238,20 +223,12 @@ export default function RootLayout() {
                 ),
               }}
             />
-            {/* <Drawer.Screen
+            <Drawer.Screen
               name='carousel-tickets'
               options={{
-                title: 'Carousel Tickets',
                 drawerItemStyle: { display: 'none' },
-                drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='ticket-simple'
-                    size={20}
-                    color='#FFEB3B'
-                  />
-                ),
               }}
-            /> */}
+            />
             {/* <Drawer.Screen
               name='activities'
               options={{
@@ -265,16 +242,12 @@ export default function RootLayout() {
                 ),
               }}
             /> */}
-            {/* <Drawer.Screen
+            <Drawer.Screen
               name='swsh'
               options={{
-                title: 'Photo Album',
                 drawerItemStyle: { display: 'none' },
-                drawerIcon: ({ color }) => (
-                  <FontAwesome6 name='camera' size={20} color='#FFEB3B' />
-                ),
               }}
-            /> */}
+            />
 
             <Drawer.Screen
               name='smart-dillo'
@@ -333,6 +306,24 @@ export default function RootLayout() {
               name='racing-game'
               options={{
                 title: 'Racing game',
+                drawerItemStyle: { display: 'none' },
+              }}
+            />
+            <Drawer.Screen
+              name='racing-game/index'
+              options={{
+                drawerItemStyle: { display: 'none' },
+              }}
+            />
+            <Drawer.Screen
+              name='racing-game/play'
+              options={{
+                drawerItemStyle: { display: 'none' },
+              }}
+            />
+            <Drawer.Screen
+              name='racing-game/game-over'
+              options={{
                 drawerItemStyle: { display: 'none' },
               }}
             />
