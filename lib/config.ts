@@ -29,7 +29,7 @@ export interface AppState {
 
 export async function getConfig(): Promise<ConfigInformation> {
   try {
-    const configDoc = await getDoc(doc(db, 'config', 'config-2025'));
+    const configDoc = await getDoc(doc(db, 'config', 'config-2026'));
 
     if (!configDoc.exists()) {
       console.error('Config document does not exist in Firestore');
