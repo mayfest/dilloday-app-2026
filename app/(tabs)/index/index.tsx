@@ -205,4 +205,9 @@ const styles = StyleSheet.create({
     gap: 15,
     marginBottom: 0,
   },
+  racingButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
