@@ -1,21 +1,12 @@
 import React, { Component } from 'react';
 
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-
 import { router } from 'expo-router';
-import Matter from 'matter-js';
-import { GameEngine } from 'react-native-game-engine';
-
 import { Accelerometer } from 'expo-sensors';
-
 import sampleSize from 'lodash.samplesize';
+import Matter from 'matter-js';
 import randomInt from 'random-int';
-
-import Box from './components/Box';
-import Car from './components/Car';
-import Road from './components/Road';
-
-import getRandomDecimal from './helpers/getRandomDecimal';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { GameEngine } from 'react-native-game-engine';
 
 import {
   CAR_HEIGHT,
@@ -42,24 +33,24 @@ import {
   gravityForTier,
   worldSpeedPxPerSec,
 } from './Constants';
-
 import { OPPOSING_CAR_IMAGES } from './Images';
-
 import { car, floor, road } from './Objects';
+import Box from './components/Box';
+import Car from './components/Car';
+import Road from './components/Road';
+import getRandomDecimal from './helpers/getRandomDecimal';
 
 function getSpeedTier(score) {
   return Math.floor(score / RACING_CARS_PER_SPEED_TIER);
 }
 
 function getBlueCarSpeedForTier(tier) {
-  const v =
-    RACING_BLUE_CAR_BASE_SPEED + tier * RACING_BLUE_CAR_SPEED_PER_TIER;
+  const v = RACING_BLUE_CAR_BASE_SPEED + tier * RACING_BLUE_CAR_SPEED_PER_TIER;
   return Math.min(v, RACING_BLUE_CAR_MAX_SPEED);
 }
 
 function getBlueCarSpinForTier(tier) {
-  const w =
-    RACING_BLUE_CAR_BASE_SPIN + tier * RACING_BLUE_CAR_SPIN_PER_TIER;
+  const w = RACING_BLUE_CAR_BASE_SPIN + tier * RACING_BLUE_CAR_SPIN_PER_TIER;
   return Math.min(w, RACING_BLUE_CAR_MAX_SPIN);
 }
 
@@ -83,10 +74,10 @@ export default class World extends Component {
     this.tiltX = 0;
     this.playerX = DEVICE_WIDTH / 2;
 
-    const {engine, world} = this.addObjectsToWorld(car);
+    const { engine, world } = this.addObjectsToWorld(car);
     this.entities = this.getEntities(engine, world, car, road);
 
-    this.physics = (entities, {time: {delta}}) => {
+    this.physics = (entities, { time: { delta } }) => {
       if (this.state.gamePhase === 'confirmexit') {
         return entities;
       }
@@ -97,7 +88,7 @@ export default class World extends Component {
       return entities;
     };
 
-    this.playerMotion = (entities, {time}) => {
+    this.playerMotion = (entities, { time }) => {
       if (this.state.isGamePaused || this.state.gamePhase !== 'playing') {
         return entities;
       }
@@ -121,11 +112,11 @@ export default class World extends Component {
       if (nextX > maxX) nextX = maxX;
       this.playerX = nextX;
 
-      Matter.Body.setPosition(car, {x: nextX, y: DEVICE_HEIGHT - 200});
+      Matter.Body.setPosition(car, { x: nextX, y: DEVICE_HEIGHT - 200 });
       return entities;
     };
 
-    this.roadTranslation = (entities, {time}) => {
+    this.roadTranslation = (entities, { time }) => {
       if (this.state.isGamePaused) {
         return entities;
       }
@@ -148,7 +139,7 @@ export default class World extends Component {
       return entities;
     };
 
-    this.blueCarMotion = (entities, {time}) => {
+    this.blueCarMotion = (entities, { time }) => {
       if (this.state.isGamePaused) {
         return entities;
       }
@@ -157,7 +148,7 @@ export default class World extends Component {
       const blueActive = tier >= RACING_BLUE_CAR_MIN_TIER;
 
       if (!blueActive) {
-        Matter.Body.setPosition(this.blueCar, {x: -500, y: -500});
+        Matter.Body.setPosition(this.blueCar, { x: -500, y: -500 });
         Matter.Body.setAngle(this.blueCar, 0);
         this._blueCarWasActive = false;
         return entities;
@@ -182,8 +173,7 @@ export default class World extends Component {
 
       let x = this.blueCar.position.x + this.blueCarDir * speed * dt;
       const y = this.blueCarY;
-      let ang =
-        this.blueCar.angle + this.blueCarSpinDir * spin * dt;
+      let ang = this.blueCar.angle + this.blueCarSpinDir * spin * dt;
 
       if (this.blueCarDir > 0 && x > DEVICE_WIDTH + margin) {
         x = -margin;
@@ -195,7 +185,7 @@ export default class World extends Component {
         this.blueCarSpinDir = Math.random() < 0.5 ? 1 : -1;
       }
 
-      Matter.Body.setPosition(this.blueCar, {x, y});
+      Matter.Body.setPosition(this.blueCar, { x, y });
       Matter.Body.setAngle(this.blueCar, ang);
 
       if (Matter.Query.collides(this.blueCar, [car]).length > 0) {
@@ -223,7 +213,7 @@ export default class World extends Component {
 
     try {
       Accelerometer.setUpdateInterval(15);
-      this.accelerometer = Accelerometer.addListener(({x}) => {
+      this.accelerometer = Accelerometer.addListener(({ x }) => {
         this.tiltX = x;
       });
     } catch (e) {
@@ -237,8 +227,8 @@ export default class World extends Component {
     }
   }
 
-  addObjectsToWorld = car => {
-    const engine = Matter.Engine.create({enableSleeping: false});
+  addObjectsToWorld = (car) => {
+    const engine = Matter.Engine.create({ enableSleeping: false });
     const world = engine.world;
 
     let objects = [road, car, floor];
@@ -257,12 +247,9 @@ export default class World extends Component {
           label: 'opposing_car',
           collisionFilter: {
             category: MATTER_CAT_OPPOSING,
-            mask:
-              MATTER_CAT_FLOOR |
-              MATTER_CAT_PLAYER |
-              MATTER_CAT_OPPOSING,
+            mask: MATTER_CAT_FLOOR | MATTER_CAT_PLAYER | MATTER_CAT_OPPOSING,
           },
-        },
+        }
       );
 
       this.opposing_cars.push(opposing_car);
@@ -283,17 +270,17 @@ export default class World extends Component {
           category: MATTER_CAT_BLUE_HAZARD,
           mask: MATTER_CAT_PLAYER,
         },
-      },
+      }
     );
     objects.push(this.blueCar);
 
     Matter.World.add(world, objects);
 
-    return {engine, world};
+    return { engine, world };
   };
 
-  setupCollisionHandler = engine => {
-    Matter.Events.on(engine, 'collisionStart', event => {
+  setupCollisionHandler = (engine) => {
+    Matter.Events.on(engine, 'collisionStart', (event) => {
       if (this.state.isGamePaused) {
         return;
       }
@@ -315,10 +302,10 @@ export default class World extends Component {
               Math.floor(DEVICE_HEIGHT * 1.2)
             ),
           });
-          Matter.Body.setVelocity(opp, {x: 0, y: 0});
-          Matter.Body.set(opp, {frictionAir: getRandomDecimal(0.05, 0.25)});
+          Matter.Body.setVelocity(opp, { x: 0, y: 0 });
+          Matter.Body.set(opp, { frictionAir: getRandomDecimal(0.05, 0.25) });
 
-          this.setState(state => ({
+          this.setState((state) => ({
             score: state.score + 1,
           }));
         }
@@ -330,23 +317,22 @@ export default class World extends Component {
           this.gameOver('YOU BUMPED ANOTHER CAR!');
           return;
         }
-
       }
     });
   };
 
-  gameOver = async msg => {
+  gameOver = async (msg) => {
     if (this._gameOverDone) {
       return;
     }
     this._gameOverDone = true;
 
-    this.opposing_cars.forEach(item => {
+    this.opposing_cars.forEach((item) => {
       Matter.Body.set(item, {
         isStatic: true,
       });
     });
-    Matter.Body.set(this.blueCar, {isStatic: true});
+    Matter.Body.set(this.blueCar, { isStatic: true });
 
     const finalScore = this.state.score;
 
@@ -367,7 +353,7 @@ export default class World extends Component {
 
   getEntities = (engine, world, car, road) => {
     const entities = {
-      physics: {engine, world},
+      physics: { engine, world },
 
       theRoad: {
         body: road,
@@ -414,7 +400,7 @@ export default class World extends Component {
   };
 
   render() {
-    const {isGameSetup, score} = this.state;
+    const { isGameSetup, score } = this.state;
     const tier = getSpeedTier(score);
 
     if (isGameSetup) {
@@ -444,18 +430,26 @@ export default class World extends Component {
             ) : null}
           </View>
           {__DEV__ && (
-            <View style={styles.devControls} pointerEvents="box-none">
+            <View style={styles.devControls} pointerEvents='box-none'>
               <Pressable
                 style={[styles.devButton, styles.devButtonLeft]}
-                onPressIn={() => { this.tiltX = -0.15; }}
-                onPressOut={() => { this.tiltX = 0; }}
+                onPressIn={() => {
+                  this.tiltX = -0.15;
+                }}
+                onPressOut={() => {
+                  this.tiltX = 0;
+                }}
               >
                 <Text style={styles.devButtonText}>◀</Text>
               </Pressable>
               <Pressable
                 style={[styles.devButton, styles.devButtonRight]}
-                onPressIn={() => { this.tiltX = 0.15; }}
-                onPressOut={() => { this.tiltX = 0; }}
+                onPressIn={() => {
+                  this.tiltX = 0.15;
+                }}
+                onPressOut={() => {
+                  this.tiltX = 0;
+                }}
               >
                 <Text style={styles.devButtonText}>▶</Text>
               </Pressable>

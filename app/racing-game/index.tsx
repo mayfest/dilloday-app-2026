@@ -1,21 +1,22 @@
+import React, { useCallback, useEffect, useState } from 'react';
+
 import AccordionItem from '@/components/faq/accordion-item';
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
 import {
-  subscribeTopLeaderboard,
   type RacingLeaderboardEntry,
+  subscribeTopLeaderboard,
 } from '@/lib/racing-leaderboard';
 import {
   RACING_DEV_UNLIMITED_TRIES,
   RACING_REAL_TRIES,
+  type RacingPlayerProfile,
   canPlayScored,
   getProfile,
   isLockedOut,
   setName,
-  type RacingPlayerProfile,
 } from '@/lib/racing-player-profile';
 import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -23,7 +24,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -117,12 +118,12 @@ export default function RacingGameLobbyScreen() {
           <TextInput
             value={nameInput}
             onChangeText={setNameInput}
-            placeholder="Your name"
-            placeholderTextColor="#888"
+            placeholder='Your name'
+            placeholderTextColor='#888'
             style={styles.input}
-            autoCapitalize="words"
+            autoCapitalize='words'
             maxLength={24}
-            returnKeyType="done"
+            returnKeyType='done'
             onSubmitEditing={onSaveName}
           />
           <Pressable
@@ -136,9 +137,17 @@ export default function RacingGameLobbyScreen() {
             disabled={!nameInput.trim() || savingName}
           >
             <View
-              style={[styles.attemptButtonLabelWrap, styles.attemptRibbonCompactWrap]}
+              style={[
+                styles.attemptButtonLabelWrap,
+                styles.attemptRibbonCompactWrap,
+              ]}
             >
-              <Text style={[styles.attemptButtonLabel, styles.attemptRibbonCompactText]}>
+              <Text
+                style={[
+                  styles.attemptButtonLabel,
+                  styles.attemptRibbonCompactText,
+                ]}
+              >
                 {savingName ? 'Saving…' : 'Continue'}
               </Text>
             </View>
@@ -171,9 +180,17 @@ export default function RacingGameLobbyScreen() {
             disabled={starting}
           >
             <View
-              style={[styles.attemptButtonLabelWrap, styles.attemptRibbonCompactWrap]}
+              style={[
+                styles.attemptButtonLabelWrap,
+                styles.attemptRibbonCompactWrap,
+              ]}
             >
-              <Text style={[styles.attemptButtonLabel, styles.attemptRibbonCompactText]}>
+              <Text
+                style={[
+                  styles.attemptButtonLabel,
+                  styles.attemptRibbonCompactText,
+                ]}
+              >
                 {starting ? 'Starting…' : 'Start practice'}
               </Text>
             </View>
@@ -248,7 +265,7 @@ export default function RacingGameLobbyScreen() {
           removeClippedSubviews={false}
           contentContainerStyle={styles.scroll}
           showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+          keyboardShouldPersistTaps='handled'
         >
           {/* <Text style={styles.tagline}>Mayfest presents...</Text> */}
           <Text style={styles.title}>Speedway Dillo</Text>
@@ -282,15 +299,15 @@ export default function RacingGameLobbyScreen() {
           </View>
 
           <View style={styles.howToWrap}>
-            <AccordionItem title="How to play" content={[HOW_TO_PLAY]} />
+            <AccordionItem title='How to play' content={[HOW_TO_PLAY]} />
           </View>
-          <AccordionItem title="Prizes" content={[PRIZES]} />
+          <AccordionItem title='Prizes' content={[PRIZES]} />
           <AccordionItem
-            title="Leaderboard"
+            title='Leaderboard'
             content={[
-              <View key="leaderboard-content" style={styles.boardWrap}>
+              <View key='leaderboard-content' style={styles.boardWrap}>
                 {boardRows === null ? (
-                  <ActivityIndicator color="#fff" style={styles.boardLoader} />
+                  <ActivityIndicator color='#fff' style={styles.boardLoader} />
                 ) : boardRows.length === 0 ? (
                   <Text style={styles.boardEmpty}>
                     No scores yet. Be the first!
@@ -301,11 +318,17 @@ export default function RacingGameLobbyScreen() {
                     return (
                       <View
                         key={row.userId}
-                        style={[styles.boardRow, idx === 0 && styles.boardRowFirst]}
+                        style={[
+                          styles.boardRow,
+                          idx === 0 && styles.boardRowFirst,
+                        ]}
                       >
                         <Text style={styles.boardRank}>#{idx + 1}</Text>
                         <Text
-                          style={[styles.boardName, isYou && styles.boardNameYou]}
+                          style={[
+                            styles.boardName,
+                            isYou && styles.boardNameYou,
+                          ]}
                           numberOfLines={1}
                         >
                           {row.name}

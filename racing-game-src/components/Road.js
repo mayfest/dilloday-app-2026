@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { View } from 'react-native';
 
 import { DEVICE_HEIGHT, DEVICE_WIDTH } from '../Constants';
@@ -11,7 +12,7 @@ const CURB_BASE_WIDTH = 14;
 const INTERIOR_LINE_WIDTH = 4;
 const PATTERN_CANVAS_HEIGHT = DEVICE_HEIGHT * 1.6;
 
-const Road = ({body}) => {
+const Road = ({ body }) => {
   // Keep sub-pixel precision so dashed lines move smoothly frame-to-frame.
   const y = body.position.y % 44;
 
@@ -107,7 +108,7 @@ const Road = ({body}) => {
       />
 
       {/* Interior lane markers */}
-      {interiorXs.map(x => (
+      {interiorXs.map((x) => (
         <RoadLine
           key={`lane-${x}`}
           x={x}

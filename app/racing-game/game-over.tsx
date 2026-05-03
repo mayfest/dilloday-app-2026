@@ -1,21 +1,22 @@
+import React, { useCallback, useEffect, useState } from 'react';
+
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
 import {
+  type RacingLeaderboardEntry,
   recordLeaderboardScore,
   subscribeTopLeaderboard,
-  type RacingLeaderboardEntry,
 } from '@/lib/racing-leaderboard';
 import {
   RACING_DEV_UNLIMITED_TRIES,
   RACING_REAL_TRIES,
+  type RacingPlayerProfile,
   canPlayScored,
   getProfile,
   incrementTriesUsed,
   isLockedOut,
   markPracticeUsed,
-  type RacingPlayerProfile,
 } from '@/lib/racing-player-profile';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -32,13 +33,17 @@ const LOBBY_TAB_BAR_CLEARANCE = 88;
 
 export default function RacingGameOverScreen() {
   const insets = useSafeAreaInsets();
-  const { score: scoreParam, reason, endedAt, mode: modeParam } =
-    useLocalSearchParams<{
-      score?: string;
-      reason?: string;
-      endedAt?: string;
-      mode?: string;
-    }>();
+  const {
+    score: scoreParam,
+    reason,
+    endedAt,
+    mode: modeParam,
+  } = useLocalSearchParams<{
+    score?: string;
+    reason?: string;
+    endedAt?: string;
+    mode?: string;
+  }>();
   const score = Number.parseInt(scoreParam ?? '0', 10) || 0;
   const mode: Mode =
     modeParam === 'practice'
@@ -98,7 +103,10 @@ export default function RacingGameOverScreen() {
       return (
         <View style={[styles.row, index === 0 && styles.rowFirst]}>
           <Text style={styles.rank}>#{index + 1}</Text>
-          <Text style={[styles.rowName, isYou && styles.rowNameYou]} numberOfLines={1}>
+          <Text
+            style={[styles.rowName, isYou && styles.rowNameYou]}
+            numberOfLines={1}
+          >
             {item.name}
             {isYou ? ' (you)' : ''}
           </Text>
@@ -129,13 +137,17 @@ export default function RacingGameOverScreen() {
         : (reason ?? null);
 
   const showScoreCard = mode !== 'view-only';
-  const canContinueScored = mode === 'scored' && profile ? canPlayScored(profile) : false;
-  const nextAttempt = mode === 'scored' && profile ? profile.realTriesUsed + 1 : null;
+  const canContinueScored =
+    mode === 'scored' && profile ? canPlayScored(profile) : false;
+  const nextAttempt =
+    mode === 'scored' && profile ? profile.realTriesUsed + 1 : null;
 
   const listHeader = (
     <>
       <Text style={styles.title}>{titleText}</Text>
-      {subtitleText ? <Text style={styles.subtitle}>{subtitleText}</Text> : null}
+      {subtitleText ? (
+        <Text style={styles.subtitle}>{subtitleText}</Text>
+      ) : null}
 
       {showScoreCard ? (
         <View style={styles.scoreBorderOuter}>
@@ -234,7 +246,7 @@ export default function RacingGameOverScreen() {
 
   const listEmpty = () =>
     loading ? (
-      <ActivityIndicator color="#fff" style={styles.loader} />
+      <ActivityIndicator color='#fff' style={styles.loader} />
     ) : (
       <Text style={styles.empty}>No scores yet. Play to set one!</Text>
     );

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Image, View } from 'react-native';
 
 import {
@@ -31,7 +32,7 @@ function Car({ body, image }) {
     >
       <Image
         source={image}
-        resizeMode="contain"
+        resizeMode='contain'
         style={{
           width,
           height,

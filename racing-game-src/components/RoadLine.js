@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { View } from 'react-native';
 
 const RoadLine = ({
@@ -26,7 +27,7 @@ const RoadLine = ({
         height: canvasHeight + cycle * 2,
       }}
     >
-      {Array.from({length: count}).map((_, idx) => (
+      {Array.from({ length: count }).map((_, idx) => (
         <View
           key={idx}
           style={{

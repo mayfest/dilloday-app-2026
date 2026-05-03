@@ -1,15 +1,15 @@
 import {
+  type QueryDocumentSnapshot,
   Timestamp,
   collection,
   doc,
-  getDocs,
   limit as fbLimit,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
   runTransaction,
   serverTimestamp,
-  type QueryDocumentSnapshot,
 } from 'firebase/firestore';
 
 import { db } from './app';
@@ -38,10 +38,7 @@ export async function recordLeaderboardScore(args: {
     const snap = await tx.get(ref);
     if (snap.exists()) {
       const existing = snap.data() as { topScore?: number };
-      if (
-        typeof existing.topScore === 'number' &&
-        existing.topScore >= score
-      ) {
+      if (typeof existing.topScore === 'number' && existing.topScore >= score) {
         return;
       }
     }

@@ -9,8 +9,7 @@ export const DEVICE_WIDTH = width;
 const CAR_MODEL_W = 10;
 const CAR_MODEL_H = 13;
 const BASE = Math.max(width, height, 1);
-const CAR_SCALE =
-  (BASE * 0.15) / Math.max(CAR_MODEL_W, CAR_MODEL_H, 1);
+const CAR_SCALE = (BASE * 0.15) / Math.max(CAR_MODEL_W, CAR_MODEL_H, 1);
 
 export const CAR_WIDTH = Math.round(CAR_MODEL_W * CAR_SCALE);
 export const CAR_HEIGHT = Math.round(CAR_MODEL_H * CAR_SCALE);
@@ -41,8 +40,7 @@ export const RACING_WORLD_SPEED_PER_TIER = 22;
 export const RACING_WORLD_SPEED_MAX = 300;
 
 export function worldSpeedPxPerSec(tier) {
-  const v =
-    RACING_WORLD_SPEED_BASE + tier * RACING_WORLD_SPEED_PER_TIER;
+  const v = RACING_WORLD_SPEED_BASE + tier * RACING_WORLD_SPEED_PER_TIER;
   return Math.min(v, RACING_WORLD_SPEED_MAX);
 }
 

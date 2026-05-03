@@ -1,13 +1,14 @@
 import Matter from 'matter-js';
+
 import {
-  DEVICE_WIDTH,
   DEVICE_HEIGHT,
-  HITBOX_WIDTH,
+  DEVICE_WIDTH,
   HITBOX_HEIGHT,
-  MATTER_CAT_FLOOR,
-  MATTER_CAT_PLAYER,
-  MATTER_CAT_OPPOSING,
+  HITBOX_WIDTH,
   MATTER_CAT_BLUE_HAZARD,
+  MATTER_CAT_FLOOR,
+  MATTER_CAT_OPPOSING,
+  MATTER_CAT_PLAYER,
 } from './Constants';
 
 export const car = Matter.Bodies.rectangle(
@@ -20,12 +21,9 @@ export const car = Matter.Bodies.rectangle(
     label: 'car',
     collisionFilter: {
       category: MATTER_CAT_PLAYER,
-      mask:
-        MATTER_CAT_FLOOR |
-        MATTER_CAT_OPPOSING |
-        MATTER_CAT_BLUE_HAZARD,
+      mask: MATTER_CAT_FLOOR | MATTER_CAT_OPPOSING | MATTER_CAT_BLUE_HAZARD,
     },
-  },
+  }
 );
 
 export const floor = Matter.Bodies.rectangle(
@@ -41,7 +39,7 @@ export const floor = Matter.Bodies.rectangle(
       category: MATTER_CAT_FLOOR,
       mask: MATTER_CAT_OPPOSING,
     },
-  },
+  }
 );
 
 export const road = Matter.Bodies.rectangle(DEVICE_WIDTH / 2, 100, 20, 100, {

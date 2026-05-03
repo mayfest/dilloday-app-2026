@@ -1,5 +1,6 @@
-import World from '../../racing-game-src/World';
 import { useLocalSearchParams } from 'expo-router';
+
+import World from '../../racing-game-src/World';
 
 export type RacingMode = 'practice' | 'scored';
 
