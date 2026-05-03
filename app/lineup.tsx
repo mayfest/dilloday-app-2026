@@ -7,15 +7,15 @@ import React, {
 } from 'react';
 
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
-import {
-  MAIN_STAGE_TICKET_RENDERED_HEIGHT,
-  getMainStageTicketSvgWidth,
-} from '@/components/schedule/main-stage-ticket';
 import FestivalLineupTimeline, {
   type FestivalSlot,
   type FestivalStage,
   formatClock as formatAmPmClock,
 } from '@/components/schedule/festival-lineup-timeline';
+import {
+  MAIN_STAGE_TICKET_RENDERED_HEIGHT,
+  getMainStageTicketSvgWidth,
+} from '@/components/schedule/main-stage-ticket';
 import type { Artist } from '@/lib/artist';
 import { type Config, useConfig } from '@/lib/config';
 import type { Stage } from '@/lib/schedule';
@@ -347,18 +347,14 @@ export default function LineupScreen() {
   }, [selectedArtist, backdropOpacity, sheetTranslateY, closeArtistModal]);
 
   const stages = useMemo(() => {
-
     if (!config) return MOCK_STAGES;
-      const configStages = buildStagesFromConfig(config);
-      return configStages.length > 0 ? configStages : MOCK_STAGES;}, [config]);
+    const configStages = buildStagesFromConfig(config);
+    return configStages.length > 0 ? configStages : MOCK_STAGES;
+  }, [config]);
 
-
-  const onPressArtist = useCallback(
-    (slot: FestivalSlot, stageName: string) => {
-      setSelectedArtist({ slot, stage: stageName });
-    },
-    []
-  );
+  const onPressArtist = useCallback((slot: FestivalSlot, stageName: string) => {
+    setSelectedArtist({ slot, stage: stageName });
+  }, []);
 
   return (
     <GlobalNavivationWrapper>
