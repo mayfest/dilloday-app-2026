@@ -22,15 +22,15 @@ const smartDilloImages = [
     alt: 'Smart Dillo 2025 Cover',
   },
   {
-    source: require('@/assets/images/smart-dillo/smart-dillo-popcorn.png'),
+    source: require('@/assets/images/smart-dillo/smart-dillo-full-tank.png'),
     alt: 'Eat Early, Eat Often',
   },
   {
-    source: require('@/assets/images/smart-dillo/smart-dillo-hydratation.png'),
+    source: require('@/assets/images/smart-dillo/smart-dillo-hydrate.png'),
     alt: 'Stay Hydrated',
   },
   {
-    source: require('@/assets/images/smart-dillo/smart-dillo-safety.png'),
+    source: require('@/assets/images/smart-dillo/smart-dillo-alcohol.png'),
     alt: 'Stick to Your Limits with Alcohol',
   },
   {
