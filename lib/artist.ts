@@ -8,6 +8,10 @@ export interface Artist {
   available: boolean;
   name: string;
   time: string;
+  /** Set length in minutes; used for LINEUP bar width when present. */
+  durationMinutes?: number;
+  /** If set without `durationMinutes`, bar length spans from `time` to `endTime`. */
+  endTime?: string;
   description?: string;
   image?: string;
   spotify?: string;

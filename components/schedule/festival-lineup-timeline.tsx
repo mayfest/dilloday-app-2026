@@ -18,12 +18,23 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
-const HOUR_WIDTH = 132;
+/** Each grid column represents this many minutes (was 60; half-hour gives 2× width per hour). */
+const COLUMN_MINUTES_SPAN = 30;
+/** Pixel width of one column (unchanged from old “hour column” footprint). */
+const COLUMN_WIDTH = 132;
+
 const HEADER_TIME_HEIGHT = 40;
 const STAGE_TITLE_HEIGHT = 28;
 const STAGE_BLOCK_GAP = 14;
 const TRACK_HEIGHT = 94;
 const RAIL_HEIGHT = 4;
+/** Gray timeline area inside the red/white stripes. */
+const TRACK_CONTENT_HEIGHT = TRACK_HEIGHT - RAIL_HEIGHT * 2;
+/** Slimmer card + equal top/bottom inset so it sits vertically centered. */
+const ARTIST_CARD_HEIGHT = TRACK_CONTENT_HEIGHT - 10;
+const ARTIST_CARD_TOP = (TRACK_CONTENT_HEIGHT - ARTIST_CARD_HEIGHT) / 2;
+/** Narrow sets stay tappable/readable without distorting proportional scale too much */
+const ARTIST_CARD_MIN_WIDTH = 44;
 
 export const STAGE_BLOCK_HEIGHT =
   STAGE_TITLE_HEIGHT + 6 + TRACK_HEIGHT + STAGE_BLOCK_GAP;
@@ -44,7 +55,11 @@ export type FestivalStage = {
 
 type Props = {
   stages: FestivalStage[];
+  /** Hour of day (0–23) for the left edge of the timeline. */
   startHour: number;
+  /** Minutes past the hour; defaults to 0 (e.g. 45 with startHour 11 → 11:45 AM). */
+  startMinute?: number;
+  /** Visible window length in whole hours (drawn at half‑hour increments). */
   hourSpan: number;
   onPressArtist: (slot: FestivalSlot, stageName: string) => void;
 };
@@ -57,19 +72,21 @@ export type FestivalLineupTimelineHandle = {
   };
 };
 
-function formatClock(totalMinutes: number) {
-  const rawHour = Math.floor(totalMinutes / 60) % 24;
-  const minutes = totalMinutes % 60;
+const MINUTES_DAY = 24 * 60;
+
+function normalizeMinuteOfDay(totalMinutes: number) {
+  return ((Math.floor(totalMinutes) % MINUTES_DAY) + MINUTES_DAY) % MINUTES_DAY;
+}
+
+/** 12-hour clock labels for LINEUP timeline (exported for lineup screen alerts). */
+export function formatClock(totalMinutes: number) {
+  const mins = normalizeMinuteOfDay(totalMinutes);
+  const rawHour = Math.floor(mins / 60) % 24;
+  const minutes = mins % 60;
   const suffix = rawHour >= 12 ? 'PM' : 'AM';
   const hour12 = rawHour % 12 === 0 ? 12 : rawHour % 12;
 
   return `${hour12}:${String(minutes).padStart(2, '0')} ${suffix}`;
-}
-
-function formatHourLabel(hour24: number) {
-  const suffix = hour24 >= 12 ? 'PM' : 'AM';
-  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
-  return `${hour12}:00 ${suffix}`;
 }
 
 function RacingBorder({
@@ -106,18 +123,20 @@ function RacingBorder({
 }
 
 const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
-  ({ stages, startHour, hourSpan, onPressArtist }, ref) => {
+  ({ stages, startHour, startMinute = 0, hourSpan, onPressArtist }, ref) => {
     const { width: screenWidth } = useWindowDimensions();
 
-    const startM = startHour * 60;
+    const startM = startHour * 60 + startMinute;
     const totalMinutes = hourSpan * 60;
-    const timelineWidth = Math.max(hourSpan * HOUR_WIDTH, screenWidth);
+    const pxPerMinute = COLUMN_WIDTH / COLUMN_MINUTES_SPAN;
+    const columnCount =
+      totalMinutes <= 0 ? 0 : Math.ceil(totalMinutes / COLUMN_MINUTES_SPAN);
+
+    const timelineWidth = Math.max(columnCount * COLUMN_WIDTH, screenWidth);
 
     const headerRef = useRef<ScrollView | null>(null);
     const stageRefs = useRef<Record<string, ScrollView | null>>({});
     const isSyncingRef = useRef(false);
-
-    const hours = Array.from({ length: hourSpan }, (_, i) => startHour + i);
 
     const syncScroll = useCallback((source: 'header' | string, x: number) => {
       if (isSyncingRef.current) {
@@ -164,7 +183,7 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
 
             if (slot) {
               const offsetMin = slot.startMinutes - startM;
-              const x = Math.max(0, (offsetMin / 60) * HOUR_WIDTH - 24);
+              const x = Math.max(0, offsetMin * pxPerMinute - 24);
               syncScroll('header', x);
               return { found: true, stageIndex, slot };
             }
@@ -173,7 +192,7 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
           return { found: false, stageIndex: -1 };
         },
       }),
-      [stages, startM, syncScroll]
+      [stages, startM, syncScroll, pxPerMinute]
     );
 
     return (
@@ -187,12 +206,18 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
           onScroll={handleScroll('header')}
         >
           <View style={[styles.timeRow, { width: timelineWidth }]}>
-            {hours.map((hour) => (
-              <View key={hour} style={[styles.hourCell, { width: HOUR_WIDTH }]}>
-                <Text style={styles.hourText}>{formatHourLabel(hour)}</Text>
-                <View style={styles.hourTick} />
-              </View>
-            ))}
+            {Array.from({ length: columnCount }, (_, i) => {
+              const t = startM + i * COLUMN_MINUTES_SPAN;
+              return (
+                <View
+                  key={t}
+                  style={[styles.hourCell, { width: COLUMN_WIDTH }]}
+                >
+                  <Text style={styles.hourText}>{formatClock(t)}</Text>
+                  <View style={styles.hourTick} />
+                </View>
+              );
+            })}
             <View style={styles.lastGridLine} />
           </View>
         </ScrollView>
@@ -220,10 +245,10 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
                 <RacingBorder width={timelineWidth} position='bottom' />
 
                 <View style={[styles.timelineTrack, { width: timelineWidth }]}>
-                  {Array.from({ length: hourSpan + 1 }, (_, i) => (
+                  {Array.from({ length: columnCount + 1 }, (_, i) => (
                     <View
                       key={`${stage.key}-grid-${i}`}
-                      style={[styles.gridLine, { left: i * HOUR_WIDTH }]}
+                      style={[styles.gridLine, { left: i * COLUMN_WIDTH }]}
                     />
                   ))}
 
@@ -237,10 +262,12 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
                       return null;
                     }
 
-                    const left = Math.max(0, (offsetMin / 60) * HOUR_WIDTH);
+                    const left = Math.max(0, offsetMin * pxPerMinute);
+                    const proportionalWidth =
+                      slot.durationMinutes * pxPerMinute;
                     const width = Math.max(
-                      slot.imageUri ? 172 : 132,
-                      (slot.durationMinutes / 60) * HOUR_WIDTH + 18
+                      ARTIST_CARD_MIN_WIDTH,
+                      proportionalWidth
                     );
 
                     return (
@@ -252,7 +279,7 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
                           {
                             left,
                             width,
-                            top: 9,
+                            top: ARTIST_CARD_TOP,
                           },
                         ]}
                       >
@@ -318,7 +345,7 @@ const styles = StyleSheet.create({
   },
   hourText: {
     color: '#fff',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '600',
     opacity: 0.9,
   },
@@ -395,7 +422,7 @@ const styles = StyleSheet.create({
   },
   artistCard: {
     position: 'absolute',
-    height: TRACK_HEIGHT - 18,
+    height: ARTIST_CARD_HEIGHT,
     backgroundColor: '#2f2f2f',
     borderRadius: 6,
     paddingHorizontal: 8,
