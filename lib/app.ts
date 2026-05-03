@@ -13,7 +13,7 @@ const firebaseConfig = {
   apiKey: 'AIzaSyALC7_uNBF4IFQmr-CXOYa6s3slDka1KYc',
   authDomain: 'app.dilloday.com',
   projectId: 'dillo-day',
-  storageBucket: 'dillo-day.appspot.com',
+  storageBucket: 'dillo-day.firebasestorage.app',
   messagingSenderId: '1025535388888',
   appId: '1:1025535388888:web:19f69f2fbf19e0682cfbad',
 };
