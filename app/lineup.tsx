@@ -7,17 +7,20 @@ import React, {
 } from 'react';
 
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
+import {
+  MAIN_STAGE_TICKET_RENDERED_HEIGHT,
+  getMainStageTicketSvgWidth,
+} from '@/components/schedule/main-stage-ticket';
 import FestivalLineupTimeline, {
   type FestivalSlot,
   type FestivalStage,
   formatClock as formatAmPmClock,
 } from '@/components/schedule/festival-lineup-timeline';
-import { Colors } from '@/constants/Colors';
 import type { Artist } from '@/lib/artist';
 import { type Config, useConfig } from '@/lib/config';
+import type { Stage } from '@/lib/schedule';
 import { StatusBar } from 'expo-status-bar';
 import {
-  Alert,
   Animated,
   BackHandler,
   Dimensions,
@@ -29,10 +32,13 @@ import {
   StyleSheet,
   Text,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const TAB_BAR_CLEARANCE = 88;
+/** Matches “LINEUP” title and artist sheet background. */
+const LINEUP_ACCENT_YELLOW = '#FFEB3B';
 const TIMELINE_START_HOUR = 11;
 const TIMELINE_START_MINUTE = 30;
 /** Total window length in hours; ticks every 30 min (timeline starts at first tick). */
@@ -269,13 +275,25 @@ function resolveSetDurationMinutes(
   return clampBand(Math.max(MIN_SET_DURATION_MINUTES, fallbackLast));
 }
 
+/** Pull license plate up over hero image (~12–14% of ticket height). */
+const PLATE_OVERLAP_RATIO = 0.13;
+
 export default function LineupScreen() {
+  const { width: windowWidth } = useWindowDimensions();
+  const headlinerTicketImageWidth = getMainStageTicketSvgWidth(windowWidth);
+  const heroImageHeight = MAIN_STAGE_TICKET_RENDERED_HEIGHT;
+  const plateOverlapY = Math.round(heroImageHeight * PLATE_OVERLAP_RATIO);
   const insets = useSafeAreaInsets();
   const { config } = useConfig();
   const [selectedArtist, setSelectedArtist] = useState<{
     slot: FestivalSlot;
     stage: string;
   } | null>(null);
+
+  const artistData = useMemo(() => {
+    if (!selectedArtist) return undefined;
+    return config?.artists?.[selectedArtist.slot.id];
+  }, [selectedArtist, config]);
 
   const backdropOpacity = useRef(new Animated.Value(0)).current;
   const sheetTranslateY = useRef(new Animated.Value(0)).current;
@@ -299,7 +317,7 @@ export default function LineupScreen() {
   }, [backdropOpacity, sheetTranslateY]);
 
   useEffect(() => {
-    if (!selectedArtist) if (!config) return;
+    if (!selectedArtist) return;
 
     const h = Dimensions.get('window').height;
     backdropOpacity.setValue(0);
@@ -337,24 +355,9 @@ export default function LineupScreen() {
 
   const onPressArtist = useCallback(
     (slot: FestivalSlot, stageName: string) => {
-      if (config?.artists?.[slot.id]) {
-        router.push({
-          pathname: '/(tabs)/schedule/artist',
-          params: {
-            artist: slot.id,
-            stage: stageName,
-          },
-        });
-      } else {
-        Alert.alert(
-          slot.name,
-          `${stageName}\n${formatAmPmClock(slot.startMinutes)}–${formatAmPmClock(
-            slot.startMinutes + slot.durationMinutes
-          )} (${slot.durationMinutes} min)`
-        );
-      }
+      setSelectedArtist({ slot, stage: stageName });
     },
-    [config]
+    []
   );
 
   return (
@@ -425,42 +428,65 @@ export default function LineupScreen() {
                 <ScrollView showsVerticalScrollIndicator={false}>
                   {selectedArtist && (
                     <View style={styles.contentContainer}>
-                      <Image
-                        source={{
-                          uri:
-                            artistData?.image ||
-                            'https://via.placeholder.com/400',
-                        }}
-                        style={styles.artistHeroImage}
-                        resizeMode='cover'
-                      />
+                      <View
+                        style={[
+                          styles.heroPlateStack,
+                          { width: headlinerTicketImageWidth },
+                        ]}
+                      >
+                        <Image
+                          source={{
+                            uri:
+                              artistData?.image ||
+                              selectedArtist.slot.imageUri ||
+                              'https://via.placeholder.com/400',
+                          }}
+                          style={[
+                            styles.artistHeroImage,
+                            {
+                              width: '100%',
+                              height: heroImageHeight,
+                            },
+                          ]}
+                          resizeMode='cover'
+                        />
 
-                      <View style={styles.plateCard}>
-                        <View style={styles.plateHeader}>
-                          <View style={styles.locBadge}>
-                            <Text style={styles.locText}>L.A., CA</Text>
+                        <View
+                          style={[
+                            styles.plateCard,
+                            { marginTop: -plateOverlapY, width: '100%' },
+                          ]}
+                        >
+                          <View style={styles.plateHeader}>
+                            <View style={styles.locBadge}>
+                              <Text style={styles.locText}>L.A., CA</Text>
+                            </View>
+                            <Text style={styles.plateStageText}>
+                              {selectedArtist.stage}
+                            </Text>
+                            <View style={styles.timeBadge}>
+                              <Text style={styles.timeText}>
+                                {formatAmPmClock(
+                                  selectedArtist.slot.startMinutes
+                                )}
+                              </Text>
+                            </View>
                           </View>
-                          <Text style={styles.plateStageText}>
-                            {selectedArtist.stage}
-                          </Text>
-                          <View style={styles.timeBadge}>
-                            <Text style={styles.timeText}>8PM</Text>
+
+                          <View style={styles.plateBody}>
+                            <Text style={styles.plateArtistName}>
+                              {selectedArtist.slot.name
+                                .split(' ')
+                                .join('\n')
+                                .toUpperCase()}
+                            </Text>
                           </View>
-                        </View>
 
-                        <View style={styles.plateBody}>
-                          <Text style={styles.plateArtistName}>
-                            {selectedArtist.slot.name
-                              .split(' ')
-                              .join('\n')
-                              .toUpperCase()}
-                          </Text>
-                        </View>
-
-                        <View style={styles.plateFooter}>
-                          <Text style={styles.footerSubtext}>
-                            NIGHTTIME HEADLINER
-                          </Text>
+                          <View style={styles.plateFooter}>
+                            <Text style={styles.footerSubtext}>
+                              NIGHTTIME HEADLINER
+                            </Text>
+                          </View>
                         </View>
                       </View>
 
@@ -490,12 +516,28 @@ export default function LineupScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#000' },
-  topBar: { paddingVertical: 12, alignItems: 'center' },
+  topBar: {
+    alignItems: 'center',
+    backgroundColor: '#000',
+    elevation: 8,
+    overflow: 'visible',
+    paddingTop: 18,
+    paddingBottom: 14,
+    paddingHorizontal: 8,
+    width: '100%',
+    zIndex: 2,
+  },
   lineupTitle: {
-    color: '#FFEB3B',
+    color: LINEUP_ACCENT_YELLOW,
     fontFamily: 'Sofachrome',
     fontSize: 29,
     fontStyle: 'italic',
+    includeFontPadding: false,
+    lineHeight: 38,
+    overflow: 'visible',
+    paddingLeft: 4,
+    paddingRight: 22,
+    textAlign: 'center',
   },
   timelineScroll: { flex: 1 },
 
@@ -513,7 +555,7 @@ const styles = StyleSheet.create({
 
   popupSheet: {
     flex: 1,
-    backgroundColor: Colors.light.tint,
+    backgroundColor: LINEUP_ACCENT_YELLOW,
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     paddingHorizontal: 20,
@@ -526,18 +568,29 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     alignSelf: 'center',
   },
-  contentContainer: { alignItems: 'center' },
+  contentContainer: {
+    alignItems: 'center',
+    paddingTop: 32,
+  },
+
+  heroPlateStack: {
+    alignSelf: 'center',
+    position: 'relative',
+    zIndex: 0,
+  },
 
   artistHeroImage: {
-    width: '100%',
-    height: 100,
-    borderRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    position: 'relative',
+    zIndex: 0,
   },
 
   // License Plate Card
   plateCard: {
     backgroundColor: '#FFFBE6',
-    width: '95%',
     borderRadius: 15,
     padding: 15,
     borderWidth: 2,
@@ -546,6 +599,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
+    elevation: 6,
+    position: 'relative',
+    zIndex: 1,
   },
   plateHeader: {
     flexDirection: 'row',
@@ -592,7 +648,7 @@ const styles = StyleSheet.create({
   },
 
   bioText: {
-    marginTop: 30,
+    marginTop: 20,
     fontSize: 16,
     color: '#000',
     textAlign: 'center',
