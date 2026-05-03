@@ -48,14 +48,20 @@ export default function SponsorsScreen() {
         </View>
 
         {loading ? (
-          <ActivityIndicator color={Colors.light.text} style={{ marginTop: 32 }} />
+          <ActivityIndicator
+            color={Colors.light.text}
+            style={{ marginTop: 32 }}
+          />
         ) : (
           sponsors.map(({ name, logoUrl, url }, i) => {
             const hasBooth = SPONSOR_BOOTHS.some((b) => b.name === name);
 
             const handlePress = () => {
               if (hasBooth) {
-                router.push({ pathname: '/sponsors/sponsor-details', params: { name, logoUrl } });
+                router.push({
+                  pathname: '/sponsors/sponsor-details',
+                  params: { name, logoUrl },
+                });
               } else {
                 openUrl(url);
               }
@@ -66,9 +72,17 @@ export default function SponsorsScreen() {
                 key={name}
                 activeOpacity={0.7}
                 onPress={handlePress}
-                style={[styles.row, i === sponsors.length - 1 && { borderBottomWidth: 0 }]}
+                style={[
+                  styles.row,
+                  i === sponsors.length - 1 && { borderBottomWidth: 0 },
+                ]}
               >
-                <View style={[styles.logoWrapper, WHITE_BG_SPONSORS.has(name) && styles.logoWrapperWhite]}>
+                <View
+                  style={[
+                    styles.logoWrapper,
+                    WHITE_BG_SPONSORS.has(name) && styles.logoWrapperWhite,
+                  ]}
+                >
                   <Image
                     source={{ uri: logoUrl }}
                     style={styles.logo}

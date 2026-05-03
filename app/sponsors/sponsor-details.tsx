@@ -41,10 +41,22 @@ export default function SponsorDetailsModal() {
   const needsWhiteBg = WHITE_BG_SPONSORS.has(name);
 
   return (
-    <StackScreen backgroundColor={Colors.dark.background} backButtonColor='#fff'>
-      <ScrollView contentContainerStyle={styles.container} style={{ backgroundColor: Colors.dark.background }}>
-        <View style={[styles.logoWrapper, needsWhiteBg && styles.logoWrapperWhite]}>
-          <Image source={{ uri: logoUrl }} style={styles.logo} resizeMode='contain' />
+    <StackScreen
+      backgroundColor={Colors.dark.background}
+      backButtonColor='#fff'
+    >
+      <ScrollView
+        contentContainerStyle={styles.container}
+        style={{ backgroundColor: Colors.dark.background }}
+      >
+        <View
+          style={[styles.logoWrapper, needsWhiteBg && styles.logoWrapperWhite]}
+        >
+          <Image
+            source={{ uri: logoUrl }}
+            style={styles.logo}
+            resizeMode='contain'
+          />
         </View>
         <Text style={styles.title}>{activity.name}</Text>
         <Text style={styles.location}>{activity.location}</Text>

@@ -1,4 +1,5 @@
 import { doc, getDoc } from 'firebase/firestore';
+
 import { db } from './app';
 
 export interface Sponsor {
