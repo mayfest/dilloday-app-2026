@@ -176,6 +176,7 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
       ref,
       () => ({
         scrollToArtist: (artistName: string) => {
+          console.log('scrollToArtist called with:', artistName);
           const normalized = artistName.trim().toLowerCase();
           if (!normalized) {
             return { found: false, stageIndex: -1 };

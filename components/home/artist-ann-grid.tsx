@@ -1,6 +1,8 @@
 import React from 'react';
 
+import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
+import { Pressable } from 'react-native';
 
 type RectangleProps = {
   color?: string;
@@ -19,17 +21,26 @@ export function Rectangle({
   rectangleOpacity = 1,
 }: RectangleProps) {
   return (
-    <View style={[styles.container, { opacity: rectangleOpacity }]}>
+    <Pressable
+      onPress={() =>
+        router.push({
+          pathname: '/lineup',
+          params: { artist },
+        })
+      }
+      style={[styles.container, { opacity: rectangleOpacity }]}
+    >
       <View style={[styles.leftColorRect, { backgroundColor: color }]}>
         <Text style={styles.when}>{when}</Text>
       </View>
+
       <View style={styles.rightAnnouncementRect}>
         {artist ? (
           <Text style={styles.artistName}>{artist.toUpperCase()}</Text>
         ) : null}
         {time ? <Text style={styles.timeText}>{time}</Text> : null}
       </View>
-    </View>
+    </Pressable>
   );
 }
 

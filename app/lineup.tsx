@@ -8,6 +8,7 @@ import React, {
 
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
 import FestivalLineupTimeline, {
+  type FestivalLineupTimelineHandle,
   type FestivalSlot,
   type FestivalStage,
   formatClock as formatAmPmClock,
@@ -19,6 +20,7 @@ import {
 import type { Artist } from '@/lib/artist';
 import { type Config, useConfig } from '@/lib/config';
 import type { Stage } from '@/lib/schedule';
+import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
   ActivityIndicator,
@@ -218,6 +220,8 @@ function resolveSetDurationMinutes(
 const PLATE_OVERLAP_RATIO = 0.13;
 
 export default function LineupScreen() {
+  const { artist } = useLocalSearchParams();
+  const timelineRef = useRef<FestivalLineupTimelineHandle>(null);
   const { width: windowWidth } = useWindowDimensions();
   const headlinerTicketImageWidth = getMainStageTicketSvgWidth(windowWidth);
   const heroImageHeight = MAIN_STAGE_TICKET_RENDERED_HEIGHT;
@@ -301,6 +305,22 @@ export default function LineupScreen() {
     setSelectedArtist({ slot, stage: stageName });
   }, []);
 
+  useEffect(() => {
+    if (!artist) return;
+
+    const timer = setTimeout(() => {
+      const result = timelineRef.current?.scrollToArtist(String(artist));
+
+      if (result?.found && result.slot) {
+        onPressArtist(result.slot, stages[result.stageIndex].name);
+
+        router.setParams({ artist: undefined });
+      }
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [artist, onPressArtist, stages]);
+
   return (
     <GlobalNavivationWrapper>
       <View
@@ -336,6 +356,7 @@ export default function LineupScreen() {
             </View>
           ) : (
             <FestivalLineupTimeline
+              ref={timelineRef}
               stages={stages}
               startHour={TIMELINE_START_HOUR}
               startMinute={TIMELINE_START_MINUTE}
