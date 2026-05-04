@@ -84,9 +84,7 @@ function drawerContentPropsWithoutHiddenRoutes(
       routes,
       routeNames: routes.map((r) => r.name),
       index,
-      ...(preloadedRouteKeys !== undefined
-        ? { preloadedRouteKeys }
-        : {}),
+      ...(preloadedRouteKeys !== undefined ? { preloadedRouteKeys } : {}),
     },
   };
 }
@@ -186,32 +184,33 @@ export default function RootLayout() {
             drawerContent={(props) => {
               const listProps = drawerContentPropsWithoutHiddenRoutes(props);
               return (
-              <View style={styles.drawerContentRoot}>
-                <DrawerContentScrollView
-                  {...props}
-                  contentContainerStyle={[
-                    styles.drawerScrollContent,
-                    { paddingTop: insets.top + 28 },
-                  ]}
-                >
-                  <DrawerItemList {...listProps} />
-                </DrawerContentScrollView>
+                <View style={styles.drawerContentRoot}>
+                  <DrawerContentScrollView
+                    {...props}
+                    contentContainerStyle={[
+                      styles.drawerScrollContent,
+                      { paddingTop: insets.top + 28 },
+                    ]}
+                  >
+                    <DrawerItemList {...listProps} />
+                  </DrawerContentScrollView>
 
-                <View pointerEvents='none' style={styles.drawerRacingStripe}>
-                  {Array.from({ length: 24 }).map((_, i) => (
-                    <View
-                      key={`drawer-stripe-${i}`}
-                      style={[
-                        styles.drawerRacingStripeSegment,
-                        {
-                          backgroundColor: i % 2 === 0 ? '#D62828' : '#F4F4F4',
-                        },
-                      ]}
-                    />
-                  ))}
+                  <View pointerEvents='none' style={styles.drawerRacingStripe}>
+                    {Array.from({ length: 24 }).map((_, i) => (
+                      <View
+                        key={`drawer-stripe-${i}`}
+                        style={[
+                          styles.drawerRacingStripeSegment,
+                          {
+                            backgroundColor:
+                              i % 2 === 0 ? '#D62828' : '#F4F4F4',
+                          },
+                        ]}
+                      />
+                    ))}
+                  </View>
                 </View>
-              </View>
-            );
+              );
             }}
             screenOptions={({ route }) => ({
               headerShown: false,
