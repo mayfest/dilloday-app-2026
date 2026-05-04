@@ -27,6 +27,7 @@ import {
   SofiaSansCondensed_900Black,
 } from '@expo-google-fonts/sofia-sans-condensed';
 import { FontAwesome6 } from '@expo/vector-icons';
+import type { DrawerContentComponentProps } from '@react-navigation/drawer';
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -43,12 +44,55 @@ import { StatusBar } from 'expo-status-bar';
 import { AppState, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
 
+/** Routes that stay in the navigator but must not appear in the drawer list. */
+const DRAWER_ITEMS_HIDDEN_FROM_MENU = new Set([
+  '(tabs)',
+  'lineup',
+  'carousel-tickets',
+  'swsh',
+  'racing-game',
+  'racing-game/index',
+  'racing-game/play',
+  'racing-game/game-over',
+  '+not-found',
+]);
+
+function drawerContentPropsWithoutHiddenRoutes(
+  props: DrawerContentComponentProps
+): DrawerContentComponentProps {
+  const routes = props.state.routes.filter(
+    (route) => !DRAWER_ITEMS_HIDDEN_FROM_MENU.has(route.name)
+  );
+  const focusedKey = props.state.routes[props.state.index]?.key;
+  let index = routes.findIndex((r) => r.key === focusedKey);
+  if (index < 0) {
+    index = 0;
+  }
+  const preloadedRouteKeys = props.state.preloadedRouteKeys?.filter((key) =>
+    routes.some((r) => r.key === key)
+  );
+  return {
+    ...props,
+    state: {
+      ...props.state,
+      routes,
+      routeNames: routes.map((r) => r.name),
+      index,
+      ...(preloadedRouteKeys !== undefined
+        ? { preloadedRouteKeys }
+        : {}),
+    },
+  };
+}
+
 export default function RootLayout() {
+  const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const baseTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
   const appTheme = {
@@ -139,13 +183,18 @@ export default function RootLayout() {
       <ConfigContextProvider>
         <ThemeProvider value={appTheme}>
           <Drawer
-            drawerContent={(props) => (
+            drawerContent={(props) => {
+              const listProps = drawerContentPropsWithoutHiddenRoutes(props);
+              return (
               <View style={styles.drawerContentRoot}>
                 <DrawerContentScrollView
                   {...props}
-                  contentContainerStyle={styles.drawerScrollContent}
+                  contentContainerStyle={[
+                    styles.drawerScrollContent,
+                    { paddingTop: insets.top + 28 },
+                  ]}
                 >
-                  <DrawerItemList {...props} />
+                  <DrawerItemList {...listProps} />
                 </DrawerContentScrollView>
 
                 <View pointerEvents='none' style={styles.drawerRacingStripe}>
@@ -162,7 +211,8 @@ export default function RootLayout() {
                   ))}
                 </View>
               </View>
-            )}
+            );
+            }}
             screenOptions={({ route }) => ({
               headerShown: false,
               drawerType: 'slide',
@@ -192,21 +242,12 @@ export default function RootLayout() {
               swipeEnabled: !DISABLED_SWIPE_ROUTES.includes(route.name),
             })}
           >
-            {/* <Drawer.Screen
+            <Drawer.Screen
               name='(tabs)'
               options={{
-                drawerLabel: 'Home',
-                title: 'Home',
                 drawerItemStyle: { display: 'none' },
-                drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='house-chimney'
-                    size={20}
-                    color='#FFEB3B'
-                  />
-                ),
               }}
-            /> */}
+            />
 
             {/* <Drawer.Screen
               name='product/[id]'
@@ -240,20 +281,12 @@ export default function RootLayout() {
                 ),
               }}
             />
-            {/* <Drawer.Screen
+            <Drawer.Screen
               name='carousel-tickets'
               options={{
-                title: 'Carousel Tickets',
                 drawerItemStyle: { display: 'none' },
-                drawerIcon: ({ color }) => (
-                  <FontAwesome6
-                    name='ticket-simple'
-                    size={20}
-                    color='#FFEB3B'
-                  />
-                ),
               }}
-            /> */}
+            />
             {/* <Drawer.Screen
               name='activities'
               options={{
@@ -267,16 +300,12 @@ export default function RootLayout() {
                 ),
               }}
             /> */}
-            {/* <Drawer.Screen
+            <Drawer.Screen
               name='swsh'
               options={{
-                title: 'Photo Album',
                 drawerItemStyle: { display: 'none' },
-                drawerIcon: ({ color }) => (
-                  <FontAwesome6 name='camera' size={20} color='#FFEB3B' />
-                ),
               }}
-            /> */}
+            />
 
             <Drawer.Screen
               name='smart-dillo'
@@ -332,9 +361,20 @@ export default function RootLayout() {
               }}
             />
             <Drawer.Screen
-              name='racing-game'
+              name='racing-game/index'
               options={{
-                title: 'Racing game',
+                drawerItemStyle: { display: 'none' },
+              }}
+            />
+            <Drawer.Screen
+              name='racing-game/play'
+              options={{
+                drawerItemStyle: { display: 'none' },
+              }}
+            />
+            <Drawer.Screen
+              name='racing-game/game-over'
+              options={{
                 drawerItemStyle: { display: 'none' },
               }}
             />
@@ -359,7 +399,6 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   drawerScrollContent: {
-    paddingTop: 40,
     paddingBottom: 20,
     paddingRight: 16,
   },
