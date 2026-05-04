@@ -74,8 +74,7 @@ const LOCATION_INFO: Record<
     title: 'The Burrow',
     description:
       "The Burrow is one of Dillo Day's stages—catch live sets and programming throughout the day.",
-    details:
-      'Check the schedule for set times and who’s playing The Burrow.',
+    details: 'Check the schedule for set times and who’s playing The Burrow.',
     linkLabel: 'View lineup',
     linkTarget: '/lineup',
   },
