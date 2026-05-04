@@ -1,7 +1,7 @@
 // MapScreen.tsx
 import React, { useEffect, useRef, useState } from 'react';
 
-import MapImage from '@/assets/images/dillo_map_no_caro.jpeg';
+import MapImage from '@/assets/images/dillo_map_no_caro.png';
 import DrawerContent from '@/components/map/drawer-content';
 import IconMarker from '@/components/map/location-marker';
 import TabScreen from '@/components/tab-screen';
@@ -22,8 +22,8 @@ import MapView, { Callout, Marker, Region } from 'react-native-maps';
 
 const screen = Dimensions.get('window');
 const ASPECT_RATIO = screen.width / screen.height;
-const LATITUDE = 42.05165;
-const LONGITUDE = -87.67184;
+const LATITUDE = 42.053722;
+const LONGITUDE = -87.67225;
 const LATITUDE_DELTA = 0.0111;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
@@ -48,17 +48,21 @@ interface MarkerData {
   type:
     | 'main'
     | 'fmo'
+    | 'burrow'
     | 'food'
     | 'medical'
     | 'restroom'
+    | 'restroomAccessible'
     | 'programming-event'
     | 'sponsor'
     | 'exit'
+    | 'exitEndOfDay'
+    | 'exitSouth'
     | 'artistMerch'
     | 'entrance'
     | 'water'
-    | 'carousel'
     | 'beerGarden'
+    | 'lunasPub'
     | 'restArea';
   icon:
     | 'truck'
@@ -87,14 +91,17 @@ const markers: MarkerData[] = [
     type: 'entrance',
     icon: 'door-open',
     label: 'Entrance',
-    coordinate: { latitude: 42.05165, longitude: -87.67184 },
+    coordinate: {
+      latitude: 42.053722,
+      longitude: -87.67225,
+    },
   },
   {
     id: 'b',
     type: 'artistMerch',
     icon: 'store',
     label: 'Artist Merch',
-    coordinate: { latitude: 42.053865, longitude: -87.67004 },
+    coordinate: { latitude: 42.05325, longitude: -87.669917 },
   },
   {
     id: 'c',
@@ -102,13 +109,6 @@ const markers: MarkerData[] = [
     icon: 'truck',
     label: 'Food Trucks',
     coordinate: { latitude: 42.054823, longitude: -87.670859 },
-  },
-  {
-    id: 'o',
-    type: 'carousel',
-    icon: 'person-booth',
-    label: 'Carousel',
-    coordinate: { latitude: 42.052194, longitude: -87.669797 },
   },
   {
     id: 'd',
@@ -125,11 +125,25 @@ const markers: MarkerData[] = [
     coordinate: { latitude: 42.057273, longitude: -87.670835 },
   },
   {
+    id: 'u',
+    type: 'burrow',
+    icon: 'record-vinyl',
+    label: 'The Burrow',
+    coordinate: { latitude: 42.053139, longitude: -87.671889 },
+  },
+  {
     id: 'f',
     type: 'restroom',
     icon: 'restroom',
     label: 'Restrooms',
-    coordinate: { latitude: 42.055042, longitude: -87.670372 },
+    coordinate: { latitude: 42.053361, longitude: -87.672306 },
+  },
+  {
+    id: 't',
+    type: 'restroomAccessible',
+    icon: 'restroom',
+    label: 'Restrooms (accessible)',
+    coordinate: { latitude: 42.054472, longitude: -87.670306 },
   },
   {
     id: 'g',
@@ -143,14 +157,28 @@ const markers: MarkerData[] = [
     type: 'water',
     icon: 'water',
     label: 'Water Station',
-    coordinate: { latitude: 42.056683, longitude: -87.670807 },
+    coordinate: { latitude: 42.056889, longitude: -87.67125 },
   },
   {
     id: 'z',
     type: 'water',
     icon: 'water',
-    label: 'Water Stations',
-    coordinate: { latitude: 42.052463, longitude: -87.670366 },
+    label: 'Water Station',
+    coordinate: { latitude: 42.056528, longitude: -87.670528 },
+  },
+  {
+    id: 'w',
+    type: 'water',
+    icon: 'water',
+    label: 'Water Station',
+    coordinate: { latitude: 42.05225, longitude: -87.670056 },
+  },
+  {
+    id: 'v',
+    type: 'water',
+    icon: 'water',
+    label: 'Water Station',
+    coordinate: { latitude: 42.053417, longitude: -87.672278 },
   },
   {
     id: 'y',
@@ -164,28 +192,49 @@ const markers: MarkerData[] = [
     type: 'beerGarden',
     icon: 'id-card',
     label: 'Beer Garden',
-    coordinate: { latitude: 42.057127, longitude: -87.670366 },
+    coordinate: { latitude: 42.057139, longitude: -87.671361 },
+  },
+  {
+    id: 'p',
+    type: 'lunasPub',
+    icon: 'id-card',
+    label: "Drinking Space (Luna's Pub)",
+    coordinate: { latitude: 42.05325, longitude: -87.672278 },
   },
   {
     id: 'q',
     type: 'restArea',
     icon: 'person-booth',
-    label: 'Rest Area',
+    label: 'Sponsors and Vendors',
     coordinate: { latitude: 42.05557, longitude: -87.671849 },
   },
   {
     id: 's',
     type: 'sponsor',
     icon: 'person-booth',
-    label: 'Sponsor Booths',
+    label: 'Sponsors and Vendors',
     coordinate: { latitude: 42.055587, longitude: -87.670527 },
   },
   {
     id: 'i',
     type: 'exit',
     icon: 'door-closed',
-    label: 'Exit',
-    coordinate: { latitude: 42.056717, longitude: -87.672353 },
+    label: 'North Exit',
+    coordinate: { latitude: 42.056806, longitude: -87.671917 },
+  },
+  {
+    id: 'j',
+    type: 'exitEndOfDay',
+    icon: 'door-closed',
+    label: 'End of Day Exit',
+    coordinate: { latitude: 42.057306, longitude: -87.670251 },
+  },
+  {
+    id: 'k',
+    type: 'exitSouth',
+    icon: 'door-closed',
+    label: 'South Exit',
+    coordinate: { latitude: 42.052361, longitude: -87.671167 },
   },
 ];
 
