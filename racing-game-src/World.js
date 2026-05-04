@@ -40,6 +40,8 @@ import Car from './components/Car';
 import Road from './components/Road';
 import getRandomDecimal from './helpers/getRandomDecimal';
 
+const OPPOSING_CAR_COUNT = OPPOSING_CAR_IMAGES.length;
+
 /**
  * Custom entity renderer: same idea as react-native-game-engine DefaultRenderer,
  * but avoids rendering `<undefined />` when `renderer` is an object without a
@@ -262,7 +264,7 @@ export default class World extends Component {
 
     let objects = [road, car, floor];
 
-    for (let x = 0; x <= 4; x++) {
+    for (let x = 0; x < OPPOSING_CAR_COUNT; x++) {
       const opposing_car = Matter.Bodies.rectangle(
         randomInt(
           Math.ceil(CAR_WIDTH / 2) + 8,
@@ -393,7 +395,7 @@ export default class World extends Component {
       playerCar: {
         body: car,
         size: [CAR_WIDTH, CAR_HEIGHT],
-        image: require('../assets/racing-game/red-car.png'),
+        image: require('../assets/racing-game/red-car-user.png'),
         renderer: Car,
       },
 
@@ -412,9 +414,9 @@ export default class World extends Component {
       },
     };
 
-    const selected_car_images = sampleSize(OPPOSING_CAR_IMAGES, 5);
+    const selected_car_images = sampleSize(OPPOSING_CAR_IMAGES, this.opposing_cars.length);
 
-    for (let x = 0; x <= 4; x++) {
+    for (let x = 0; x < this.opposing_cars.length; x++) {
       Object.assign(entities, {
         ['opposing_car' + x]: {
           body: this.opposing_cars[x],
