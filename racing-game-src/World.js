@@ -414,7 +414,10 @@ export default class World extends Component {
       },
     };
 
-    const selected_car_images = sampleSize(OPPOSING_CAR_IMAGES, this.opposing_cars.length);
+    const selected_car_images = sampleSize(
+      OPPOSING_CAR_IMAGES,
+      this.opposing_cars.length
+    );
 
     for (let x = 0; x < this.opposing_cars.length; x++) {
       Object.assign(entities, {
