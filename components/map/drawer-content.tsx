@@ -7,12 +7,16 @@ import { StyleSheet, Text, View } from 'react-native';
 type LocationType =
   | 'main'
   | 'fmo'
+  | 'burrow'
   | 'food'
   | 'medical'
   | 'restroom'
+  | 'restroomAccessible'
   | 'programming-event'
   | 'sponsor'
   | 'exit'
+  | 'exitEndOfDay'
+  | 'exitSouth'
   | 'water'
   | 'food-truck'
   | 'info'
@@ -21,8 +25,8 @@ type LocationType =
   | 'lost-child'
   | 'artistMerch'
   | 'entrance'
-  | 'carousel'
   | 'beerGarden'
+  | 'lunasPub'
   | 'restArea';
 
 interface DrawerContentProps {
@@ -66,6 +70,14 @@ const LOCATION_INFO: Record<
     linkLabel: 'See FMO stage lineup',
     linkTarget: '/lineup',
   },
+  burrow: {
+    title: 'The Burrow',
+    description:
+      "The Burrow is one of Dillo Day's stages—catch live sets and programming throughout the day.",
+    details: 'Check the schedule for set times and who’s playing The Burrow.',
+    linkLabel: 'View lineup',
+    linkTarget: '/lineup',
+  },
   food: {
     title: 'Food Trucks',
     description:
@@ -77,7 +89,13 @@ const LOCATION_INFO: Record<
   restroom: {
     title: 'Restrooms',
     description:
-      'Clean, accessible portable restrooms located for your convenience throughout the venue. Regularly serviced to ensure a comfortable experience.',
+      'Clean portable restrooms located for your convenience throughout the venue. Regularly serviced to ensure a comfortable experience.',
+    details: '',
+  },
+  restroomAccessible: {
+    title: 'Restrooms',
+    description:
+      'This restroom location includes accessible stalls and meets ADA guidelines. Clean, accessible portable restrooms—regularly serviced for your comfort.',
     details: '',
   },
   medical: {
@@ -95,20 +113,32 @@ const LOCATION_INFO: Record<
     details: '',
   },
   sponsor: {
-    title: 'Sponsor Booths',
+    title: 'Sponsors and Vendors',
     description:
-      'Connect with our valued partners and sponsors showcasing their latest products and services. Enjoy exclusive giveaways and networking opportunities.',
+      'Connect with our sponsors and vendors—partners showcasing products, services, giveaways, and more. These areas also include shade from the LOOK App, seating, shopping with Crossroads thrifting and Animal Records, and space to recharge.',
     details:
-      'Stop by each booth to learn about community initiatives and pick up free swag.',
-    // linkLabel: 'See all sponsor booths',
-    // linkTarget: '/activities',
+      'Both pins on the map mark Sponsors and Vendors locations—visit each to explore activations and partner booths.',
   },
   exit: {
-    title: 'Exit',
+    title: 'North Exit',
     description:
-      'Designated exit path ensuring smooth departure from the event grounds. Follow the clearly marked route for the quickest way out.',
+      'Designated north exit path ensuring smooth departure from the event grounds. Follow the clearly marked route for the quickest way out.',
     details:
       'Remember that re-entry is allowed until doors close at 10 PM. Please keep your wristband on for re-entry.',
+  },
+  exitEndOfDay: {
+    title: 'End of Day Exit',
+    description:
+      'Use this exit when leaving after the event ends. Follow staff directions and posted signage for a safe exit from the grounds.',
+    details:
+      'Keep your wristband until you have fully exited. Plan ahead for crowds at closing.',
+  },
+  exitSouth: {
+    title: 'South Exit',
+    description:
+      'Designated south exit from the event grounds. Follow posted signage and staff directions for a smooth departure.',
+    details:
+      'Re-entry rules and wristband policies still apply—keep your wristband on if you plan to return before doors close.',
   },
   water: {
     title: 'Water Stations',
@@ -124,27 +154,24 @@ const LOCATION_INFO: Record<
     details:
       'Merchandise is available for purchase at the designated booth on the map. Merchandise will be available until supplies last.',
   },
-  carousel: {
-    title: 'Carousel',
-    description: 'Take a break and enjoy the first ever Dillo Day carousel!',
-    details:
-      'Rides are free and open to all that have a valid signup timeslot. Please check our Instagram for more information on how to sign up for a timeslot.',
-    linkLabel: 'See carousel timeslots',
-    linkTarget: '/carousel-tickets',
-  },
   beerGarden: {
     title: 'Beer Garden',
     description:
       'Relax and enjoy a cold drink in our designated beer garden area. A variety of alcholic beverages will be available to you. Please make sure that you have a Beer Garden ticket before entering the area. The Beer Garden is only open to those 21+.',
     details: 'Must be 21+ to enter. Please drink responsibly and have fun!',
   },
-  restArea: {
-    title: 'Rest Area',
+  lunasPub: {
+    title: "Drinking Space (Luna's Pub)",
     description:
-      'Need a break? The rest area is the perfect place to relax and recharge. With a comfortable seating are and shade provided by the LOOK App, as well as shopping with Crossroads thrifting and Animal Records, you can take a break from the sun and enjoy some downtime.',
-    details: '',
-    // linkLabel: 'See all sponsor booths',
-    // linkTarget: '/activities',
+      "A designated 21+ drinking area—grab a drink and hang out at Luna's Pub. Follow any posted rules or wristband requirements for alcohol service at this location.",
+    details: 'Must be 21+ to enter. Please drink responsibly.',
+  },
+  restArea: {
+    title: 'Sponsors and Vendors',
+    description:
+      'Connect with our sponsors and vendors—partners showcasing products, services, giveaways, and more. These areas also include shade from the LOOK App, seating, shopping with Crossroads thrifting and Animal Records, and space to recharge.',
+    details:
+      'Both pins on the map mark Sponsors and Vendors locations—visit each to explore activations and partner booths.',
   },
 };
 
