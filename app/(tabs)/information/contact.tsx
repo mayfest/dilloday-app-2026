@@ -1,10 +1,9 @@
 import React from 'react';
 
-import ContactMayfestIcon from '@/components/information/contact-mayfest';
-import { call } from '@/lib/link';
-import { theme, toastConfig } from '@/lib/theme';
+import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
+import { call, link, mail } from '@/lib/link';
+import { toastConfig } from '@/lib/theme';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
   Platform,
@@ -14,7 +13,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+
+/** Space above the floating `GlobalTabBar` (height + offset) — keep in sync with `global-tab-bar.tsx`. */
+const TAB_BAR_CLEARANCE = 116;
+
+const TITLE_YELLOW = '#FFEB3B';
 
 function getCoordinatorNumber() {
   const now = new Date();
@@ -39,147 +44,168 @@ function getCoordinatorNumber() {
 }
 
 export default function ContactScreen() {
-  const router = useRouter();
-  const handleClose = () => router.back();
-
+  const insets = useSafeAreaInsets();
   const { name, number } = getCoordinatorNumber();
   const handleCallAccessibility = () => call(number);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.modalContent}>
-        <View style={styles.modalHandle} />
-
-        <View style={styles.navigationBar}>
-          <TouchableOpacity
-            style={styles.navigationButton}
-            onPress={handleClose}
-          >
-            <Text style={styles.navigationButtonText}>CLOSE</Text>
-            <FontAwesome6
-              name='xmark'
-              size={16}
-              color={theme.socialModalText}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView contentContainerStyle={styles.contentContainer}>
-          <ContactMayfestIcon width={180} height={180} style={styles.svg} />
+    <GlobalNavivationWrapper>
+      <View
+        style={[
+          styles.container,
+          {
+            paddingTop: insets.top,
+            paddingBottom: Math.max(insets.bottom, 8) + TAB_BAR_CLEARANCE,
+          },
+        ]}
+      >
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
+          bounces
+        >
+          <Text style={styles.screenTitle}>Call Mayfest</Text>
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => mail('support@dilloday.com')}
+            onPress={() => void mail('support@dilloday.com')}
           >
-            <FontAwesome6
-              name='people-group'
-              size={24}
-              color={theme.socialModalBackground}
-            />
-            <Text style={styles.buttonText}>Email Mayfest Support</Text>
+            <View style={styles.buttonInner}>
+              <FontAwesome6
+                name='people-group'
+                size={22}
+                color='#fff'
+                style={styles.buttonIcon}
+              />
+              <View style={styles.buttonLabelCol}>
+                <Text style={styles.buttonText}>Email Mayfest Support</Text>
+              </View>
+            </View>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={handleCallAccessibility}
           >
-            <FontAwesome6
-              name='universal-access'
-              size={24}
-              color={theme.socialModalBackground}
-            />
-            <View>
-              <Text style={styles.buttonText}>Call {name} (Accessibility)</Text>
-              <Text style={styles.subText}>{number} CST</Text>
+            <View style={styles.buttonInner}>
+              <FontAwesome6
+                name='universal-access'
+                size={22}
+                color='#fff'
+                style={styles.buttonIcon}
+              />
+              <View style={styles.buttonLabelCol}>
+                <Text style={styles.buttonText}>
+                  Call {name} (Accessibility)
+                </Text>
+                <Text style={styles.subText}>{number} CST</Text>
+              </View>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => link('https://app.dilloday.com/feedback')}
+            onPress={() => void link('https://app.dilloday.com/feedback')}
           >
-            <FontAwesome6
-              name='mobile'
-              size={24}
-              color={theme.socialModalBackground}
-            />
-            <Text style={styles.buttonText}>
-              Submit feedback to Mayfest Tech
-            </Text>
+            <View style={styles.buttonInner}>
+              <FontAwesome6
+                name='mobile'
+                size={22}
+                color='#fff'
+                style={styles.buttonIcon}
+              />
+              <View style={styles.buttonLabelCol}>
+                <Text style={styles.buttonText}>
+                  Submit feedback to Mayfest Tech
+                </Text>
+              </View>
+            </View>
           </TouchableOpacity>
         </ScrollView>
 
         <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
         <Toast topOffset={32} config={toastConfig} />
       </View>
-    </View>
+    </GlobalNavivationWrapper>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    height: '100%',
+    backgroundColor: '#000',
   },
-  modalContent: {
-    width: '100%',
-    backgroundColor: theme.socialModalBackground,
-    height: '100%',
-  },
-  modalHandle: {
-    width: 40,
-    height: 5,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    borderRadius: 3,
-    alignSelf: 'center',
-    marginTop: 10,
-    marginBottom: 5,
-  },
-  navigationBar: {
-    flexDirection: 'row',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: 8,
-  },
-  navigationButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 8,
-  },
-  navigationButtonText: {
-    color: theme.socialModalText,
-    fontSize: 16,
-    marginRight: 8,
-    fontFamily: theme.bodyBold,
+  scroll: {
+    flex: 1,
   },
   contentContainer: {
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingBottom: 40,
-  },
-  svg: {
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    marginBottom: 24,
-  },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.socialModalText,
-    paddingVertical: 12,
     paddingHorizontal: 20,
-    gap: 12,
-    borderRadius: 8,
-    marginVertical: 12,
+    paddingTop: 16,
+  },
+  screenTitle: {
+    alignSelf: 'center',
+    color: TITLE_YELLOW,
+    fontFamily: 'SofachromeIt',
+    fontSize: 32,
+    includeFontPadding: false,
+    letterSpacing: 0.5,
+    lineHeight: 40,
+    marginBottom: 28,
+    maxWidth: 420,
+    paddingRight: 12,
+    textAlign: 'left',
     width: '90%',
   },
+  button: {
+    alignItems: 'stretch',
+    alignSelf: 'center',
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 0,
+    borderBottomLeftRadius: 12,
+    marginVertical: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    width: '90%',
+    maxWidth: 420,
+  },
+  buttonInner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    width: '100%',
+    gap: 14,
+  },
+  buttonIcon: {
+    paddingTop: 2,
+  },
+  buttonLabelCol: {
+    flex: 1,
+    alignItems: 'flex-start',
+    minWidth: 0,
+  },
   buttonText: {
-    color: theme.socialModalBackground,
-    fontFamily: theme.bodyBold,
-    fontSize: 16,
+    alignSelf: 'stretch',
+    color: '#fff',
+    fontFamily: 'FuturaBold',
+    fontSize: 15,
+    letterSpacing: 0.5,
+    textAlign: 'left',
+    textTransform: 'uppercase',
+  },
+  subText: {
+    alignSelf: 'stretch',
+    color: '#fff',
+    fontFamily: 'FuturaBold',
+    fontSize: 13,
+    letterSpacing: 0.4,
+    marginTop: 6,
+    opacity: 0.9,
+    textAlign: 'left',
+    textTransform: 'uppercase',
   },
 });

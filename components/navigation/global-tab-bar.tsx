@@ -100,7 +100,7 @@ export default function GlobalTabBar() {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 48,
     left: '2.5%',
     right: 0,
     backgroundColor: '#FFEB3B',

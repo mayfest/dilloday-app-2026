@@ -37,7 +37,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const TAB_BAR_CLEARANCE = 88;
+/** ~60px bar + `GlobalTabBar` bottom offset + buffer — keep in sync with `global-tab-bar.tsx`. */
+const TAB_BAR_CLEARANCE = 116;
 /** Matches “LINEUP” title and artist sheet background. */
 const LINEUP_ACCENT_YELLOW = '#FFEB3B';
 const TIMELINE_START_HOUR = 11;
@@ -454,7 +455,7 @@ export default function LineupScreen() {
                         style={styles.closeBtn}
                         onPress={closeArtistModal}
                       >
-                        <Text style={styles.closeBtnText}>CLOSE</Text>
+                        <Text style={styles.closeBtnText}>Close</Text>
                       </Pressable>
                     </View>
                   )}
@@ -632,10 +633,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     paddingVertical: 15,
     paddingHorizontal: 40,
-    borderRadius: 10,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 0,
+    borderBottomLeftRadius: 12,
   },
   closeBtnText: {
     color: 'white',
-    fontWeight: 'bold',
+    fontFamily: 'FuturaBold',
+    fontSize: 15,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
 });

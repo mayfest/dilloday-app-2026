@@ -35,7 +35,7 @@ const HOW_TO_PLAY = `• Tilt your phone (or use device motion) to steer your ca
 
 const PRIZES = `Prizes for top racers will be announced here. Check back closer to Dillo Day, or ask an organizer for this year's rules.`;
 
-const LOBBY_TAB_BAR_CLEARANCE = 88;
+const LOBBY_TAB_BAR_CLEARANCE = 116;
 
 export default function RacingGameLobbyScreen() {
   const insets = useSafeAreaInsets();
