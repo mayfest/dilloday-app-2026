@@ -29,7 +29,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Mode = 'practice' | 'scored' | 'view-only';
-const LOBBY_TAB_BAR_CLEARANCE = 88;
+const LOBBY_TAB_BAR_CLEARANCE = 116;
 
 export default function RacingGameOverScreen() {
   const insets = useSafeAreaInsets();

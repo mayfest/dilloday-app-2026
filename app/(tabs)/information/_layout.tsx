@@ -8,13 +8,7 @@ export default function InformationLayout() {
       }}
     >
       <Stack.Screen name='index' />
-      <Stack.Screen
-        name='contact'
-        options={{
-          presentation: 'modal',
-          animation: 'slide_from_bottom',
-        }}
-      />
+      <Stack.Screen name='contact' />
     </Stack>
   );
 }

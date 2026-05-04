@@ -20,13 +20,15 @@ import {
 
 /** Each grid column represents this many minutes (was 60; half-hour gives 2× width per hour). */
 const COLUMN_MINUTES_SPAN = 30;
-/** Pixel width of one column (unchanged from old “hour column” footprint). */
-const COLUMN_WIDTH = 132;
+/** Pixel width of one 30-minute column (wider = more horizontal space per slot). */
+const COLUMN_WIDTH = 152;
 
-const HEADER_TIME_HEIGHT = 40;
-const STAGE_TITLE_HEIGHT = 28;
-const STAGE_BLOCK_GAP = 14;
-const TRACK_HEIGHT = 94;
+const HEADER_TIME_HEIGHT = 44;
+const STAGE_TITLE_HEIGHT = 34;
+/** Vertical space between stage sections (title + track blocks). */
+const STAGE_BLOCK_GAP = 24;
+/** Taller track = taller stage row (title + this + gap). */
+const TRACK_HEIGHT = 108;
 const RAIL_HEIGHT = 4;
 /** Gray timeline area inside the red/white stripes. */
 const TRACK_CONTENT_HEIGHT = TRACK_HEIGHT - RAIL_HEIGHT * 2;
@@ -35,6 +37,10 @@ const ARTIST_CARD_HEIGHT = TRACK_CONTENT_HEIGHT - 10;
 const ARTIST_CARD_TOP = (TRACK_CONTENT_HEIGHT - ARTIST_CARD_HEIGHT) / 2;
 /** Narrow sets stay tappable/readable without distorting proportional scale too much */
 const ARTIST_CARD_MIN_WIDTH = 44;
+
+/** Vertical time column dividers (track + header tick). */
+const TIMELINE_GRID_LINE_WIDTH = 1;
+const TIMELINE_GRID_LINE_COLOR = '#767676';
 
 export const STAGE_BLOCK_HEIGHT =
   STAGE_TITLE_HEIGHT + 6 + TRACK_HEIGHT + STAGE_BLOCK_GAP;
@@ -335,8 +341,8 @@ const styles = StyleSheet.create({
     height: HEADER_TIME_HEIGHT,
     flexDirection: 'row',
     alignItems: 'stretch',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#333',
+    borderBottomWidth: TIMELINE_GRID_LINE_WIDTH,
+    borderBottomColor: TIMELINE_GRID_LINE_COLOR,
     position: 'relative',
   },
   hourCell: {
@@ -355,17 +361,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     bottom: 0,
-    width: StyleSheet.hairlineWidth,
-    height: 10,
-    backgroundColor: '#555',
+    width: TIMELINE_GRID_LINE_WIDTH,
+    height: 12,
+    backgroundColor: TIMELINE_GRID_LINE_COLOR,
   },
   lastGridLine: {
     position: 'absolute',
     right: 0,
     top: 0,
     bottom: 0,
-    width: StyleSheet.hairlineWidth,
-    backgroundColor: '#555',
+    width: TIMELINE_GRID_LINE_WIDTH,
+    backgroundColor: TIMELINE_GRID_LINE_COLOR,
   },
   stageBlock: {
     marginBottom: STAGE_BLOCK_GAP,
@@ -378,9 +384,9 @@ const styles = StyleSheet.create({
   stageName: {
     color: '#FFEB3B',
     fontFamily: 'FuturaBold',
-    fontSize: 14,
+    fontSize: 17,
     fontWeight: '800',
-    letterSpacing: 0.6,
+    letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
   timelineTrackWrap: {
@@ -419,8 +425,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     bottom: 0,
-    width: StyleSheet.hairlineWidth,
-    backgroundColor: '#3b3b3b',
+    width: TIMELINE_GRID_LINE_WIDTH,
+    backgroundColor: TIMELINE_GRID_LINE_COLOR,
   },
   artistCard: {
     position: 'absolute',
@@ -439,14 +445,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   artistThumb: {
-    width: 40,
-    height: 40,
+    width: 46,
+    height: 46,
     borderRadius: 4,
     backgroundColor: '#1a1a1a',
   },
   artistThumbPlaceholder: {
-    width: 40,
-    height: 40,
+    width: 46,
+    height: 46,
     backgroundColor: '#1a1a1a',
     justifyContent: 'center',
     alignItems: 'center',
@@ -459,14 +465,16 @@ const styles = StyleSheet.create({
   },
   artistName: {
     color: '#fff',
-    fontSize: 10,
+    fontSize: 13,
+    lineHeight: 16,
     fontWeight: '800',
-    letterSpacing: 0.3,
+    letterSpacing: 0.25,
   },
   artistTime: {
     color: '#ccc',
-    fontSize: 10,
-    marginTop: 2,
+    fontSize: 12,
+    lineHeight: 15,
+    marginTop: 3,
     fontWeight: '600',
   },
 });
