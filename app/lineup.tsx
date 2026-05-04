@@ -21,6 +21,7 @@ import { type Config, useConfig } from '@/lib/config';
 import type { Stage } from '@/lib/schedule';
 import { StatusBar } from 'expo-status-bar';
 import {
+  ActivityIndicator,
   Animated,
   BackHandler,
   Dimensions,
@@ -47,69 +48,6 @@ const TIMELINE_HOUR_SPAN = 12;
 const DEFAULT_SLOT_DURATION = 50;
 const MIN_SET_DURATION_MINUTES = 15;
 const MAX_SET_DURATION_MINUTES = 8 * 60;
-
-const MOCK_STAGES: FestivalStage[] = [
-  {
-    key: 'mock-a',
-    name: 'MAIN STAGE',
-    slots: [
-      {
-        id: 'm1',
-        name: 'Opening act',
-        startMinutes: 14 * 60 + 45,
-        durationMinutes: 45,
-      },
-      {
-        id: 'm2',
-        name: 'Headliner set',
-        startMinutes: 17 * 60,
-        durationMinutes: 60,
-      },
-      {
-        id: 'm3',
-        name: 'Late night',
-        startMinutes: 19 * 60 + 30,
-        durationMinutes: 55,
-      },
-    ],
-  },
-  {
-    key: 'mock-b',
-    name: 'FMO STAGE',
-    slots: [
-      {
-        id: 'm4',
-        name: 'Campus band',
-        startMinutes: 15 * 60,
-        durationMinutes: 40,
-      },
-      {
-        id: 'm5',
-        name: 'DJ set',
-        startMinutes: 18 * 60 + 15,
-        durationMinutes: 90,
-      },
-    ],
-  },
-  {
-    key: 'mock-c',
-    name: 'THE BURROW',
-    slots: [
-      {
-        id: 'm6',
-        name: 'Acoustic hour',
-        startMinutes: 14 * 60 + 30,
-        durationMinutes: 60,
-      },
-      {
-        id: 'm7',
-        name: 'Student showcase',
-        startMinutes: 16 * 60 + 45,
-        durationMinutes: 50,
-      },
-    ],
-  },
-];
 
 function parseArtistTime(time?: string): number | null {
   if (!time) return null;
@@ -347,10 +285,16 @@ export default function LineupScreen() {
   }, [selectedArtist, backdropOpacity, sheetTranslateY, closeArtistModal]);
 
   const stages = useMemo(() => {
-    if (!config) return MOCK_STAGES;
-    const configStages = buildStagesFromConfig(config);
-    return configStages.length > 0 ? configStages : MOCK_STAGES;
+    if (!config?.schedule) return [];
+    return buildStagesFromConfig(config).filter((s) => s.slots.length > 0);
   }, [config]);
+
+  const scheduleLoading = config === null;
+  const scheduleEmpty =
+    config !== null &&
+    (!config.schedule ||
+      Object.keys(config.schedule).length === 0 ||
+      stages.length === 0);
 
   const onPressArtist = useCallback((slot: FestivalSlot, stageName: string) => {
     setSelectedArtist({ slot, stage: stageName });
@@ -377,13 +321,27 @@ export default function LineupScreen() {
           style={styles.timelineScroll}
           showsVerticalScrollIndicator={false}
         >
-          <FestivalLineupTimeline
-            stages={stages}
-            startHour={TIMELINE_START_HOUR}
-            startMinute={TIMELINE_START_MINUTE}
-            hourSpan={TIMELINE_HOUR_SPAN}
-            onPressArtist={onPressArtist}
-          />
+          {scheduleLoading ? (
+            <View style={styles.scheduleFallback}>
+              <ActivityIndicator size='large' color={LINEUP_ACCENT_YELLOW} />
+              <Text style={styles.scheduleFallbackText}>Loading lineup…</Text>
+            </View>
+          ) : scheduleEmpty ? (
+            <View style={styles.scheduleFallback}>
+              <Text style={styles.scheduleFallbackText}>
+                No lineup is published in the app config yet. When stages and
+                artists are added in Firebase, they will appear here.
+              </Text>
+            </View>
+          ) : (
+            <FestivalLineupTimeline
+              stages={stages}
+              startHour={TIMELINE_START_HOUR}
+              startMinute={TIMELINE_START_MINUTE}
+              hourSpan={TIMELINE_HOUR_SPAN}
+              onPressArtist={onPressArtist}
+            />
+          )}
         </ScrollView>
 
         <Modal
@@ -536,6 +494,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   timelineScroll: { flex: 1 },
+  scheduleFallback: {
+    flex: 1,
+    minHeight: 200,
+    paddingHorizontal: 24,
+    paddingTop: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  scheduleFallbackText: {
+    color: '#ccc',
+    fontFamily: 'Futura',
+    fontSize: 16,
+    textAlign: 'center',
+    lineHeight: 24,
+  },
 
   modalContainer: { flex: 1, justifyContent: 'flex-end' },
   backdropWrap: StyleSheet.absoluteFillObject,
