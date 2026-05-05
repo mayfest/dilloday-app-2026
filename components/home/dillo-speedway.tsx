@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   container: {
     borderRadius: 16,
-    padding: 0,
+    paddingTop: 20,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,

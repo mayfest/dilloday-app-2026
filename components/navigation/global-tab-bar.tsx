@@ -129,6 +129,9 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 26,
     backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 7,
   },
   homeActiveIconContainer: {
     backgroundColor: '#000000',
