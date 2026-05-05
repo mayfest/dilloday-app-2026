@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-
+import { useFocusEffect } from 'expo-router';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import {
@@ -135,6 +135,7 @@ export default function SmartDilloScreen() {
     const newIndex = Math.round(e.nativeEvent.contentOffset.x / ITEM_WIDTH);
     setCurrentIndex(newIndex);
   }, []);
+  const [graphicsResetKey, setGraphicsResetKey] = useState(0);
 
   const openLink = useCallback(async () => {
     const url =
@@ -216,6 +217,15 @@ export default function SmartDilloScreen() {
     });
   }, [currentIndex, dotPosition]);
 
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setCurrentIndex(0);
+        setGraphicsResetKey((k) => k + 1);
+      };
+    }, [])
+  );
+
   return (
     <DrawerScreen>
       <ScrollView
@@ -228,6 +238,7 @@ export default function SmartDilloScreen() {
 
         <View style={styles.container}>
           <FlatList
+            key={graphicsResetKey}
             ref={flatListRef}
             data={smartDilloImages}
             renderItem={renderItem}
