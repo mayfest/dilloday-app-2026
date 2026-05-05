@@ -93,8 +93,8 @@ const markers: MarkerData[] = [
     icon: 'door-open',
     label: 'Entrance',
     coordinate: {
-      latitude: 42.053722,
-      longitude: -87.67225,
+      latitude: 42.053889,
+      longitude: -87.672583,
     },
   },
   {
@@ -130,14 +130,14 @@ const markers: MarkerData[] = [
     type: 'burrow',
     icon: 'record-vinyl',
     label: 'The Burrow',
-    coordinate: { latitude: 42.053139, longitude: -87.671889 },
+    coordinate: { latitude: 42.053167, longitude: -87.671611 },
   },
   {
     id: 'f',
     type: 'restroom',
     icon: 'restroom',
     label: 'Restrooms',
-    coordinate: { latitude: 42.053361, longitude: -87.672306 },
+    coordinate: { latitude: 42.053639, longitude: -87.672278 },
   },
   {
     id: 't',
@@ -179,7 +179,7 @@ const markers: MarkerData[] = [
     type: 'water',
     icon: 'water',
     label: 'Water Station',
-    coordinate: { latitude: 42.053417, longitude: -87.672278 },
+    coordinate: { latitude: 42.053611, longitude: -87.671639 },
   },
   {
     id: 'y',
@@ -193,7 +193,7 @@ const markers: MarkerData[] = [
     type: 'beerGarden',
     icon: 'id-card',
     label: 'Beer Garden',
-    coordinate: { latitude: 42.057139, longitude: -87.671361 },
+    coordinate: { latitude: 42.05725, longitude: -87.671361 },
   },
   {
     id: 'p',
