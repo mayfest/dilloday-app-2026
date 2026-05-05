@@ -13,6 +13,8 @@ interface StackScreenProps {
   banner?: React.ReactNode;
   backgroundColor?: string;
   backButtonColor?: string;
+  /** When set, applies to the "BACK" label next to the chevron. */
+  backButtonFontFamily?: string;
 }
 
 export default function StackScreen({
@@ -21,6 +23,7 @@ export default function StackScreen({
   banner,
   backgroundColor = '#faf6f0',
   backButtonColor = Colors.light.background,
+  backButtonFontFamily,
 }: StackScreenProps) {
   const navigation = useNavigation();
   const canGoBack = navigation.canGoBack();
@@ -52,6 +55,12 @@ export default function StackScreen({
                     style={[
                       styles.navigationButtonText,
                       { color: backButtonColor },
+                      backButtonFontFamily
+                        ? {
+                            fontFamily: backButtonFontFamily,
+                            fontWeight: 'normal',
+                          }
+                        : null,
                     ]}
                   >
                     BACK

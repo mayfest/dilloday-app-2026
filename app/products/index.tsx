@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
-import { Colors } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
 import {
   ActivityIndicator,
@@ -51,7 +50,7 @@ export default function ProductsScreen() {
   const fetchProducts = async () => {
     try {
       const res = await fetch(
-        `https://storefront-api.fourthwall.com/v1/collections/carnival-dillo/products?storefront_token=${STOREFRONT_TOKEN}`,
+        `https://storefront-api.fourthwall.com/v1/collections/dillo-speedway-collection/products?storefront_token=${STOREFRONT_TOKEN}`,
         { headers: { 'Content-Type': 'application/json' } }
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -85,7 +84,7 @@ export default function ProductsScreen() {
     return (
       <TouchableOpacity
         style={styles.productCard}
-        onPress={() => router.push(`/products/${item.id}`)}
+        onPress={() => router.push(`/products/${item.slug}`)}
       >
         <Image
           source={{ uri: item.images[0]?.url }}
@@ -199,7 +198,11 @@ const styles = StyleSheet.create({
   },
   infoBar: {
     height: INFO_BAR_HEIGHT,
-    backgroundColor: Colors.light.text,
+    backgroundColor: '#000',
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 8,
