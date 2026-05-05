@@ -194,7 +194,10 @@ export default function DrawerContent({ type }: DrawerContentProps) {
         <Text style={styles.description}>{info.description}</Text>
         <Text style={styles.details}>{info.details}</Text>
         {info.linkLabel && info.linkTarget && (
-          <Text style={styles.link} onPress={() => router.push(info.linkTarget!)}>
+          <Text
+            style={styles.link}
+            onPress={() => router.push(info.linkTarget!)}
+          >
             {info.linkLabel}
           </Text>
         )}

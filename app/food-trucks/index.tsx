@@ -69,7 +69,9 @@ export default function FoodTrucksScreen() {
               {item.displayName}
             </ThemedText>
           )}
-          <ThemedText style={styles.infoType} numberOfLines={2}>{item.tag}</ThemedText>
+          <ThemedText style={styles.infoType} numberOfLines={2}>
+            {item.tag}
+          </ThemedText>
           <View style={styles.infoChevronWrap}>
             <FontAwesome6
               name='chevron-down'
@@ -225,5 +227,5 @@ const styles = StyleSheet.create({
     height: '75%',
     backgroundColor: '#fff',
     padding: 8,
-  }
+  },
 });
