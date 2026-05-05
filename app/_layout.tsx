@@ -66,14 +66,16 @@ const DRAWER_ITEMS_HIDDEN_FROM_MENU = new Set([
 function drawerContentPropsWithoutHiddenRoutes(
   props: DrawerContentComponentProps
 ): DrawerContentComponentProps {
-  const routes = props.state.routes.filter(
-    (route) => !DRAWER_ITEMS_HIDDEN_FROM_MENU.has(route.name)
-  );
   const focusedKey = props.state.routes[props.state.index]?.key;
-  let index = routes.findIndex((r) => r.key === focusedKey);
-  if (index < 0) {
-    index = 0;
-  }
+  // Keep the currently-focused route even if it's in the hidden set, so
+  // state.index stays valid for DrawerItemList. Hidden routes have
+  // drawerItemStyle.display = 'none', so the focused route renders as null
+  // and no visible item gets marked focused (its index won't match).
+  const routes = props.state.routes.filter(
+    (route) =>
+      !DRAWER_ITEMS_HIDDEN_FROM_MENU.has(route.name) || route.key === focusedKey
+  );
+  const index = routes.findIndex((r) => r.key === focusedKey);
   const preloadedRouteKeys = props.state.preloadedRouteKeys?.filter((key) =>
     routes.some((r) => r.key === key)
   );

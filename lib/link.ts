@@ -14,9 +14,9 @@ export async function link(url: string) {
 }
 
 export async function mail(email: string) {
-  if (await Linking.canOpenURL(`mailto:${email}`)) {
+  try {
     await Linking.openURL(`mailto:${email}`);
-  } else {
+  } catch {
     Toast.show({
       type: 'error',
       text1: 'Unable to launch mail.',
@@ -26,13 +26,5 @@ export async function mail(email: string) {
 }
 
 export async function call(tel: string) {
-  if (await Linking.canOpenURL(`tel:${tel}`)) {
-    await Linking.openURL(`tel:${tel}`);
-  } else {
-    Toast.show({
-      type: 'error',
-      text1: 'Unable to make call.',
-      text2: 'Your device does not support phone calls.',
-    });
-  }
+  await Linking.openURL(`tel:${tel}`);
 }
