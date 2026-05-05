@@ -176,7 +176,6 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
       ref,
       () => ({
         scrollToArtist: (artistName: string) => {
-          console.log('scrollToArtist called with:', artistName);
           const normalized = artistName.trim().toLowerCase();
           if (!normalized) {
             return { found: false, stageIndex: -1 };
@@ -191,7 +190,11 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
             if (slot) {
               const offsetMin = slot.startMinutes - startM;
               const x = Math.max(0, offsetMin * pxPerMinute - 24);
-              syncScroll('header', x);
+              headerRef.current?.scrollTo({ x, animated: true });
+
+              Object.values(stageRefs.current).forEach((ref) => {
+                ref?.scrollTo({ x, animated: true });
+              });
               return { found: true, stageIndex, slot };
             }
           }

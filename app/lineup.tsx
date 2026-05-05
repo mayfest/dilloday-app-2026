@@ -312,11 +312,14 @@ export default function LineupScreen() {
       const result = timelineRef.current?.scrollToArtist(String(artist));
 
       if (result?.found && result.slot) {
-        onPressArtist(result.slot, stages[result.stageIndex].name);
+        const slot = result.slot;
 
-        router.setParams({ artist: undefined });
+        setTimeout(() => {
+          onPressArtist(slot, stages[result.stageIndex].name);
+          router.setParams({ artist: undefined });
+        }, 450);
       }
-    }, 200);
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [artist, onPressArtist, stages]);
