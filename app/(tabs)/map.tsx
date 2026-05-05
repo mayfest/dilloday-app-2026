@@ -1,5 +1,6 @@
 // MapScreen.tsx
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
 
 import MapImage from '@/assets/images/dillo_map_no_caro.png';
 import DrawerContent from '@/components/map/drawer-content';
@@ -260,6 +261,17 @@ export default function MapScreen() {
   const [activeTab, setActiveTab] = useState<'interactive' | 'static'>(
     'interactive'
   );
+  const [mapResetKey, setMapResetKey] = useState(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setActiveIndex(0);
+        setActiveTab('interactive');
+        setMapResetKey((k) => k + 1);
+      };
+    }, [])
+  );
 
   useEffect(() => {
     if (activeTab === 'interactive') {
@@ -414,7 +426,7 @@ export default function MapScreen() {
 
   return (
     <TabScreen>
-      <View style={styles.container}>
+      <View key={mapResetKey} style={styles.container}>
         {renderTabSelector()}
         {activeTab === 'interactive' ? renderInteractive() : renderStatic()}
       </View>
