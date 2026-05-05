@@ -1,12 +1,12 @@
 // MapScreen.tsx
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useFocusEffect } from 'expo-router';
 
 import MapImage from '@/assets/images/dillo_map_no_caro.png';
 import DrawerContent from '@/components/map/drawer-content';
 import IconMarker from '@/components/map/location-marker';
 import TabScreen from '@/components/tab-screen';
 import { Colors } from '@/constants/Colors';
+import { useFocusEffect } from 'expo-router';
 import {
   Dimensions,
   FlatList,

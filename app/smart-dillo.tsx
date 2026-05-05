@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useFocusEffect } from 'expo-router';
+
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
+import { useFocusEffect } from 'expo-router';
 import {
   ActivityIndicator,
   Animated,
