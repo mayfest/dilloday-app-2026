@@ -86,6 +86,12 @@ interface MarkerData {
   coordinate: { latitude: number; longitude: number };
 }
 
+const getDrawerItemLayout = (_: unknown, index: number) => ({
+  length: SNAP_WIDTH,
+  offset: SNAP_WIDTH * index,
+  index,
+});
+
 const markers: MarkerData[] = [
   {
     id: 'a',
@@ -93,8 +99,8 @@ const markers: MarkerData[] = [
     icon: 'door-open',
     label: 'Entrance',
     coordinate: {
-      latitude: 42.053889,
-      longitude: -87.672583,
+      latitude: 42.053833,
+      longitude: -87.67275,
     },
   },
   {
@@ -151,7 +157,7 @@ const markers: MarkerData[] = [
     type: 'medical',
     icon: 'briefcase-medical',
     label: 'Medical Tent',
-    coordinate: { latitude: 42.056484, longitude: -87.670533 },
+    coordinate: { latitude: 42.056806, longitude: -87.6705 },
   },
   {
     id: 'h',
@@ -165,7 +171,7 @@ const markers: MarkerData[] = [
     type: 'water',
     icon: 'water',
     label: 'Water Station',
-    coordinate: { latitude: 42.056528, longitude: -87.670528 },
+    coordinate: { latitude: 42.056306, longitude: -87.670444 },
   },
   {
     id: 'w',
@@ -275,12 +281,18 @@ export default function MapScreen() {
   );
 
   useEffect(() => {
-    if (activeTab === 'interactive') {
-      drawerRef.current?.scrollToOffset({
-        offset: activeIndex * SNAP_WIDTH,
-        animated: true, // ← animate instead of jumping
+    if (activeTab !== 'interactive') return;
+    // Use scrollToIndex + getItemLayout so the visible drawer card matches
+    // activeIndex. scrollToOffset(activeIndex * SNAP_WIDTH) does not stay in
+    // sync with padding + centered snap and can show the wrong location.
+    const frame = requestAnimationFrame(() => {
+      drawerRef.current?.scrollToIndex({
+        index: activeIndex,
+        animated: true,
+        viewPosition: 0.5,
       });
-    }
+    });
+    return () => cancelAnimationFrame(frame);
   }, [activeTab, activeIndex]);
 
   useEffect(() => {
@@ -395,6 +407,16 @@ export default function MapScreen() {
           snapToInterval={SNAP_WIDTH}
           snapToAlignment='center'
           showsHorizontalScrollIndicator={false}
+          getItemLayout={getDrawerItemLayout}
+          onScrollToIndexFailed={({ index }) => {
+            requestAnimationFrame(() => {
+              drawerRef.current?.scrollToIndex({
+                index,
+                animated: false,
+                viewPosition: 0.5,
+              });
+            });
+          }}
           contentContainerStyle={{
             paddingHorizontal: (screen.width - ITEM_WIDTH) / 2,
           }}
