@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { ThemedText } from '@/components/ThemedText';
 import StackScreen from '@/components/stack-screen';
-import { Colors } from '@/constants/Colors';
 import { useLocalSearchParams } from 'expo-router';
 import {
   ActivityIndicator,
@@ -100,11 +98,17 @@ export default function ProductDetail() {
     }
   };
 
+  const screenShellProps = {
+    backgroundColor: '#000' as const,
+    backButtonColor: '#fff' as const,
+    backButtonFontFamily: 'FuturaBold' as const,
+  };
+
   if (loading) {
     return (
-      <StackScreen>
+      <StackScreen {...screenShellProps}>
         <View style={styles.centerContainer}>
-          <ActivityIndicator size='large' color={Colors.light.action} />
+          <ActivityIndicator size='large' color='#fff' />
         </View>
       </StackScreen>
     );
@@ -112,11 +116,11 @@ export default function ProductDetail() {
 
   if (error || !product) {
     return (
-      <StackScreen>
+      <StackScreen {...screenShellProps}>
         <View style={styles.centerContainer}>
-          <ThemedText style={styles.errorText}>
-            {error || 'Product not found'}
-          </ThemedText>
+          <Text style={styles.errorText}>
+            {(error || 'Product not found').toUpperCase()}
+          </Text>
         </View>
       </StackScreen>
     );
@@ -129,8 +133,11 @@ export default function ProductDetail() {
   );
 
   return (
-    <StackScreen>
-      <ScrollView contentContainerStyle={styles.contentContainer}>
+    <StackScreen {...screenShellProps}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+      >
         <View style={styles.imageContainer}>
           <Image
             source={{
@@ -175,7 +182,7 @@ export default function ProductDetail() {
                           backgroundColor: color.swatch,
                           borderColor:
                             selectedColor === color.name
-                              ? '#000'
+                              ? '#fff'
                               : 'transparent',
                         },
                       ]}
@@ -206,7 +213,9 @@ export default function ProductDetail() {
               )
             }
           >
-            <Text style={styles.viewWebsiteButtonText}>View on Website</Text>
+            <Text style={styles.viewWebsiteButtonText}>
+              VIEW ON WEBSITE
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -215,16 +224,27 @@ export default function ProductDetail() {
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
   contentContainer: {
+    backgroundColor: '#000',
     paddingBottom: 40,
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#000',
   },
   errorText: {
-    color: '#000',
+    color: '#fff',
+    fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    paddingHorizontal: 24,
+    fontSize: 16,
   },
   imageContainer: {
     position: 'relative',
@@ -235,30 +255,35 @@ const styles = StyleSheet.create({
   },
   productInfoContainer: {
     padding: 20,
+    backgroundColor: '#000',
   },
   productName: {
     fontSize: 24,
-    fontFamily: 'Poppins_600SemiBold',
+    fontFamily: 'FuturaBold',
     textAlign: 'center',
     marginBottom: 8,
+    color: '#fff',
+    textTransform: 'uppercase',
   },
   price: {
     fontSize: 22,
-    fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
-    fontFamily: 'Poppins_600SemiBold',
+    fontFamily: 'FuturaBold',
+    color: '#fff',
+    textTransform: 'uppercase',
   },
   divider: {
     height: 1,
-    backgroundColor: '#DDD',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     marginVertical: 8,
   },
   sectionLabel: {
     fontSize: 16,
-    fontWeight: 'bold',
     marginBottom: 12,
-    fontFamily: 'Poppins_600SemiBold',
+    fontFamily: 'FuturaBold',
+    color: '#fff',
+    textTransform: 'uppercase',
   },
   colorOptionsContainer: {
     flexDirection: 'row',
@@ -277,21 +302,24 @@ const styles = StyleSheet.create({
   },
   colorName: {
     fontSize: 12,
-    color: '#666',
-    fontFamily: 'Poppins_400Regular',
+    color: 'rgba(255, 255, 255, 0.65)',
+    fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
   },
   selectedColorName: {
     fontSize: 12,
-    color: '#000',
-    fontWeight: 'bold',
-    fontFamily: 'Poppins_400Regular',
+    color: '#fff',
+    fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
   },
   viewWebsiteButtonContainer: {
     alignItems: 'center',
     marginTop: 20,
   },
   viewWebsiteButton: {
-    backgroundColor: Colors.light.action,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#fff',
     borderRadius: 25,
     paddingVertical: 12,
     paddingHorizontal: 32,
@@ -300,7 +328,7 @@ const styles = StyleSheet.create({
   viewWebsiteButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'Poppins_600SemiBold',
+    fontFamily: 'FuturaBold',
+    textTransform: 'uppercase',
   },
 });
