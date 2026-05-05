@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 
 import { ThemedText } from '@/components/ThemedText';
 import DrawerScreen from '@/components/drawer-screen';
 import { FOOD_TRUCKS } from '@/constants/food-trucks';
 import { FontAwesome6 } from '@expo/vector-icons';
+import { useFocusEffect } from 'expo-router';
 import { useRouter } from 'expo-router';
 import {
   Dimensions,
@@ -25,6 +26,7 @@ const INFO_BAR_HEIGHT = 90;
 
 export default function FoodTrucksScreen() {
   const router = useRouter();
+  const listRef = useRef<FlatList<any>>(null);
 
   const renderFoodTruckItem = ({ item }: any) => {
     return (
@@ -76,12 +78,19 @@ export default function FoodTrucksScreen() {
     );
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      listRef.current?.scrollToOffset({ offset: 0, animated: false });
+    }, [])
+  );
+
   return (
     <DrawerScreen>
       <View style={styles.titleContainer}>
         <Text style={styles.foodTitle}>Food</Text>
       </View>
       <FlatList
+        ref={listRef}
         data={FOOD_TRUCKS}
         keyExtractor={(item) => item.id}
         renderItem={renderFoodTruckItem}
