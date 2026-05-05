@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     paddingRight: 14,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#FFF',
     fontFamily: 'FuturaBold',
     textTransform: 'uppercase',
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   message: {
-    fontSize: 19,
+    fontSize: 17,
     fontFamily: 'Futura',
     fontWeight: '400',
     lineHeight: 24,

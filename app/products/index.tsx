@@ -85,7 +85,7 @@ export default function ProductsScreen() {
     return (
       <TouchableOpacity
         style={styles.productCard}
-        onPress={() => router.push(`/products/${item.slug}`)}
+        onPress={() => router.push(`/products/${item.id}`)}
       >
         <Image
           source={{ uri: item.images[0]?.url }}
