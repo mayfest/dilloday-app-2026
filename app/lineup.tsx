@@ -480,7 +480,7 @@ export default function LineupScreen() {
 
                       {/* 3. Bio Text */}
                       <Text style={styles.bioText}>
-                        {artistData?.bio ||
+                        {artistData?.description ||
                           'No biography available for this artist.'}
                       </Text>
 
