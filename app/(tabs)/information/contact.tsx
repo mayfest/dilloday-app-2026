@@ -36,10 +36,10 @@ function getCoordinatorNumber() {
   /* 
     TODO update name and numbers, need to get info from promo or prog??? 
   */
-  if (hour < 13 || (hour === 13 && minute < 30)) {
-    return { name: 'Danielle', number: '+12406786015' };
+  if (hour < 16 || (hour === 16 && minute < 30)) {
+    return { name: 'Ozge Unver', number: '+12244887073' };
   } else {
-    return { name: 'Anya', number: '+13103390032' };
+    return { name: 'Tyler Kang', number: '+18475330224' };
   }
 }
 
@@ -99,7 +99,7 @@ export default function ContactScreen() {
                 <Text style={styles.buttonText}>
                   Call {name} (Accessibility)
                 </Text>
-                <Text style={styles.subText}>{number} CST</Text>
+                <Text style={styles.subText}>{number}</Text>
               </View>
             </View>
           </TouchableOpacity>
