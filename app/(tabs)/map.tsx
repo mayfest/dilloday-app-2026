@@ -256,6 +256,7 @@ export default function MapScreen() {
   const mapRef = useRef<MapView>(null);
   const markerRefs = useRef<(Marker | null)[]>([]);
   const drawerRef = useRef<FlatList<MarkerData>>(null);
+  const drawerWasDragged = useRef(false);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'interactive' | 'static'>(
@@ -398,8 +399,16 @@ export default function MapScreen() {
             paddingHorizontal: (screen.width - ITEM_WIDTH) / 2,
           }}
           onMomentumScrollEnd={(e) => {
+            // Ignore momentum events not caused by user drag.
+            // On initial mount/layout, FlatList can emit momentum callbacks that
+            // would otherwise snap selection to an unintended marker.
+            if (!drawerWasDragged.current) return;
+            drawerWasDragged.current = false;
             const idx = Math.round(e.nativeEvent.contentOffset.x / SNAP_WIDTH);
             setActiveIndex(Math.max(0, Math.min(idx, markers.length - 1)));
+          }}
+          onScrollBeginDrag={() => {
+            drawerWasDragged.current = true;
           }}
           renderItem={({ item }) => (
             <View style={styles.item}>
