@@ -13,7 +13,7 @@ export interface Artist {
   /** If set without `durationMinutes`, bar length spans from `time` to `endTime`. */
   endTime?: string;
   description?: string;
-  /** Lineup / detail copy (e.g. Firestore `bio`). */
+  /** Legacy / optional duplicate of `description`; prefer `description`. */
   bio?: string;
   image?: string;
   spotify?: string;
