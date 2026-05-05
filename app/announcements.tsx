@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import AnnouncementItem from '@/components/announcements/announcement-item';
 import DrawerScreen from '@/components/drawer-screen';
 import LoadingIndicator from '@/components/loading-indicator';
 import { Announcement, getAnnouncements } from '@/lib/announcement';
+import { useFocusEffect } from 'expo-router';
 import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
@@ -29,10 +30,22 @@ export default function AnnouncementScreen() {
       setState('error');
     }
   };
+  const listRef = useRef<FlatList<Announcement>>(null);
+  const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
     load();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      listRef.current?.scrollToOffset({ offset: 0, animated: false });
+
+      return () => {
+        setResetKey((key) => key + 1);
+      };
+    }, [])
+  );
 
   if (state === 'loading' && announcements === null) {
     return (
@@ -63,8 +76,9 @@ export default function AnnouncementScreen() {
     <DrawerScreen>
       <Text style={styles.pageTitle}>ANNOUNCEMENTS</Text>
       <FlatList
+        ref={listRef}
         data={announcements!}
-        keyExtractor={(item) => `announcement-${item.id}`}
+        keyExtractor={(item) => `${resetKey}-announcement-${item.id}`}
         renderItem={({ item, index }) => (
           <AnnouncementItem data={item} index={index} />
         )}

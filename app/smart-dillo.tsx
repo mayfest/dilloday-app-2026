@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
+import { useFocusEffect } from 'expo-router';
 import {
   ActivityIndicator,
   Animated,
@@ -19,7 +20,7 @@ import {
 const smartDilloImages = [
   {
     source: require('@/assets/images/smart-dillo/smart-dillo-cover.png'),
-    alt: 'Smart Dillo 2025 Cover',
+    alt: 'Smart Dillo 2026 Cover',
   },
   {
     source: require('@/assets/images/smart-dillo/smart-dillo-full-tank.png'),
@@ -135,6 +136,7 @@ export default function SmartDilloScreen() {
     const newIndex = Math.round(e.nativeEvent.contentOffset.x / ITEM_WIDTH);
     setCurrentIndex(newIndex);
   }, []);
+  const [graphicsResetKey, setGraphicsResetKey] = useState(0);
 
   const openLink = useCallback(async () => {
     const url =
@@ -216,6 +218,17 @@ export default function SmartDilloScreen() {
     });
   }, [currentIndex, dotPosition]);
 
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setCurrentIndex(0);
+        setAutoplay(true);
+        scrollX.setValue(0);
+        setGraphicsResetKey((k) => k + 1);
+      };
+    }, [scrollX])
+  );
+
   return (
     <DrawerScreen>
       <ScrollView
@@ -228,6 +241,7 @@ export default function SmartDilloScreen() {
 
         <View style={styles.container}>
           <FlatList
+            key={graphicsResetKey}
             ref={flatListRef}
             data={smartDilloImages}
             renderItem={renderItem}
@@ -285,7 +299,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginVertical: 16,
+    marginTop: 10,
+    marginBottom: 8,
     overflow: 'visible',
   },
   pageTitle: {
@@ -297,8 +312,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingVertical: 20,
-    paddingBottom: 40,
+    paddingTop: 0,
+    paddingBottom: 60,
     alignItems: 'center',
   },
   sectionTitleText: {
@@ -358,7 +373,7 @@ const styles = StyleSheet.create({
   },
   dotsContainer: {
     flexDirection: 'row',
-    marginTop: 12,
+    marginTop: 7,
   },
   dotButton: {
     padding: 3,
@@ -379,6 +394,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 18,
+    lineHeight: 25,
     textAlign: 'left',
     color: Colors.light.text,
     marginTop: 10,

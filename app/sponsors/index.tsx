@@ -1,11 +1,11 @@
 // app/sponsors/index.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { SPONSOR_BOOTHS } from '@/constants/sponsor-booths';
 import { Sponsor, getSponsors } from '@/lib/sponsors';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import {
   ActivityIndicator,
   Image,
@@ -28,6 +28,7 @@ export default function SponsorsScreen() {
   const router = useRouter();
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
   const [loading, setLoading] = useState(true);
+  const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     getSponsors()
@@ -36,13 +37,19 @@ export default function SponsorsScreen() {
       .finally(() => setLoading(false));
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      scrollRef.current?.scrollTo({ y: 0, animated: false });
+    }, [])
+  );
+
   const openUrl = (url?: string) => {
     if (url && url !== '---') Linking.openURL(url);
   };
 
   return (
     <DrawerScreen>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView ref={scrollRef} contentContainerStyle={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.pageTitle}>Sponsors</Text>
         </View>
@@ -117,7 +124,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
     paddingTop: 24,
-    paddingBottom: 40,
+    paddingBottom: 75,
   },
   row: {
     flexDirection: 'row',

@@ -176,14 +176,15 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
       ref,
       () => ({
         scrollToArtist: (artistName: string) => {
-          console.log('scrollToArtist called with:', artistName);
           const normalized = artistName.trim().toLowerCase();
+
           if (!normalized) {
             return { found: false, stageIndex: -1 };
           }
 
           for (let stageIndex = 0; stageIndex < stages.length; stageIndex++) {
             const stage = stages[stageIndex];
+
             const slot = stage.slots.find((s) =>
               s.name.toLowerCase().includes(normalized)
             );
@@ -191,15 +192,30 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
             if (slot) {
               const offsetMin = slot.startMinutes - startM;
               const x = Math.max(0, offsetMin * pxPerMinute - 24);
-              syncScroll('header', x);
-              return { found: true, stageIndex, slot };
+
+              headerRef.current?.scrollTo({ x, animated: true });
+
+              Object.values(stageRefs.current).forEach((scrollRef) => {
+                if (scrollRef) {
+                  scrollRef.scrollTo({ x, animated: true });
+                }
+              });
+
+              return {
+                found: true,
+                stageIndex,
+                slot,
+              };
             }
           }
 
-          return { found: false, stageIndex: -1 };
+          return {
+            found: false,
+            stageIndex: -1,
+          };
         },
       }),
-      [stages, startM, syncScroll, pxPerMinute]
+      [stages, startM, pxPerMinute]
     );
 
     return (

@@ -21,6 +21,7 @@ import type { Artist } from '@/lib/artist';
 import { type Config, useConfig } from '@/lib/config';
 import type { Stage } from '@/lib/schedule';
 import { router, useLocalSearchParams } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
   ActivityIndicator,
@@ -232,6 +233,7 @@ export default function LineupScreen() {
     slot: FestivalSlot;
     stage: string;
   } | null>(null);
+  const [timelineKey, setTimelineKey] = useState(0);
 
   const artistData = useMemo(() => {
     if (!selectedArtist) return undefined;
@@ -312,14 +314,23 @@ export default function LineupScreen() {
       const result = timelineRef.current?.scrollToArtist(String(artist));
 
       if (result?.found && result.slot) {
-        onPressArtist(result.slot, stages[result.stageIndex].name);
+        const slot = result.slot;
 
-        router.setParams({ artist: undefined });
+        setTimeout(() => {
+          onPressArtist(slot, stages[result.stageIndex].name);
+          router.setParams({ artist: undefined });
+        }, 400);
       }
-    }, 200);
+    }, 0);
 
     return () => clearTimeout(timer);
   }, [artist, onPressArtist, stages]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setTimelineKey((key) => key + 1);
+    }, [])
+  );
 
   return (
     <GlobalNavivationWrapper>
@@ -356,6 +367,7 @@ export default function LineupScreen() {
             </View>
           ) : (
             <FestivalLineupTimeline
+              key={timelineKey}
               ref={timelineRef}
               stages={stages}
               startHour={TIMELINE_START_HOUR}
