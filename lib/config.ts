@@ -11,11 +11,36 @@ import { UserState } from './user';
 
 export { useConfig } from '@/contexts/config-context';
 
+/** One vendor from `food-trucks` array form (`name`, `image`); omit when using map form below. */
+export interface FoodTruckConfigItem {
+  /** Stable route id when using array form (generated from name if omitted). */
+  id?: string;
+  name: string;
+  image: string;
+}
+
+/** Nested under each truck in map form (`food-trucks.<id>.food-truck-menu`). */
+export interface FoodTruckEntryPayload extends FoodTruckConfigItem {
+  'food-truck-menu'?: Record<string, string | number>;
+  food_truck_menu?: Record<string, string | number>;
+}
+
 export interface Config {
   home: Home;
   artists: Artists;
   schedule: Schedule;
   social: SocialConfig;
+  /**
+   * Either an array of `{ name, image, id? }` (menus via top-level `food_truck_menus`), or a **map**
+   * `{ "<slug>": { name, image, "food-truck-menu": { "Item": price } } }`.
+   */
+  food_trucks?: FoodTruckConfigItem[] | Record<string, FoodTruckEntryPayload>;
+  'food-trucks'?: FoodTruckConfigItem[] | Record<string, FoodTruckEntryPayload>;
+  /** Alternative: top-level `truck id → menu` (underscore / legacy keys). */
+  'food-truck-menu'?: Record<string, Record<string, string | number>>;
+  food_truck_menu?: Record<string, Record<string, string | number>>;
+  /** @deprecated Prefer `food-truck-menu` / `food_truck_menu`. */
+  food_truck_menus?: Record<string, Record<string, string | number>>;
 }
 
 export interface ConfigInformation {

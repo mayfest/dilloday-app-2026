@@ -1,8 +1,13 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 
 import { ThemedText } from '@/components/ThemedText';
 import DrawerScreen from '@/components/drawer-screen';
-import { FOOD_TRUCKS } from '@/constants/food-trucks';
+import LoadingIndicator from '@/components/loading-indicator';
+import { useConfig } from '@/lib/config';
+import {
+  type ResolvedFoodTruck,
+  getFoodTrucksFromConfig,
+} from '@/lib/food-trucks';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import {
@@ -25,65 +30,42 @@ const INFO_BAR_HEIGHT = 90;
 
 export default function FoodTrucksScreen() {
   const router = useRouter();
-  const listRef = useRef<FlatList<any>>(null);
+  const { config } = useConfig();
+  const listRef = useRef<FlatList<ResolvedFoodTruck>>(null);
 
-  const renderFoodTruckItem = ({ item }: any) => {
-    return (
-      <TouchableOpacity
-        style={styles.foodTruckCard}
-        onPress={() => router.push(`/food-trucks/${item.id}`)}
-      >
-        <View style={styles.imageContainer}>
-          {item.id === 'dAndD' ? (
-            <Image
-              source={item.logo}
-              style={styles.whiteLogoBlackBackground}
-              resizeMode='contain'
-            />
-          ) : item.id === 'souldAndSmoke' ? (
-            <Image
-              source={item.logo}
-              style={styles.whiteLogoBlackBackground}
-              resizeMode='contain'
-            />
-          ) : item.id === 'chilis' ? (
-            <Image
-              source={item.logo}
-              style={styles.blackLogoWhiteBackground}
-              resizeMode='contain'
-            />
-          ) : (
-            <Image
-              source={item.logo}
-              style={styles.logoImage}
-              resizeMode='contain'
-            />
-          )}
+  const trucks = useMemo(() => getFoodTrucksFromConfig(config), [config]);
+
+  const renderFoodTruckItem = ({ item }: { item: ResolvedFoodTruck }) => (
+    <TouchableOpacity
+      style={styles.foodTruckCard}
+      onPress={() => router.push(`/food-trucks/${item.id}`)}
+    >
+      <View style={styles.imageContainer}>
+        {item.image ? (
+          <Image
+            source={{ uri: item.image }}
+            style={styles.logoImage}
+            resizeMode='contain'
+          />
+        ) : (
+          <View style={styles.logoPlaceholder} />
+        )}
+      </View>
+      <View style={styles.infoBar}>
+        <ThemedText style={styles.infoName} numberOfLines={2}>
+          {item.name}
+        </ThemedText>
+        <View style={styles.infoChevronWrap}>
+          <FontAwesome6
+            name='chevron-down'
+            size={14}
+            color='#fff'
+            style={styles.infoChevron}
+          />
         </View>
-        <View style={styles.infoBar}>
-          <ThemedText style={styles.infoName} numberOfLines={2}>
-            {item.name}
-          </ThemedText>
-          {item.displayName && (
-            <ThemedText style={styles.infoSubtitle} numberOfLines={2}>
-              {item.displayName}
-            </ThemedText>
-          )}
-          <ThemedText style={styles.infoType} numberOfLines={2}>
-            {item.tag}
-          </ThemedText>
-          <View style={styles.infoChevronWrap}>
-            <FontAwesome6
-              name='chevron-down'
-              size={14}
-              color='#fff'
-              style={styles.infoChevron}
-            />
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+      </View>
+    </TouchableOpacity>
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -91,33 +73,46 @@ export default function FoodTrucksScreen() {
     }, [])
   );
 
+  if (!config) {
+    return (
+      <DrawerScreen>
+        <View style={styles.titleContainer}>
+          <Text style={styles.foodTitle}>Food</Text>
+        </View>
+        <LoadingIndicator />
+      </DrawerScreen>
+    );
+  }
+
   return (
     <DrawerScreen>
       <View style={styles.titleContainer}>
         <Text style={styles.foodTitle}>Food</Text>
       </View>
-      <FlatList
-        ref={listRef}
-        data={FOOD_TRUCKS}
-        keyExtractor={(item) => item.id}
-        renderItem={renderFoodTruckItem}
-        contentContainerStyle={styles.listContainer}
-        numColumns={2}
-        columnWrapperStyle={styles.columnWrapper}
-        // ListHeaderComponent={ListHeaderComponent}
-        showsVerticalScrollIndicator={false}
-      />
+      {trucks.length === 0 ? (
+        <View style={styles.emptyWrap}>
+          <Text style={styles.emptyText}>
+            Food truck list is not available yet. Check back soon.
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          ref={listRef}
+          data={trucks}
+          keyExtractor={(item) => item.id}
+          renderItem={renderFoodTruckItem}
+          contentContainerStyle={styles.listContainer}
+          numColumns={2}
+          columnWrapperStyle={styles.columnWrapper}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
       <View style={{ height: 40 }} />
     </DrawerScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  bannerWrapper: {
-    // paddingLeft: 15,
-    paddingBottom: 15,
-    width: '100%',
-  },
   titleContainer: {
     alignItems: 'center',
     marginVertical: 16,
@@ -163,9 +158,11 @@ const styles = StyleSheet.create({
     width: '75%',
     height: '75%',
   },
-  wideLogoImage: {
-    width: '65%',
-    height: '65%',
+  logoPlaceholder: {
+    width: '60%',
+    height: '60%',
+    backgroundColor: '#222',
+    borderRadius: 8,
   },
   infoBar: {
     height: INFO_BAR_HEIGHT,
@@ -193,39 +190,15 @@ const styles = StyleSheet.create({
   infoChevron: {
     marginVertical: 0,
   },
-  infoSubtitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: -5,
+  emptyWrap: {
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    alignItems: 'center',
+  },
+  emptyText: {
     color: '#fff',
+    fontFamily: 'Futura',
     textAlign: 'center',
-    fontFamily: 'FuturaBold',
-    textTransform: 'uppercase',
-  },
-  infoType: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#fff',
-    fontFamily: 'FuturaBold',
-    textTransform: 'uppercase',
-  },
-  favoriteIcon: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    zIndex: 10,
-  },
-  whiteLogoBlackBackground: {
-    width: '75%',
-    height: '75%',
-    backgroundColor: '#000',
-    borderRadius: 12,
-    padding: 8,
-  },
-  blackLogoWhiteBackground: {
-    width: '75%',
-    height: '75%',
-    backgroundColor: '#fff',
-    padding: 8,
+    fontSize: 16,
   },
 });

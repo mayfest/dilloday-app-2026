@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
 import LoadingIndicator from '@/components/loading-indicator';
 import StackScreen from '@/components/stack-screen';
 import { Colors } from '@/constants/Colors';
-import { FOOD_TRUCKS, FoodTruckMeta } from '@/constants/food-trucks';
 import { useConfig } from '@/lib/config';
+import { parseMenuForTruck, resolveFoodTruckById } from '@/lib/food-trucks';
 import { useLocalSearchParams } from 'expo-router';
 import {
   Dimensions,
@@ -20,23 +20,28 @@ import {
 const { width } = Dimensions.get('window');
 
 export default function FoodTruckDetail() {
-  const { config, state: appState } = useConfig();
+  const { config, reload } = useConfig();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const meta = FOOD_TRUCKS.find((t) => t.id === id) as FoodTruckMeta;
+  const [refreshing, setRefreshing] = useState(false);
 
-  const menu = useMemo(() => {
-    if (!config || !id) return [];
-    const raw = config.food_truck_menus[id] ?? {};
-    return Object.entries(raw)
-      .map(([item, price]) => ({
-        item,
-        price: `${parseFloat(price).toFixed(2)}`,
-        numericPrice: parseFloat(price), // Keep numeric value for sorting
-      }))
-      .sort((a, b) => b.numericPrice - a.numericPrice); // Sort highest to lowest
-  }, [config, id]);
+  const meta = useMemo(
+    () => (config && id ? resolveFoodTruckById(config, id) : undefined),
+    [config, id]
+  );
 
-  if (!meta) return null;
+  const menu = useMemo(
+    () => (config && id ? parseMenuForTruck(config, id) : []),
+    [config, id]
+  );
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await reload();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [reload]);
 
   if (!config) {
     return (
@@ -46,43 +51,46 @@ export default function FoodTruckDetail() {
     );
   }
 
+  if (!meta) {
+    return (
+      <StackScreen backgroundColor='#000' backButtonColor='#fff'>
+        <View style={styles.container}>
+          <Text style={styles.emptyText}>Food truck not found.</Text>
+        </View>
+      </StackScreen>
+    );
+  }
+
+  const title = `${meta.name} Menu`;
+
   return (
     <StackScreen backgroundColor='#000' backButtonColor='#fff'>
       <View style={styles.container}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.contentContainer}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator
           refreshControl={
-            <RefreshControl
-              refreshing={appState.state === 'loading'}
-              onRefresh={() => config.reload?.()}
-            />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          {/* Hero image at 50% width */}
-          {meta.name === 'D&Ds' || meta.name === 'Soul & Smoke' ? (
+          {meta.image ? (
             <Image
-              source={meta.logo}
-              style={styles.blackHero}
-              resizeMode='contain'
-            />
-          ) : (
-            <Image
-              source={meta.logo}
+              source={{ uri: meta.image }}
               style={styles.hero}
               resizeMode='contain'
             />
+          ) : (
+            <View style={styles.heroPlaceholder} />
           )}
 
-          {/* Title constrained to one line */}
-          <Text style={styles.title}>{meta.name} Menu</Text>
+          <Text style={styles.title}>{title}</Text>
 
           <View style={styles.divider} />
 
           {menu.length > 0 ? (
             menu.map((m, i) => (
-              <View key={i} style={styles.menuRow}>
+              <View key={`${m.item}-${i}`} style={styles.menuRow}>
                 <Text
                   style={styles.item}
                   numberOfLines={2}
@@ -95,13 +103,13 @@ export default function FoodTruckDetail() {
             ))
           ) : (
             <Text style={styles.emptyText}>
-              We currently don't have a menu for {meta.name}. We will update
-              this page as soon as we have it!
+              We currently don&apos;t have a menu for {meta.name}. We will
+              update this page as soon as we have it!
             </Text>
           )}
           {menu.length > 0 && (
             <Text style={styles.noticeText}>
-              All prices are in USD and are before tax and optinal gratuity.
+              All prices are in USD and are before tax and optional gratuity.
             </Text>
           )}
         </ScrollView>
@@ -125,19 +133,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   hero: {
-    width: width * 0.8, // 80% of screen width
-    aspectRatio: 2, // keep your original ratio
-    height: undefined, // Let aspectRatio determine height
-    alignSelf: 'center',
-    marginBottom: 24,
-  },
-  blackHero: {
-    width: width * 0.8, // 80% of screen width
+    width: width * 0.8,
     aspectRatio: 2,
-    height: undefined, // Let aspectRatio determine height
+    height: undefined,
     alignSelf: 'center',
     marginBottom: 24,
-    backgroundColor: '#000000',
+    backgroundColor: '#000',
+  },
+  heroPlaceholder: {
+    width: width * 0.8,
+    aspectRatio: 2,
+    alignSelf: 'center',
+    marginBottom: 24,
+    backgroundColor: '#222',
+    borderRadius: 8,
   },
   title: {
     fontSize: 28,
@@ -162,11 +171,11 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.light.text,
   },
   item: {
-    flex: 1, // allow wrapping
+    flex: 1,
     fontSize: 18,
     color: Colors.light.text,
     flexWrap: 'wrap',
-    marginRight: 12, // space before price
+    marginRight: 12,
     fontFamily: 'Futura',
     textTransform: 'none',
   },
@@ -174,7 +183,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: Colors.light.text,
-    flexShrink: 0, // prevent shrinking price
+    flexShrink: 0,
     fontFamily: 'Futura',
     textTransform: 'none',
   },
