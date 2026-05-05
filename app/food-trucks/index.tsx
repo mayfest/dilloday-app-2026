@@ -4,8 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import DrawerScreen from '@/components/drawer-screen';
 import { FOOD_TRUCKS } from '@/constants/food-trucks';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { useFocusEffect } from 'expo-router';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import {
   Dimensions,
   FlatList,
@@ -47,6 +46,12 @@ export default function FoodTrucksScreen() {
               style={styles.whiteLogoBlackBackground}
               resizeMode='contain'
             />
+          ) : item.id === 'chilis' ? (
+            <Image
+              source={item.logo}
+              style={styles.blackLogoWhiteBackground}
+              resizeMode='contain'
+            />
           ) : (
             <Image
               source={item.logo}
@@ -64,7 +69,9 @@ export default function FoodTrucksScreen() {
               {item.displayName}
             </ThemedText>
           )}
-          <ThemedText style={styles.infoType}>{item.tag}</ThemedText>
+          <ThemedText style={styles.infoType} numberOfLines={2}>
+            {item.tag}
+          </ThemedText>
           <View style={styles.infoChevronWrap}>
             <FontAwesome6
               name='chevron-down'
@@ -163,10 +170,10 @@ const styles = StyleSheet.create({
   infoBar: {
     height: INFO_BAR_HEIGHT,
     backgroundColor: '#000',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     paddingHorizontal: 8,
-    paddingVertical: 12,
+    paddingBottom: 24,
   },
   infoName: {
     fontSize: 18,
@@ -177,9 +184,11 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   infoChevronWrap: {
-    width: '100%',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 8,
     alignItems: 'center',
-    paddingVertical: 8,
   },
   infoChevron: {
     marginVertical: 0,
@@ -187,6 +196,7 @@ const styles = StyleSheet.create({
   infoSubtitle: {
     fontSize: 16,
     fontWeight: '700',
+    marginBottom: -5,
     color: '#fff',
     textAlign: 'center',
     fontFamily: 'FuturaBold',
@@ -196,7 +206,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#fff',
-    paddingTop: 4,
     fontFamily: 'FuturaBold',
     textTransform: 'uppercase',
   },
@@ -211,6 +220,12 @@ const styles = StyleSheet.create({
     height: '75%',
     backgroundColor: '#000',
     borderRadius: 12,
+    padding: 8,
+  },
+  blackLogoWhiteBackground: {
+    width: '75%',
+    height: '75%',
+    backgroundColor: '#fff',
     padding: 8,
   },
 });
