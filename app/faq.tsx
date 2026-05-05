@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
 import FAQCategorySection from '@/components/faq/faq-category-section';
 import SearchBar from '@/components/faq/faq-search-bar';
 import { Colors } from '@/constants/Colors';
 import { FAQ_DATA } from '@/constants/faq';
+import { useFocusEffect } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function FAQScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState(FAQ_DATA);
+  const [resetKey, setResetKey] = useState(0);
+  const scrollRef = useRef<ScrollView>(null);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -35,9 +38,20 @@ export default function FAQScreen() {
     setFilteredData(filtered);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      scrollRef.current?.scrollTo({ y: 0, animated: false });
+
+      return () => {
+        setResetKey((k) => k + 1);
+      };
+    }, [])
+  );
+
   return (
     <DrawerScreen>
       <ScrollView
+        ref={scrollRef}
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
       >
@@ -48,7 +62,7 @@ export default function FAQScreen() {
         {filteredData.length > 0 ? (
           filteredData.map((category, index) => (
             <FAQCategorySection
-              key={index}
+              key={`${resetKey}-${index}`}
               category={category.category}
               items={category.items}
               searchQuery={searchQuery}

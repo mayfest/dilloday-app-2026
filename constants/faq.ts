@@ -15,7 +15,7 @@ export const FAQ_DATA: FAQCategory[] = [
         title: 'Bag Policy',
         content: [
           'While certain bags are permitted within the festival we highly encourage those who do not need a bag to leave them at home. Individuals may bring in one (1) small personal bag, no bigger than a typical backpack.',
-          'Examples include purses, drawstring bags, or camelbacks. Bigger bags will not be allowed into the festival. All bags will be searched by security prior to entering the festival',
+          'Examples include purses, drawstring bags, or camelbacks. Bigger bags will not be allowed into the festival. All bags will be searched by security prior to entering the festival.',
         ],
       },
       {
@@ -153,14 +153,6 @@ export const FAQ_DATA: FAQCategory[] = [
   {
     category: 'Dillo Day Mobile App',
     items: [
-      {
-        title: 'Dillosonas',
-        content: [
-          'Dillo Cabin Mates is a feature that connects members to other members based on music taste. Only Northwestern-affiliated members are eligible to participate, including undergraduate students, graduate students, alumni, faculty, and staff. You will only be matched with another Northwestern-affiliated member of the same type, where types are as follows: Undergraduate, Graduate and Alumni, and Faculty and Staff. A Google account with a Northwestern domain primary email address is required to participate.',
-          'Registration can be done up until Friday, May 17, 2024 at 8:00 PM. Matches will be made and shared on the morning of Dillo Day, Saturday, May 18, 2024. Enable push notifications within the app for updates.',
-          'Both Spotify and Apple Music are supported.',
-        ],
-      },
       {
         title: 'App Data Privacy',
         content: [
