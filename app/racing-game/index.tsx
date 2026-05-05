@@ -308,9 +308,17 @@ export default function RacingGameLobbyScreen() {
           </View>
 
           <View style={styles.howToWrap}>
-            <AccordionItem key={`how-to-${resetKey}`} title='How to play' content={[HOW_TO_PLAY]} />
+            <AccordionItem
+              key={`how-to-${resetKey}`}
+              title='How to play'
+              content={[HOW_TO_PLAY]}
+            />
           </View>
-          <AccordionItem key={`prizes-${resetKey}`} title='Prizes' content={[PRIZES]} />
+          <AccordionItem
+            key={`prizes-${resetKey}`}
+            title='Prizes'
+            content={[PRIZES]}
+          />
           <AccordionItem
             key={`leaderboard-${resetKey}`}
             title='Leaderboard'
