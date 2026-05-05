@@ -213,9 +213,7 @@ export default function ProductDetail() {
               )
             }
           >
-            <Text style={styles.viewWebsiteButtonText}>
-              VIEW ON WEBSITE
-            </Text>
+            <Text style={styles.viewWebsiteButtonText}>VIEW ON WEBSITE</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
