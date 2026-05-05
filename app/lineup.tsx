@@ -319,9 +319,9 @@ export default function LineupScreen() {
         setTimeout(() => {
           onPressArtist(slot, stages[result.stageIndex].name);
           router.setParams({ artist: undefined });
-        }, 550);
+        }, 400);
       }
-    }, 100);
+    }, 0);
 
     return () => clearTimeout(timer);
   }, [artist, onPressArtist, stages]);
