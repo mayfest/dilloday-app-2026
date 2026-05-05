@@ -46,6 +46,7 @@ export default function RacingGameLobbyScreen() {
   const [boardRows, setBoardRows] = useState<RacingLeaderboardEntry[] | null>(
     null
   );
+  const [resetKey, setResetKey] = useState(0);
 
   // Profile is per-device; refresh on focus.
   useFocusEffect(
@@ -61,6 +62,14 @@ export default function RacingGameLobbyScreen() {
       })();
       return () => {
         cancelled = true;
+      };
+    }, [])
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setResetKey((k) => k + 1);
       };
     }, [])
   );
@@ -299,10 +308,11 @@ export default function RacingGameLobbyScreen() {
           </View>
 
           <View style={styles.howToWrap}>
-            <AccordionItem title='How to play' content={[HOW_TO_PLAY]} />
+            <AccordionItem key={`how-to-${resetKey}`} title='How to play' content={[HOW_TO_PLAY]} />
           </View>
-          <AccordionItem title='Prizes' content={[PRIZES]} />
+          <AccordionItem key={`prizes-${resetKey}`} title='Prizes' content={[PRIZES]} />
           <AccordionItem
+            key={`leaderboard-${resetKey}`}
             title='Leaderboard'
             content={[
               <View key='leaderboard-content' style={styles.boardWrap}>
