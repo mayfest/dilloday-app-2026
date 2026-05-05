@@ -19,7 +19,7 @@ import {
 const smartDilloImages = [
   {
     source: require('@/assets/images/smart-dillo/smart-dillo-cover.png'),
-    alt: 'Smart Dillo 2025 Cover',
+    alt: 'Smart Dillo 2026 Cover',
   },
   {
     source: require('@/assets/images/smart-dillo/smart-dillo-full-tank.png'),
@@ -221,9 +221,11 @@ export default function SmartDilloScreen() {
     useCallback(() => {
       return () => {
         setCurrentIndex(0);
+        setAutoplay(true);
+        scrollX.setValue(0);
         setGraphicsResetKey((k) => k + 1);
       };
-    }, [])
+    }, [scrollX])
   );
 
   return (
@@ -296,7 +298,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginVertical: 16,
+    marginTop: 10,
+    marginBottom: 8,
     overflow: 'visible',
   },
   pageTitle: {
@@ -308,8 +311,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingVertical: 20,
-    paddingBottom: 40,
+    paddingTop: 0,
+    paddingBottom: 60,
     alignItems: 'center',
   },
   sectionTitleText: {
@@ -369,7 +372,7 @@ const styles = StyleSheet.create({
   },
   dotsContainer: {
     flexDirection: 'row',
-    marginTop: 12,
+    marginTop: 7,
   },
   dotButton: {
     padding: 3,
@@ -390,6 +393,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 18,
+    lineHeight: 25,
     textAlign: 'left',
     color: Colors.light.text,
     marginTop: 10,

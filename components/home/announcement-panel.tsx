@@ -20,7 +20,7 @@ export default function AnnouncementPanel({ value }: AnnouncementPanelProps) {
       <View style={styles.contentContainer}>
         <View style={styles.textHeader}>
           <Text style={styles.header}>
-            ANNOUNCEMENT <Text style={styles.headerCarrot}>›</Text>
+            ANNOUNCEMENTS <Text style={styles.headerCarrot}>›</Text>
           </Text>
         </View>
         <View style={styles.textContainer}>
