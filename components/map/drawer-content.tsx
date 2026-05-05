@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Colors } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 type LocationType =
   | 'main'
@@ -115,7 +115,7 @@ const LOCATION_INFO: Record<
   sponsor: {
     title: 'Sponsors and Vendors',
     description:
-      'Connect with our sponsors and vendors—partners showcasing products, services, giveaways, and more. These areas also include shade from the LOOK App, seating, shopping with Crossroads thrifting and Animal Records, and space to recharge.',
+      'Connect with our sponsors and vendors—partners showcasing products, services, giveaways, and more.',
     details:
       'Both pins on the map mark Sponsors and Vendors locations—visit each to explore activations and partner booths.',
   },
@@ -124,7 +124,7 @@ const LOCATION_INFO: Record<
     description:
       'Designated north exit path ensuring smooth departure from the event grounds. Follow the clearly marked route for the quickest way out.',
     details:
-      'Remember that re-entry is allowed until doors close at 10 PM. Please keep your wristband on for re-entry.',
+      'Remember that re-entry is allowed until the festival closes. Please keep your wristband on for re-entry.',
   },
   exitEndOfDay: {
     title: 'End of Day Exit',
@@ -157,7 +157,7 @@ const LOCATION_INFO: Record<
   beerGarden: {
     title: 'Beer Garden',
     description:
-      'Relax and enjoy a cold drink in our designated beer garden area. A variety of alcholic beverages will be available to you. Please make sure that you have a Beer Garden ticket before entering the area. The Beer Garden is only open to those 21+.',
+      'Relax and enjoy a cold drink in our designated beer garden area. A variety of alcholic beverages will be available to you. Please make sure that you have a Beer Garden ticket before entering the area.',
     details: 'Must be 21+ to enter. Please drink responsibly and have fun!',
   },
   lunasPub: {
@@ -169,7 +169,7 @@ const LOCATION_INFO: Record<
   restArea: {
     title: 'Sponsors and Vendors',
     description:
-      'Connect with our sponsors and vendors—partners showcasing products, services, giveaways, and more. These areas also include shade from the LOOK App, seating, shopping with Crossroads thrifting and Animal Records, and space to recharge.',
+      'Connect with our sponsors and vendors—partners showcasing products, services, giveaways, and more.',
     details:
       'Both pins on the map mark Sponsors and Vendors locations—visit each to explore activations and partner booths.',
   },
@@ -185,14 +185,20 @@ export default function DrawerContent({ type }: DrawerContentProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{info.title}</Text>
-      <Text style={styles.description}>{info.description}</Text>
-      <Text style={styles.details}>{info.details}</Text>
-      {info.linkLabel && info.linkTarget && (
-        <Text style={styles.link} onPress={() => router.push(info.linkTarget!)}>
-          {info.linkLabel}
-        </Text>
-      )}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator
+      >
+        <Text style={styles.title}>{info.title}</Text>
+        <Text style={styles.description}>{info.description}</Text>
+        <Text style={styles.details}>{info.details}</Text>
+        {info.linkLabel && info.linkTarget && (
+          <Text style={styles.link} onPress={() => router.push(info.linkTarget!)}>
+            {info.linkLabel}
+          </Text>
+        )}
+      </ScrollView>
     </View>
   );
 }
@@ -202,6 +208,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#000',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 16,
   },
   title: {
     fontSize: 20,
@@ -216,16 +228,19 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginBottom: 12,
     lineHeight: 22,
+    fontFamily: 'Futura',
   },
   details: {
     fontSize: 14,
     color: '#d3d3d3',
     lineHeight: 20,
     marginBottom: 12,
+    fontFamily: 'Futura',
   },
   link: {
     fontSize: 14,
     color: Colors.light.primary,
     textDecorationLine: 'underline',
+    fontFamily: 'Futura',
   },
 });
