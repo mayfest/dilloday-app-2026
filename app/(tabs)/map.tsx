@@ -412,7 +412,7 @@ export default function MapScreen() {
   );
 
   const renderStatic = () => (
-    <View style={styles.staticContainer}>
+    <View key={mapResetKey} style={styles.staticContainer}>
       <ImageZoomViewer
         imageUrls={[{ url: '', props: { source: MapImage } }]}
         backgroundColor='#000'
