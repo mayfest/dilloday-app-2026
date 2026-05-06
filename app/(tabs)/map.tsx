@@ -481,11 +481,7 @@ export default function MapScreen() {
 
   const renderStatic = () => (
     <View key={mapResetKey} style={styles.staticContainer}>
-      <Image
-        source={MapImage}
-        style={staticMapSize}
-        resizeMode='contain'
-      />
+      <Image source={MapImage} style={staticMapSize} resizeMode='contain' />
     </View>
   );
 
