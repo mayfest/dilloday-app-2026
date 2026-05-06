@@ -47,7 +47,7 @@ const LOCATION_INFO: Record<
   entrance: {
     title: 'Entrance',
     description:
-      'The main entrance to Dillo Day is through the Arts Circle. Please make sure that you have your wristband on before entering the event. Please also look at our bag policy before entering the event.',
+      'The main entrance to Dillo Day is behind Norris Student Center. Please make sure that you have your wristband on before entering the event. Please also look at our bag policy before entering the event.',
     details: '',
     linkLabel: 'View bag policy',
     linkTarget: '/faq',
@@ -73,7 +73,7 @@ const LOCATION_INFO: Record<
   burrow: {
     title: 'The Burrow',
     description:
-      "The Burrow is one of Dillo Day's stages—catch live sets and programming throughout the day.",
+      "Get ready to catch three amazing inaugural sets at The Burrow, Dillo Day's youngest stage!",
     details: 'Check the schedule for set times and who’s playing The Burrow.',
     linkLabel: 'View lineup',
     linkTarget: '/lineup',
@@ -89,13 +89,13 @@ const LOCATION_INFO: Record<
   restroom: {
     title: 'Restrooms',
     description:
-      'Clean portable restrooms located for your convenience throughout the venue. Regularly serviced to ensure a comfortable experience.',
+      'Clean restrooms located for your convenience throughout the venue. Regularly serviced to ensure a comfortable experience.',
     details: '',
   },
   restroomAccessible: {
     title: 'Restrooms',
     description:
-      'This restroom location includes accessible stalls and meets ADA guidelines. Clean, accessible portable restrooms—regularly serviced for your comfort.',
+      'Accessible restrooms located for your convenience on the Lakefill. Regularly serviced to ensure a comfortable experience.',
     details: '',
   },
   medical: {
@@ -109,7 +109,7 @@ const LOCATION_INFO: Record<
   'programming-event': {
     title: 'Programming Area',
     description:
-      'Come to the programming area to experience face painting, screen printing, and more! This area is perfect for those looking to get creative and have fun.',
+      "Come to the programming area to experience glitter tattoos, games, and other fun activities inspired by this year's Dillo Speedway theme! This area is perfect for those looking to get creative and have fun.",
     details: '',
   },
   sponsor: {
@@ -150,7 +150,7 @@ const LOCATION_INFO: Record<
   artistMerch: {
     title: 'Artist Merch',
     description:
-      'Support your favorite artists by purchasing exclusive merchandise. From t-shirts to vinyl records, find unique items to take home.',
+      'Support your favorite artists by purchasing exclusive merchandise.',
     details:
       'Merchandise is available for purchase at the designated booth on the map. Merchandise will be available until supplies last.',
   },
@@ -163,7 +163,7 @@ const LOCATION_INFO: Record<
   lunasPub: {
     title: "Drinking Space (Luna's Pub)",
     description:
-      "A designated 21+ drinking area—grab a drink and hang out at Luna's Pub. Follow any posted rules or wristband requirements for alcohol service at this location.",
+      "A designated 21+ drinking area—grab a drink and hang out at Luna's Pub. Follow any posted rules for alcohol service at this location.",
     details: 'Must be 21+ to enter. Please drink responsibly.',
   },
   restArea: {
