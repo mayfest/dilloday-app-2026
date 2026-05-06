@@ -75,7 +75,7 @@ export async function registerForPushNotifications() {
 export async function savePushNotificationToken(token: string) {
   const getToken = await getDocs(
     query(
-      collection(db, 'notification-tokens-2025'),
+      collection(db, 'notification-tokens-2026'),
       where('token', '==', token)
     )
   );
@@ -84,7 +84,7 @@ export async function savePushNotificationToken(token: string) {
     return;
   }
 
-  await addDoc(collection(db, 'notification-tokens-2025'), {
+  await addDoc(collection(db, 'notification-tokens-2026'), {
     token,
     platform: Platform.OS,
     time: Timestamp.now(),
