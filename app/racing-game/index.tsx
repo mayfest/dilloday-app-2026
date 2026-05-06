@@ -33,7 +33,7 @@ const HOW_TO_PLAY = `• Tilt your phone (or use device motion) to steer your ca
 • Cars you successfully pass add to your score.
 • The road speeds up as your score grows — stay sharp!`;
 
-const PRIZES = `Prizes for top racers will be announced here. Check back closer to Dillo Day, or ask an organizer for this year's rules.`;
+// const PRIZES = `Prizes for top racers will be announced here. Check back closer to Dillo Day, or ask an organizer for this year's rules.`;
 
 const LOBBY_TAB_BAR_CLEARANCE = 116;
 
@@ -314,11 +314,11 @@ export default function RacingGameLobbyScreen() {
               content={[HOW_TO_PLAY]}
             />
           </View>
-          <AccordionItem
+          {/* <AccordionItem
             key={`prizes-${resetKey}`}
             title='Prizes'
             content={[PRIZES]}
-          />
+          /> */}
           <AccordionItem
             key={`leaderboard-${resetKey}`}
             title='Leaderboard'

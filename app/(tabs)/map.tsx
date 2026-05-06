@@ -1,5 +1,11 @@
 // MapScreen.tsx
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import MapImage from '@/assets/images/dillo_map_no_caro.png';
 import DrawerContent from '@/components/map/drawer-content';
@@ -10,6 +16,7 @@ import { useFocusEffect } from 'expo-router';
 import {
   Dimensions,
   FlatList,
+  Image,
   Platform,
   SafeAreaView,
   StatusBar,
@@ -17,8 +24,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from 'react-native';
-import ImageZoomViewer from 'react-native-image-zoom-viewer';
 import MapView, { Callout, Marker, Region } from 'react-native-maps';
 
 const screen = Dimensions.get('window');
@@ -258,6 +265,28 @@ const northEast = {
   longitude: Math.max(...lngs) + PADDING,
 };
 
+/** Matches `react-native-image-zoom-viewer` fit logic (`image-viewer.component.js`). */
+function fitImageToViewport(
+  intrinsicW: number,
+  intrinsicH: number,
+  viewportW: number,
+  viewportH: number
+) {
+  let width = intrinsicW;
+  let height = intrinsicH;
+  if (width > viewportW) {
+    const widthPixel = viewportW / width;
+    width *= widthPixel;
+    height *= widthPixel;
+  }
+  if (height > viewportH) {
+    const heightPixel = viewportH / height;
+    width *= heightPixel;
+    height *= heightPixel;
+  }
+  return { width, height };
+}
+
 export default function MapScreen() {
   const mapRef = useRef<MapView>(null);
   const markerRefs = useRef<(Marker | null)[]>([]);
@@ -269,6 +298,14 @@ export default function MapScreen() {
     'interactive'
   );
   const [mapResetKey, setMapResetKey] = useState(0);
+
+  const { width: vw, height: vh } = useWindowDimensions();
+  const staticMapSize = useMemo(() => {
+    const src = Image.resolveAssetSource(MapImage);
+    const iw = src?.width ?? vw;
+    const ih = src?.height ?? vh;
+    return fitImageToViewport(iw, ih, vw, vh);
+  }, [vw, vh]);
 
   useFocusEffect(
     useCallback(() => {
@@ -444,13 +481,10 @@ export default function MapScreen() {
 
   const renderStatic = () => (
     <View key={mapResetKey} style={styles.staticContainer}>
-      <ImageZoomViewer
-        imageUrls={[{ url: '', props: { source: MapImage } }]}
-        backgroundColor='#000'
-        renderIndicator={() => null}
-        enableSwipeDown
-        onSwipeDown={() => setActiveTab('interactive')}
-        minScale={0.5}
+      <Image
+        source={MapImage}
+        style={staticMapSize}
+        resizeMode='contain'
       />
     </View>
   );
@@ -531,6 +565,8 @@ const styles = StyleSheet.create({
   staticContainer: {
     flex: 1,
     backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   drawer: {
