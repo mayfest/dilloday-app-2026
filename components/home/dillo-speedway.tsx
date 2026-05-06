@@ -2,13 +2,11 @@ import React, { useCallback, useRef } from 'react';
 
 import CarButton from '@/assets/racing-game/car-button.svg';
 import { useFocusEffect } from '@react-navigation/native';
-import { useRouter } from 'expo-router';
 import {
   Animated,
   Easing,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   useWindowDimensions,
 } from 'react-native';
@@ -38,7 +36,6 @@ function RacingBorder({ position }: { position: 'top' | 'bottom' }) {
 }
 
 export default function DilloSpeedwayButton() {
-  const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
   const carSize = 150;
   const carX = useRef(new Animated.Value(0)).current;
@@ -79,16 +76,52 @@ export default function DilloSpeedwayButton() {
     }, [carX, runCarAnimation])
   );
 
+  /*
+   * ─── Copy: original navigable Speedway Dillo button (commented reference) ───
+   * Restore by swapping the `return` below: use TouchableOpacity again, wire
+   * `router.navigate({ pathname: '/racing-game' })`, label `TAP TO PLAY`, and add:
+   *   import { useRouter } from 'expo-router';
+   *   import { ..., TouchableOpacity, ... } from 'react-native';
+   *   const router = useRouter();
+   *
+   * return (
+   *   <TouchableOpacity
+   *     style={[styles.container, { width: windowWidth }]}
+   *     activeOpacity={0.8}
+   *     onPress={() => {
+   *       router.navigate({ pathname: '/racing-game' });
+   *     }}
+   *   >
+   *     <View style={styles.titleRow}>
+   *       <Text style={styles.title}>SPEEDWAY DILLO</Text>
+   *     </View>
+   *     <View style={[styles.road, { width: windowWidth }]}>
+   *       <RacingBorder position='top' />
+   *       <Animated.View
+   *         pointerEvents='none'
+   *         style={[
+   *           styles.carWrapper,
+   *           {
+   *             transform: [
+   *               { translateX: carX },
+   *               { translateY: -carSize / 2 },
+   *             ],
+   *           },
+   *         ]}
+   *       >
+   *         <CarButton width={carSize} height={carSize} />
+   *       </Animated.View>
+   *       <View pointerEvents='none' style={styles.roadLabelWrapper}>
+   *         <Text style={styles.roadLabel}>TAP TO PLAY</Text>
+   *       </View>
+   *       <RacingBorder position='bottom' />
+   *     </View>
+   *   </TouchableOpacity>
+   * );
+   */
+
   return (
-    <TouchableOpacity
-      style={[styles.container, { width: windowWidth }]}
-      activeOpacity={0.8}
-      onPress={() => {
-        router.navigate({
-          pathname: '/racing-game',
-        });
-      }}
-    >
+    <View style={[styles.container, { width: windowWidth }]}>
       <View style={styles.titleRow}>
         <Text style={styles.title}>SPEEDWAY DILLO</Text>
       </View>
@@ -107,11 +140,11 @@ export default function DilloSpeedwayButton() {
           <CarButton width={carSize} height={carSize} />
         </Animated.View>
         <View pointerEvents='none' style={styles.roadLabelWrapper}>
-          <Text style={styles.roadLabel}>TAP TO PLAY</Text>
+          <Text style={styles.roadLabel}>COMING SOON</Text>
         </View>
         <RacingBorder position='bottom' />
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 
