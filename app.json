@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Dillo Day 2025",
+    "name": "Dillo Day 2026",
     "slug": "dillo-app",
     "version": "1.0.3",
     "orientation": "portrait",
@@ -31,7 +31,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/app-icon.png",
-        "backgroundColor": "#173885"
+        "backgroundColor": "#000000"
       },
       "package": "com.mayfest.dillo",
       "runtimeVersion": "1.0.2"
@@ -49,14 +49,14 @@
           "image": "./assets/icons/app-splash.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#173885"
+          "backgroundColor": "#FED102"
         }
       ],
       [
         "expo-notifications",
         {
           "icon": "./assets/icons/app-icon.png",
-          "color": "#173885",
+          "color": "#000000",
           "enableBackgroundRemoteNotifications": false
         }
       ],
