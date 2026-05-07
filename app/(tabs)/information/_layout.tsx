@@ -8,8 +8,8 @@ export default function InformationLayout() {
         animation: 'none',
       }}
     >
-      <Stack.Screen name="index" />
-      <Stack.Screen name="contact" />
+      <Stack.Screen name='index' />
+      <Stack.Screen name='contact' />
     </Stack>
   );
 }
