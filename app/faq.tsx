@@ -56,7 +56,14 @@ export default function FAQScreen() {
         contentContainerStyle={styles.contentContainer}
       >
         <View style={styles.titleContainer}>
-          <Text style={styles.pageTitle}>FAQ</Text>
+          <Text
+            style={styles.pageTitle}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+          >
+            FAQ
+          </Text>
         </View>
         <SearchBar onSearch={handleSearch} value={searchQuery} />
         {filteredData.length > 0 ? (
@@ -94,6 +101,8 @@ const styles = StyleSheet.create({
     fontSize: 38,
     letterSpacing: 1,
     paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   container: {
     flex: 1,

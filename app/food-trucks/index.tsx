@@ -87,7 +87,14 @@ export default function FoodTrucksScreen() {
   return (
     <DrawerScreen>
       <View style={styles.titleContainer}>
-        <Text style={styles.foodTitle}>Food</Text>
+        <Text
+          style={styles.foodTitle}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.5}
+        >
+          Food
+        </Text>
       </View>
       {trucks.length === 0 ? (
         <View style={styles.emptyWrap}>
@@ -115,6 +122,7 @@ export default function FoodTrucksScreen() {
 const styles = StyleSheet.create({
   titleContainer: {
     alignItems: 'center',
+    width: '100%',
     marginVertical: 16,
     overflow: 'visible',
   },
@@ -124,6 +132,8 @@ const styles = StyleSheet.create({
     fontSize: 38,
     letterSpacing: 1,
     paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   listContainer: {
     paddingHorizontal: H_GUTTER,

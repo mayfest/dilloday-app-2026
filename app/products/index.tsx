@@ -112,7 +112,14 @@ export default function ProductsScreen() {
   return (
     <DrawerScreen>
       <View style={styles.titleContainer}>
-        <Text style={styles.pageTitle}>Store</Text>
+        <Text
+          style={styles.pageTitle}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.5}
+        >
+          Store
+        </Text>
       </View>
       {loading ? (
         <View style={styles.centerContainer}>
@@ -166,6 +173,8 @@ const styles = StyleSheet.create({
     fontSize: 38,
     letterSpacing: 1,
     paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   centerContainer: {
     flex: 1,

@@ -35,8 +35,17 @@ const TRACK_CONTENT_HEIGHT = TRACK_HEIGHT - RAIL_HEIGHT * 2;
 /** Slimmer card + equal top/bottom inset so it sits vertically centered. */
 const ARTIST_CARD_HEIGHT = TRACK_CONTENT_HEIGHT - 10;
 const ARTIST_CARD_TOP = (TRACK_CONTENT_HEIGHT - ARTIST_CARD_HEIGHT) / 2;
-/** Narrow sets stay tappable/readable without distorting proportional scale too much */
-const ARTIST_CARD_MIN_WIDTH = 44;
+/** Approximate per-character width for the uppercase artist name at fontSize 13 + letterSpacing 0.25. */
+const ARTIST_NAME_CHAR_WIDTH = 8.5;
+/** Thumb (46) + marginLeft (8) + card horizontal padding (8 + 8). */
+const ARTIST_CARD_FIXED_OVERHEAD = 46 + 8 + 16;
+/** Floor so even very short names stay tappable. */
+const ARTIST_CARD_HARD_MIN = 100;
+
+function computeArtistCardMinWidth(name: string) {
+  const textWidth = Math.ceil(name.length * ARTIST_NAME_CHAR_WIDTH);
+  return Math.max(ARTIST_CARD_HARD_MIN, ARTIST_CARD_FIXED_OVERHEAD + textWidth);
+}
 
 /** Vertical time column dividers (track + header tick). */
 const TIMELINE_GRID_LINE_WIDTH = 1;
@@ -289,7 +298,7 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
                     const proportionalWidth =
                       slot.durationMinutes * pxPerMinute;
                     const width = Math.max(
-                      ARTIST_CARD_MIN_WIDTH,
+                      computeArtistCardMinWidth(slot.name.toUpperCase()),
                       proportionalWidth
                     );
 
@@ -324,7 +333,7 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
                           )}
 
                           <View style={styles.artistTextCol}>
-                            <Text style={styles.artistName} numberOfLines={2}>
+                            <Text style={styles.artistName} numberOfLines={1}>
                               {slot.name.toUpperCase()}
                             </Text>
                             <Text style={styles.artistTime}>

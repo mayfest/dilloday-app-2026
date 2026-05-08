@@ -20,8 +20,7 @@ import {
 import type { Artist } from '@/lib/artist';
 import { type Config, useConfig } from '@/lib/config';
 import type { Stage } from '@/lib/schedule';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
   ActivityIndicator,
@@ -346,7 +345,14 @@ export default function LineupScreen() {
         <StatusBar style='light' />
 
         <View style={styles.topBar}>
-          <Text style={styles.lineupTitle}>LINEUP</Text>
+          <Text
+            style={styles.lineupTitle}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+          >
+            LINEUP
+          </Text>
         </View>
 
         <ScrollView
@@ -526,6 +532,7 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
     paddingRight: 22,
     textAlign: 'center',
+    width: '100%',
   },
   timelineScroll: { flex: 1 },
   scheduleFallback: {

@@ -41,7 +41,14 @@ export default function SocialsPage() {
     <DrawerScreen>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.titleContainer}>
-          <Text style={styles.pageTitle}>Socials</Text>
+          <Text
+            style={styles.pageTitle}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+          >
+            Socials
+          </Text>
         </View>
         {SOCIALS.map(({ label, handle, url, icon }, i) => (
           <TouchableOpacity
@@ -97,6 +104,8 @@ const styles = StyleSheet.create({
     fontSize: 38,
     letterSpacing: 1,
     paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   container: {
     paddingHorizontal: 24,
@@ -149,6 +158,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Futura',
   },
   handle: {
+    flex: 1,
+    textAlign: 'right',
     fontSize: 18,
     fontWeight: '700',
     color: '#1472B9',

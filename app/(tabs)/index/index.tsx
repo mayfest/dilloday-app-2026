@@ -136,7 +136,14 @@ export default function HomeScreen() {
           }
         >
           <View style={styles.titleContainer}>
-            <Text style={styles.lineupTitle}>DILLO 54</Text>
+            <Text
+              style={styles.lineupTitle}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.5}
+            >
+              DILLO 54
+            </Text>
           </View>
 
           <ArtistPanel
@@ -181,6 +188,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignItems: 'center',
+    width: '100%',
     marginVertical: 16,
     overflow: 'visible',
   },
@@ -190,6 +198,8 @@ const styles = StyleSheet.create({
     fontSize: 38,
     letterSpacing: 1,
     paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   lineup: {
     width: '100%',
