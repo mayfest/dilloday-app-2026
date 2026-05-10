@@ -51,7 +51,14 @@ export default function SponsorsScreen() {
     <DrawerScreen>
       <ScrollView ref={scrollRef} contentContainerStyle={styles.container}>
         <View style={styles.titleContainer}>
-          <Text style={styles.pageTitle}>Sponsors</Text>
+          <Text
+            style={styles.pageTitle}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+          >
+            Sponsors
+          </Text>
         </View>
 
         {loading ? (
@@ -120,6 +127,8 @@ const styles = StyleSheet.create({
     fontSize: 32,
     letterSpacing: 1,
     paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   container: {
     paddingHorizontal: 24,

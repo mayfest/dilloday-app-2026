@@ -36,9 +36,25 @@ export function Rectangle({
 
       <View style={styles.rightAnnouncementRect}>
         {artist ? (
-          <Text style={styles.artistName}>{artist.toUpperCase()}</Text>
+          <Text
+            style={styles.artistName}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.6}
+          >
+            {artist.toUpperCase()}
+          </Text>
         ) : null}
-        {time ? <Text style={styles.timeText}>{time}</Text> : null}
+        {time ? (
+          <Text
+            style={styles.timeText}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.6}
+          >
+            {time}
+          </Text>
+        ) : null}
       </View>
     </Pressable>
   );
@@ -68,10 +84,9 @@ const styles = StyleSheet.create({
   rightAnnouncementRect: {
     flex: 1,
     minHeight: 50,
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 4,
     paddingHorizontal: 12,
     backgroundColor: '#fff',
   },
@@ -80,10 +95,13 @@ const styles = StyleSheet.create({
     fontFamily: 'FuturaBold',
     fontSize: 20,
     letterSpacing: 0.5,
+    flexShrink: 1,
   },
   timeText: {
     fontFamily: 'Futura',
     fontStyle: 'italic',
     fontSize: 18,
+    flexShrink: 1,
+    marginLeft: 8,
   },
 });

@@ -74,7 +74,14 @@ export default function AnnouncementScreen() {
 
   return (
     <DrawerScreen>
-      <Text style={styles.pageTitle}>ANNOUNCEMENTS</Text>
+      <Text
+        style={styles.pageTitle}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.5}
+      >
+        ANNOUNCEMENTS
+      </Text>
       <FlatList
         ref={listRef}
         data={announcements!}
@@ -112,6 +119,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 34,
     marginBottom: 16,
+    width: '100%',
   },
   errorText: {
     flex: 1,

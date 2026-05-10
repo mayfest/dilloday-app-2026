@@ -42,7 +42,14 @@ export default function InfoScreenTwo() {
   return (
     <DrawerScreen>
       <View style={styles.titleContainer}>
-        <Text style={styles.lineupTitle}>INFO</Text>
+        <Text
+          style={styles.lineupTitle}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.5}
+        >
+          INFO
+        </Text>
       </View>
       {/* <ScreenBackground /> */}
       <View style={styles.container}>
@@ -153,6 +160,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignItems: 'center',
+    width: '100%',
     marginTop: 40,
     marginBottom: 30,
     overflow: 'visible',
@@ -163,5 +171,7 @@ const styles = StyleSheet.create({
     fontSize: 38,
     letterSpacing: 1,
     paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
 });
