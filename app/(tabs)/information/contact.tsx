@@ -1,6 +1,10 @@
 import React from 'react';
 
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import { call, link, mail } from '@/lib/link';
 import { toastConfig } from '@/lib/theme';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -18,8 +22,6 @@ import Toast from 'react-native-toast-message';
 
 /** Space above the floating `GlobalTabBar` (height + offset) — keep in sync with `global-tab-bar.tsx`. */
 const TAB_BAR_CLEARANCE = 116;
-
-const TITLE_YELLOW = '#FFEB3B';
 
 function getCoordinatorNumber() {
   const now = new Date();
@@ -65,7 +67,9 @@ export default function ContactScreen() {
           showsVerticalScrollIndicator={false}
           bounces
         >
-          <Text style={styles.screenTitle}>Call Mayfest</Text>
+          <View style={styles.titleContainer}>
+            <Text style={styles.screenTitle}>Call Mayfest</Text>
+          </View>
 
           <TouchableOpacity
             style={styles.button}
@@ -144,19 +148,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 16,
   },
-  screenTitle: {
-    alignSelf: 'center',
-    color: TITLE_YELLOW,
-    fontFamily: 'SofachromeIt',
-    fontSize: 32,
-    includeFontPadding: false,
-    letterSpacing: 0.5,
-    lineHeight: 40,
+  titleContainer: {
+    alignSelf: 'stretch',
+    ...sofachromeTitleContainer(),
     marginBottom: 28,
-    maxWidth: 420,
-    paddingRight: 12,
-    textAlign: 'left',
-    width: '90%',
+  },
+  screenTitle: {
+    ...sofachromeTitleTextStyle(32, { lineHeight: 40 }),
+    letterSpacing: 0.5,
   },
   button: {
     alignItems: 'stretch',

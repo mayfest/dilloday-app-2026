@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import { Colors } from '@/constants/Colors';
 import { useFocusEffect } from 'expo-router';
 import {
@@ -294,21 +298,18 @@ export default function SmartDilloScreen() {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
+    alignItems: 'stretch',
   },
   titleContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    alignSelf: 'stretch',
+    ...sofachromeTitleContainer(),
     marginTop: 10,
     marginBottom: 8,
-    overflow: 'visible',
+    width: '100%',
   },
   pageTitle: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 27,
+    ...sofachromeTitleTextStyle(27),
     letterSpacing: 1,
-    paddingRight: 8,
   },
   container: {
     flex: 1,

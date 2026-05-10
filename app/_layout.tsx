@@ -28,14 +28,14 @@ import {
 } from '@expo-google-fonts/sofia-sans-condensed';
 import { FontAwesome6 } from '@expo/vector-icons';
 import type { DrawerContentComponentProps } from '@react-navigation/drawer';
+import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import {
-  DrawerContentScrollView,
-  DrawerItemList,
-} from '@react-navigation/drawer';
-import {
+  CommonActions,
   DarkTheme,
   DefaultTheme,
+  DrawerActions,
   ThemeProvider,
+  useLinkBuilder,
 } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Drawer } from 'expo-router/drawer';
@@ -89,6 +89,104 @@ function drawerContentPropsWithoutHiddenRoutes(
       ...(preloadedRouteKeys !== undefined ? { preloadedRouteKeys } : {}),
     },
   };
+}
+
+/**
+ * Matches DrawerItem’s default activeBackgroundColor (active tint @ 12% opacity).
+ * Used as Android ripple so press uses the same light yellow highlight, not default gray/black.
+ */
+function drawerItemBrandPressOverlay(tintHex?: string): string {
+  const hex = (tintHex ?? Colors.light.tint).trim();
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex);
+  if (!m) return 'rgba(255, 205, 70, 0.12)';
+  const n = parseInt(m[1], 16);
+  const r = (n >> 16) & 255;
+  const g = (n >> 8) & 255;
+  const b = n & 255;
+  return `rgba(${r}, ${g}, ${b}, 0.12)`;
+}
+
+function DrawerItemListWithBrandPress({
+  state,
+  navigation,
+  descriptors,
+}: Pick<
+  DrawerContentComponentProps,
+  'state' | 'navigation' | 'descriptors'
+>) {
+  const { buildHref } = useLinkBuilder();
+  const focusedRoute = state.routes[state.index];
+  const focusedDescriptor = descriptors[focusedRoute.key];
+  const focusedOptions = focusedDescriptor.options;
+
+  const {
+    drawerActiveTintColor,
+    drawerInactiveTintColor,
+    drawerActiveBackgroundColor,
+    drawerInactiveBackgroundColor,
+  } = focusedOptions;
+
+  const pressColor = drawerItemBrandPressOverlay(drawerActiveTintColor);
+
+  return (
+    <>
+      {state.routes.map((route, i) => {
+        const focused = i === state.index;
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'drawerItemPress',
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!event.defaultPrevented) {
+            navigation.dispatch({
+              ...(focused
+                ? DrawerActions.closeDrawer()
+                : CommonActions.navigate(route)),
+              target: state.key,
+            });
+          }
+        };
+
+        const {
+          title,
+          drawerLabel,
+          drawerIcon,
+          drawerLabelStyle,
+          drawerItemStyle,
+          drawerAllowFontScaling,
+        } = descriptors[route.key].options;
+
+        return (
+          <DrawerItem
+            key={route.key}
+            route={route}
+            href={buildHref(route.name, route.params)}
+            label={
+              drawerLabel !== undefined
+                ? drawerLabel
+                : title !== undefined
+                  ? title
+                  : route.name
+            }
+            icon={drawerIcon}
+            focused={focused}
+            activeTintColor={drawerActiveTintColor}
+            inactiveTintColor={drawerInactiveTintColor}
+            activeBackgroundColor={drawerActiveBackgroundColor}
+            inactiveBackgroundColor={drawerInactiveBackgroundColor}
+            allowFontScaling={drawerAllowFontScaling}
+            labelStyle={drawerLabelStyle}
+            style={drawerItemStyle}
+            pressColor={pressColor}
+            onPress={onPress}
+          />
+        );
+      })}
+    </>
+  );
 }
 
 export default function RootLayout() {
@@ -194,7 +292,7 @@ export default function RootLayout() {
                       { paddingTop: insets.top + 28 },
                     ]}
                   >
-                    <DrawerItemList {...listProps} />
+                    <DrawerItemListWithBrandPress {...listProps} />
                   </DrawerContentScrollView>
 
                   <View pointerEvents='none' style={styles.drawerRacingStripe}>

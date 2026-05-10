@@ -2,6 +2,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import { Colors } from '@/constants/Colors';
 import { SPONSOR_BOOTHS } from '@/constants/sponsor-booths';
 import { Sponsor, getSponsors } from '@/lib/sponsors';
@@ -108,18 +112,12 @@ export default function SponsorsScreen() {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    ...sofachromeTitleContainer(),
     marginBottom: 16,
-    overflow: 'visible',
   },
   pageTitle: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 32,
+    ...sofachromeTitleTextStyle(32),
     letterSpacing: 1,
-    paddingRight: 8,
   },
   container: {
     paddingHorizontal: 24,

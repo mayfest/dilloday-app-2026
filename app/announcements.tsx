@@ -1,11 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import AnnouncementItem from '@/components/announcements/announcement-item';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import DrawerScreen from '@/components/drawer-screen';
 import LoadingIndicator from '@/components/loading-indicator';
 import { Announcement, getAnnouncements } from '@/lib/announcement';
 import { useFocusEffect } from 'expo-router';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import Toast from 'react-native-toast-message';
 
 export default function AnnouncementScreen() {
@@ -74,7 +84,9 @@ export default function AnnouncementScreen() {
 
   return (
     <DrawerScreen>
-      <Text style={styles.pageTitle}>ANNOUNCEMENTS</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.pageTitle}>ANNOUNCEMENTS</Text>
+      </View>
       <FlatList
         ref={listRef}
         data={announcements!}
@@ -99,19 +111,20 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 5,
   },
+  titleContainer: {
+    alignSelf: 'stretch',
+    ...sofachromeTitleContainer(),
+    marginTop: 34,
+    marginBottom: 16,
+    width: '100%',
+  },
   content: {
     paddingHorizontal: 5,
     marginTop: 10,
     paddingBottom: 20,
   },
   pageTitle: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 20,
-    letterSpacing: 1,
-    textAlign: 'center',
-    marginTop: 34,
-    marginBottom: 16,
+    ...sofachromeTitleTextStyle(20, { letterSpacing: 1 }),
   },
   errorText: {
     flex: 1,

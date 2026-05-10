@@ -7,6 +7,10 @@ import ArtistPanel from '@/components/home/artist-panel';
 import DilloSpeedwayButton from '@/components/home/dillo-speedway';
 import LoadingIndicator from '@/components/loading-indicator';
 import TabScreen from '@/components/tab-screen';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import { getAnnouncements } from '@/lib/announcement';
 import { useConfig } from '@/lib/config';
 import { useRouter } from 'expo-router';
@@ -180,16 +184,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   titleContainer: {
-    alignItems: 'center',
+    ...sofachromeTitleContainer(),
     marginVertical: 16,
-    overflow: 'visible',
   },
   lineupTitle: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 38,
+    ...sofachromeTitleTextStyle(38),
     letterSpacing: 1,
-    paddingRight: 8,
   },
   lineup: {
     width: '100%',

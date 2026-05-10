@@ -4,6 +4,10 @@ import SIS from '@/assets/images/call-SIS.svg';
 import CallMayfest from '@/assets/images/call-mayfest.svg';
 import SmartDillo from '@/assets/images/smart-dillo.svg';
 import DrawerScreen from '@/components/drawer-screen';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import { VERSION } from '@/lib/app';
 import { call } from '@/lib/link';
 import { Link, useRouter } from 'expo-router';
@@ -152,16 +156,12 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   titleContainer: {
-    alignItems: 'center',
+    ...sofachromeTitleContainer(),
     marginTop: 40,
     marginBottom: 30,
-    overflow: 'visible',
   },
   lineupTitle: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 38,
+    ...sofachromeTitleTextStyle(38),
     letterSpacing: 1,
-    paddingRight: 8,
   },
 });

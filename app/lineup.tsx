@@ -7,6 +7,10 @@ import React, {
 } from 'react';
 
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import FestivalLineupTimeline, {
   type FestivalLineupTimelineHandle,
   type FestivalSlot,
@@ -31,7 +35,6 @@ import {
   Easing,
   Image,
   Modal,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -347,12 +350,7 @@ export default function LineupScreen() {
         <StatusBar style='light' />
 
         <View style={styles.topBar}>
-          <View
-            style={styles.lineupTitleWrap}
-            collapsable={Platform.OS === 'android' ? false : undefined}
-          >
-            <Text style={styles.lineupTitle}>LINEUP</Text>
-          </View>
+          <Text style={styles.lineupTitle}>LINEUP</Text>
         </View>
 
         <ScrollView
@@ -511,32 +509,19 @@ export default function LineupScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#000' },
   topBar: {
-    alignItems: 'center',
+    ...sofachromeTitleContainer(),
     backgroundColor: '#000',
-    overflow: 'visible',
     paddingTop: 18,
     paddingBottom: 14,
-    paddingHorizontal: 8,
-    width: '100%',
+    paddingHorizontal: 4,
     zIndex: 2,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#2a2a2a',
   },
-  lineupTitleWrap: {
-    overflow: 'visible',
-    alignItems: 'center',
-    justifyContent: 'center',
-    maxWidth: '100%',
-    paddingHorizontal: 32,
-    paddingVertical: 2,
-  },
   lineupTitle: {
+    ...sofachromeTitleTextStyle(29),
     color: LINEUP_ACCENT_YELLOW,
-    fontFamily: 'SofachromeIt',
-    fontSize: 29,
     lineHeight: 44,
-    textAlign: 'center',
-    overflow: 'visible',
   },
   timelineScroll: { flex: 1 },
   scheduleFallback: {

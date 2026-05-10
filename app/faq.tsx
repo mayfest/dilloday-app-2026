@@ -1,6 +1,10 @@
 import React, { useCallback, useRef, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import FAQCategorySection from '@/components/faq/faq-category-section';
 import SearchBar from '@/components/faq/faq-search-bar';
 import { Colors } from '@/constants/Colors';
@@ -82,18 +86,13 @@ export default function FAQScreen() {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    alignSelf: 'stretch',
+    ...sofachromeTitleContainer(),
     marginVertical: 16,
-    overflow: 'visible',
   },
   pageTitle: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 38,
+    ...sofachromeTitleTextStyle(38),
     letterSpacing: 1,
-    paddingRight: 8,
   },
   container: {
     flex: 1,
