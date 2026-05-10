@@ -31,6 +31,7 @@ import {
   Easing,
   Image,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -346,7 +347,12 @@ export default function LineupScreen() {
         <StatusBar style='light' />
 
         <View style={styles.topBar}>
-          <Text style={styles.lineupTitle}>LINEUP</Text>
+          <View
+            style={styles.lineupTitleWrap}
+            collapsable={Platform.OS === 'android' ? false : undefined}
+          >
+            <Text style={styles.lineupTitle}>LINEUP</Text>
+          </View>
         </View>
 
         <ScrollView
@@ -507,25 +513,30 @@ const styles = StyleSheet.create({
   topBar: {
     alignItems: 'center',
     backgroundColor: '#000',
-    elevation: 8,
     overflow: 'visible',
     paddingTop: 18,
     paddingBottom: 14,
     paddingHorizontal: 8,
     width: '100%',
     zIndex: 2,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#2a2a2a',
+  },
+  lineupTitleWrap: {
+    overflow: 'visible',
+    alignItems: 'center',
+    justifyContent: 'center',
+    maxWidth: '100%',
+    paddingHorizontal: 32,
+    paddingVertical: 2,
   },
   lineupTitle: {
     color: LINEUP_ACCENT_YELLOW,
-    fontFamily: 'Sofachrome',
+    fontFamily: 'SofachromeIt',
     fontSize: 29,
-    fontStyle: 'italic',
-    includeFontPadding: false,
-    lineHeight: 38,
-    overflow: 'visible',
-    paddingLeft: 4,
-    paddingRight: 22,
+    lineHeight: 44,
     textAlign: 'center',
+    overflow: 'visible',
   },
   timelineScroll: { flex: 1 },
   scheduleFallback: {

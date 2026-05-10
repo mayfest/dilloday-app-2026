@@ -13,13 +13,13 @@ import IconMarker from '@/components/map/location-marker';
 import TabScreen from '@/components/tab-screen';
 import { Colors } from '@/constants/Colors';
 import { useFocusEffect } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import {
   Dimensions,
   FlatList,
   Image,
   Platform,
-  SafeAreaView,
-  StatusBar,
+  StatusBar as RNStatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -27,6 +27,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import MapView, { Callout, Marker, Region } from 'react-native-maps';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const screen = Dimensions.get('window');
 const ASPECT_RATIO = screen.width / screen.height;
@@ -40,9 +41,6 @@ const ITEM_PREVIEW = 10;
 const ITEM_WIDTH = screen.width - 2 * ITEM_SPACING - 2 * ITEM_PREVIEW;
 const SNAP_WIDTH = ITEM_WIDTH + ITEM_SPACING;
 const DRAWER_PREVIEW_HEIGHT = 325;
-
-const STATUSBAR_HEIGHT =
-  Platform.OS === 'ios' ? 44 : StatusBar.currentHeight || 0;
 
 const INITIAL_REGION: Region = {
   latitude: LATITUDE,
@@ -288,6 +286,12 @@ function fitImageToViewport(
 }
 
 export default function MapScreen() {
+  const insets = useSafeAreaInsets();
+  /** Android often reports `insets.top === 0` while the theme status bar still eats space; use max with RN height. */
+  const headerTopInset =
+    Platform.OS === 'android'
+      ? Math.max(insets.top, RNStatusBar.currentHeight ?? 0)
+      : insets.top;
   const mapRef = useRef<MapView>(null);
   const markerRefs = useRef<(Marker | null)[]>([]);
   const drawerRef = useRef<FlatList<MarkerData>>(null);
@@ -367,41 +371,35 @@ export default function MapScreen() {
     setActiveIndex(index);
   };
 
-  const renderTabSelector = () => {
-    const Container = Platform.OS === 'ios' ? SafeAreaView : View;
-    const containerStyle =
-      Platform.OS === 'ios'
-        ? styles.iosTabOuterContainer
-        : styles.androidTabOuterContainer;
-
-    return (
-      <Container style={containerStyle}>
-        <View style={styles.tabContainer}>
-          {(['interactive', 'static'] as const).map((tab) => (
-            <TouchableOpacity
-              key={tab}
+  const renderTabSelector = () => (
+    <View
+      style={[styles.tabOuterContainer, { paddingTop: headerTopInset }]}
+    >
+      <View style={styles.tabContainer}>
+        {(['interactive', 'static'] as const).map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={[
+              styles.tabButton,
+              activeTab === tab && styles.activeTabButton,
+            ]}
+            onPress={() => setActiveTab(tab)}
+            activeOpacity={0.7}
+          >
+            <Text
               style={[
-                styles.tabButton,
-                activeTab === tab && styles.activeTabButton,
+                styles.tabText,
+                activeTab === tab && styles.activeTabText,
               ]}
-              onPress={() => setActiveTab(tab)}
-              activeOpacity={0.7}
             >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === tab && styles.activeTabText,
-                ]}
-              >
-                {tab.toUpperCase()}
-              </Text>
-              {activeTab === tab && <View style={styles.activeTabIndicator} />}
-            </TouchableOpacity>
-          ))}
-        </View>
-      </Container>
-    );
-  };
+              {tab.toUpperCase()}
+            </Text>
+            {activeTab === tab && <View style={styles.activeTabIndicator} />}
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
 
   const renderInteractive = () => (
     <>
@@ -486,19 +484,22 @@ export default function MapScreen() {
   );
 
   return (
-    <TabScreen>
-      <View key={mapResetKey} style={styles.container}>
-        {renderTabSelector()}
-        {activeTab === 'interactive' ? renderInteractive() : renderStatic()}
-      </View>
-    </TabScreen>
+    <>
+      <StatusBar style='light' backgroundColor='#000000' translucent />
+      <TabScreen safeAreaEdges={['bottom', 'left', 'right']}>
+        <View key={mapResetKey} style={styles.container}>
+          {renderTabSelector()}
+          {activeTab === 'interactive' ? renderInteractive() : renderStatic()}
+        </View>
+      </TabScreen>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
 
-  iosTabOuterContainer: {
+  tabOuterContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -509,15 +510,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
-  },
-
-  androidTabOuterContainer: {
-    position: 'absolute',
-    top: STATUSBAR_HEIGHT,
-    left: 0,
-    right: 0,
-    zIndex: 100,
-    backgroundColor: '#000',
     elevation: 4,
   },
 
