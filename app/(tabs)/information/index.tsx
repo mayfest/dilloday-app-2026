@@ -68,13 +68,16 @@ export default function InfoScreenTwo() {
                 width={SMALL_BUTTON_SIZE + 40}
               />
             </TouchableOpacity>
-            <Link href='/information/contact' style={styles.buttonWrapper}>
+            <TouchableOpacity
+              onPress={() => router.replace('/information/contact')}
+              style={styles.buttonWrapper}
+            >
               <CallMayfest
                 style={styles.svg}
                 height={BUTTON_SIZE}
                 width={BUTTON_SIZE}
               />
-            </Link>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.buttonRow}>
