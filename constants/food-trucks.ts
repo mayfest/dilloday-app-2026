@@ -66,4 +66,3 @@ export const FOOD_TRUCKS: FoodTruckMeta[] = [
     logo: require('@/assets/images/food-truck-logos/chills-logo.png'),
   },
 ];
-
