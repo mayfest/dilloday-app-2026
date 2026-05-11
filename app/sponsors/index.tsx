@@ -2,11 +2,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
+import { Colors } from '@/constants/Colors';
 import {
   sofachromeTitleContainer,
   sofachromeTitleTextStyle,
 } from '@/constants/sofachrome-screen-title';
-import { Colors } from '@/constants/Colors';
 import { SPONSOR_BOOTHS } from '@/constants/sponsor-booths';
 import { Sponsor, getSponsors } from '@/lib/sponsors';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -55,7 +55,14 @@ export default function SponsorsScreen() {
     <DrawerScreen>
       <ScrollView ref={scrollRef} contentContainerStyle={styles.container}>
         <View style={styles.titleContainer}>
-          <Text style={styles.pageTitle}>Sponsors</Text>
+          <Text
+            style={styles.pageTitle}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+          >
+            Sponsors
+          </Text>
         </View>
 
         {loading ? (
@@ -118,6 +125,9 @@ const styles = StyleSheet.create({
   pageTitle: {
     ...sofachromeTitleTextStyle(32),
     letterSpacing: 1,
+    paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   container: {
     paddingHorizontal: 24,

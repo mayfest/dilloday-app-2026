@@ -7,10 +7,6 @@ import React, {
 } from 'react';
 
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
-import {
-  sofachromeTitleContainer,
-  sofachromeTitleTextStyle,
-} from '@/constants/sofachrome-screen-title';
 import FestivalLineupTimeline, {
   type FestivalLineupTimelineHandle,
   type FestivalSlot,
@@ -21,11 +17,14 @@ import {
   MAIN_STAGE_TICKET_RENDERED_HEIGHT,
   getMainStageTicketSvgWidth,
 } from '@/components/schedule/main-stage-ticket';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import type { Artist } from '@/lib/artist';
 import { type Config, useConfig } from '@/lib/config';
 import type { Stage } from '@/lib/schedule';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
   ActivityIndicator,
@@ -350,7 +349,14 @@ export default function LineupScreen() {
         <StatusBar style='light' />
 
         <View style={styles.topBar}>
-          <Text style={styles.lineupTitle}>LINEUP</Text>
+          <Text
+            style={styles.lineupTitle}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+          >
+            LINEUP
+          </Text>
         </View>
 
         <ScrollView
@@ -518,10 +524,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#2a2a2a',
   },
+  /** Same SofachromeIt treatment as “DILLO 54” on the home tab (`app/(tabs)/index/index.tsx`). */
   lineupTitle: {
-    ...sofachromeTitleTextStyle(29),
-    color: LINEUP_ACCENT_YELLOW,
-    lineHeight: 44,
+    ...sofachromeTitleTextStyle(38),
+    letterSpacing: 1,
+    paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   timelineScroll: { flex: 1 },
   scheduleFallback: {

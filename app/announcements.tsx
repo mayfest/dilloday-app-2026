@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import AnnouncementItem from '@/components/announcements/announcement-item';
-import {
-  sofachromeTitleContainer,
-  sofachromeTitleTextStyle,
-} from '@/constants/sofachrome-screen-title';
 import DrawerScreen from '@/components/drawer-screen';
 import LoadingIndicator from '@/components/loading-indicator';
+import {
+  sofachromeTitleContainer
+} from '@/constants/sofachrome-screen-title';
 import { Announcement, getAnnouncements } from '@/lib/announcement';
 import { useFocusEffect } from 'expo-router';
 import {
@@ -84,9 +83,14 @@ export default function AnnouncementScreen() {
 
   return (
     <DrawerScreen>
-      <View style={styles.titleContainer}>
-        <Text style={styles.pageTitle}>ANNOUNCEMENTS</Text>
-      </View>
+      <Text
+        style={styles.pageTitle}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.5}
+      >
+        ANNOUNCEMENTS
+      </Text>
       <FlatList
         ref={listRef}
         data={announcements!}
@@ -124,7 +128,14 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   pageTitle: {
-    ...sofachromeTitleTextStyle(20, { letterSpacing: 1 }),
+    color: '#FFEB3B',
+    fontFamily: 'SofachromeIt',
+    fontSize: 20,
+    letterSpacing: 1,
+    textAlign: 'center',
+    marginTop: 34,
+    marginBottom: 16,
+    width: '100%',
   },
   errorText: {
     flex: 1,

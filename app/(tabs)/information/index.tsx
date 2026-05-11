@@ -5,12 +5,11 @@ import CallMayfest from '@/assets/images/call-mayfest.svg';
 import SmartDillo from '@/assets/images/smart-dillo.svg';
 import DrawerScreen from '@/components/drawer-screen';
 import {
-  sofachromeTitleContainer,
-  sofachromeTitleTextStyle,
+  sofachromeTitleTextStyle
 } from '@/constants/sofachrome-screen-title';
 import { VERSION } from '@/lib/app';
 import { call } from '@/lib/link';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import {
   Dimensions,
   Linking,
@@ -46,7 +45,14 @@ export default function InfoScreenTwo() {
   return (
     <DrawerScreen>
       <View style={styles.titleContainer}>
-        <Text style={styles.lineupTitle}>INFO</Text>
+        <Text
+          style={styles.lineupTitle}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.5}
+        >
+          INFO
+        </Text>
       </View>
       {/* <ScreenBackground /> */}
       <View style={styles.container}>
@@ -156,12 +162,16 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   titleContainer: {
-    ...sofachromeTitleContainer(),
+    alignItems: 'center',
+    width: '100%',
     marginTop: 40,
     marginBottom: 30,
   },
   lineupTitle: {
     ...sofachromeTitleTextStyle(38),
     letterSpacing: 1,
+    paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
 });

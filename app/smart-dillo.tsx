@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
+import { Colors } from '@/constants/Colors';
 import {
   sofachromeTitleContainer,
   sofachromeTitleTextStyle,
 } from '@/constants/sofachrome-screen-title';
-import { Colors } from '@/constants/Colors';
 import { useFocusEffect } from 'expo-router';
 import {
   ActivityIndicator,
@@ -240,7 +240,14 @@ export default function SmartDilloScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.titleContainer}>
-          <Text style={styles.pageTitle}>Smart Dillo</Text>
+          <Text
+            style={styles.pageTitle}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+          >
+            Smart Dillo
+          </Text>
         </View>
 
         <View style={styles.container}>
@@ -310,6 +317,9 @@ const styles = StyleSheet.create({
   pageTitle: {
     ...sofachromeTitleTextStyle(27),
     letterSpacing: 1,
+    paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   container: {
     flex: 1,

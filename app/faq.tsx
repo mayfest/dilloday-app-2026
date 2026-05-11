@@ -1,14 +1,14 @@
 import React, { useCallback, useRef, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
-import {
-  sofachromeTitleContainer,
-  sofachromeTitleTextStyle,
-} from '@/constants/sofachrome-screen-title';
 import FAQCategorySection from '@/components/faq/faq-category-section';
 import SearchBar from '@/components/faq/faq-search-bar';
 import { Colors } from '@/constants/Colors';
 import { FAQ_DATA } from '@/constants/faq';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import { useFocusEffect } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -60,7 +60,14 @@ export default function FAQScreen() {
         contentContainerStyle={styles.contentContainer}
       >
         <View style={styles.titleContainer}>
-          <Text style={styles.pageTitle}>FAQ</Text>
+          <Text
+            style={styles.pageTitle}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+          >
+            FAQ
+          </Text>
         </View>
         <SearchBar onSearch={handleSearch} value={searchQuery} />
         {filteredData.length > 0 ? (
@@ -93,6 +100,9 @@ const styles = StyleSheet.create({
   pageTitle: {
     ...sofachromeTitleTextStyle(38),
     letterSpacing: 1,
+    paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   container: {
     flex: 1,

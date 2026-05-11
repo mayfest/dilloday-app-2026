@@ -8,8 +8,7 @@ import DilloSpeedwayButton from '@/components/home/dillo-speedway';
 import LoadingIndicator from '@/components/loading-indicator';
 import TabScreen from '@/components/tab-screen';
 import {
-  sofachromeTitleContainer,
-  sofachromeTitleTextStyle,
+  sofachromeTitleTextStyle
 } from '@/constants/sofachrome-screen-title';
 import { getAnnouncements } from '@/lib/announcement';
 import { useConfig } from '@/lib/config';
@@ -140,7 +139,14 @@ export default function HomeScreen() {
           }
         >
           <View style={styles.titleContainer}>
-            <Text style={styles.lineupTitle}>DILLO 54</Text>
+            <Text
+              style={styles.lineupTitle}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.5}
+            >
+              DILLO 54
+            </Text>
           </View>
 
           <ArtistPanel
@@ -184,12 +190,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   titleContainer: {
-    ...sofachromeTitleContainer(),
+    alignItems: 'center',
+    width: '100%',
     marginVertical: 16,
   },
   lineupTitle: {
     ...sofachromeTitleTextStyle(38),
     letterSpacing: 1,
+    paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   lineup: {
     width: '100%',

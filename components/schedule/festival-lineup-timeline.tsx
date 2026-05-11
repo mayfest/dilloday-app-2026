@@ -35,12 +35,30 @@ const TRACK_CONTENT_HEIGHT = TRACK_HEIGHT - RAIL_HEIGHT * 2;
 /** Slimmer card + equal top/bottom inset so it sits vertically centered. */
 const ARTIST_CARD_HEIGHT = TRACK_CONTENT_HEIGHT - 10;
 const ARTIST_CARD_TOP = (TRACK_CONTENT_HEIGHT - ARTIST_CARD_HEIGHT) / 2;
-/** Narrow sets stay tappable/readable without distorting proportional scale too much */
-const ARTIST_CARD_MIN_WIDTH = 44;
+/** Cards are clipped to their performance duration. Names wrap to extra lines when the slot is too narrow for one line. */
+const ARTIST_CARD_HARD_MIN = 56;
+/** Below this card width the music-note thumb is hidden so the name has room to wrap legibly. */
+const ARTIST_THUMB_HIDE_THRESHOLD = 110;
+/** Maximum lines the wrapped artist name will render before truncating with an ellipsis. */
+const ARTIST_NAME_MAX_LINES = 3;
 
 /** Vertical time column dividers (track + header tick). */
 const TIMELINE_GRID_LINE_WIDTH = 1;
 const TIMELINE_GRID_LINE_COLOR = '#767676';
+
+/** Vertical gap between stacked lanes inside a single stage's track. */
+const LANE_GAP = 8;
+
+function computeTrackContentHeight(numLanes: number) {
+  const safe = Math.max(1, numLanes);
+  return (
+    ARTIST_CARD_TOP * 2 + safe * ARTIST_CARD_HEIGHT + (safe - 1) * LANE_GAP
+  );
+}
+
+function computeTrackHeight(numLanes: number) {
+  return computeTrackContentHeight(numLanes) + RAIL_HEIGHT * 2;
+}
 
 export const STAGE_BLOCK_HEIGHT =
   STAGE_TITLE_HEIGHT + 6 + TRACK_HEIGHT + STAGE_BLOCK_GAP;
@@ -77,6 +95,50 @@ export type FestivalLineupTimelineHandle = {
     slot?: FestivalSlot;
   };
 };
+
+type PositionedSlot = {
+  slot: FestivalSlot;
+  left: number;
+  width: number;
+  lane: number;
+  visible: boolean;
+};
+
+/** Greedy lane assignment: a slot drops into the lowest lane whose previous card already ended at or before this card's left edge. */
+function layoutStageSlots(
+  slots: FestivalSlot[],
+  startM: number,
+  totalMinutes: number,
+  pxPerMinute: number
+): { positioned: PositionedSlot[]; numLanes: number } {
+  const sorted = [...slots].sort((a, b) => a.startMinutes - b.startMinutes);
+  const laneEnds: number[] = [];
+  const positioned: PositionedSlot[] = [];
+
+  for (const slot of sorted) {
+    const offsetMin = slot.startMinutes - startM;
+    const visible = !(
+      offsetMin + slot.durationMinutes < 0 || offsetMin > totalMinutes
+    );
+
+    const left = Math.max(0, offsetMin * pxPerMinute);
+    const proportionalWidth = slot.durationMinutes * pxPerMinute;
+    const width = Math.max(ARTIST_CARD_HARD_MIN, proportionalWidth);
+    const right = left + width;
+
+    let lane = laneEnds.findIndex((end) => end <= left);
+    if (lane === -1) {
+      lane = laneEnds.length;
+      laneEnds.push(right);
+    } else {
+      laneEnds[lane] = right;
+    }
+
+    positioned.push({ slot, left, width, lane, visible });
+  }
+
+  return { positioned, numLanes: Math.max(1, laneEnds.length) };
+}
 
 const MINUTES_DAY = 24 * 60;
 
@@ -245,101 +307,119 @@ const FestivalLineupTimeline = forwardRef<FestivalLineupTimelineHandle, Props>(
           </View>
         </ScrollView>
 
-        {stages.map((stage) => (
-          <View key={stage.key} style={styles.stageBlock}>
-            <View style={styles.stageTitleWrap}>
-              <Text style={styles.stageName}>{stage.name}</Text>
-            </View>
+        {stages.map((stage) => {
+          const { positioned, numLanes } = layoutStageSlots(
+            stage.slots,
+            startM,
+            totalMinutes,
+            pxPerMinute
+          );
+          const trackHeight = computeTrackHeight(numLanes);
+          const trackContentHeight = computeTrackContentHeight(numLanes);
 
-            <ScrollView
-              ref={(r) => {
-                stageRefs.current[stage.key] = r;
-              }}
-              horizontal
-              bounces={false}
-              showsHorizontalScrollIndicator={false}
-              scrollEventThrottle={16}
-              onScroll={handleScroll(stage.key)}
-            >
-              <View
-                style={[styles.timelineTrackWrap, { width: timelineWidth }]}
-              >
-                <RacingBorder width={timelineWidth} position='top' />
-                <RacingBorder width={timelineWidth} position='bottom' />
-
-                <View style={[styles.timelineTrack, { width: timelineWidth }]}>
-                  {Array.from({ length: columnCount + 1 }, (_, i) => (
-                    <View
-                      key={`${stage.key}-grid-${i}`}
-                      style={[styles.gridLine, { left: i * COLUMN_WIDTH }]}
-                    />
-                  ))}
-
-                  {stage.slots.map((slot) => {
-                    const offsetMin = slot.startMinutes - startM;
-
-                    if (
-                      offsetMin + slot.durationMinutes < 0 ||
-                      offsetMin > totalMinutes
-                    ) {
-                      return null;
-                    }
-
-                    const left = Math.max(0, offsetMin * pxPerMinute);
-                    const proportionalWidth =
-                      slot.durationMinutes * pxPerMinute;
-                    const width = Math.max(
-                      ARTIST_CARD_MIN_WIDTH,
-                      proportionalWidth
-                    );
-
-                    return (
-                      <Pressable
-                        key={slot.id}
-                        onPress={() => onPressArtist(slot, stage.name)}
-                        style={[
-                          styles.artistCard,
-                          {
-                            left,
-                            width,
-                            top: ARTIST_CARD_TOP,
-                          },
-                        ]}
-                      >
-                        <View style={styles.artistCardRow}>
-                          {slot.imageUri ? (
-                            <Image
-                              source={{ uri: slot.imageUri }}
-                              style={styles.artistThumb}
-                              resizeMode='cover'
-                            />
-                          ) : (
-                            <View style={styles.artistThumbPlaceholder}>
-                              <FontAwesome6
-                                name='music'
-                                size={14}
-                                color='#888'
-                              />
-                            </View>
-                          )}
-
-                          <View style={styles.artistTextCol}>
-                            <Text style={styles.artistName} numberOfLines={2}>
-                              {slot.name.toUpperCase()}
-                            </Text>
-                            <Text style={styles.artistTime}>
-                              {formatClock(slot.startMinutes)}
-                            </Text>
-                          </View>
-                        </View>
-                      </Pressable>
-                    );
-                  })}
-                </View>
+          return (
+            <View key={stage.key} style={styles.stageBlock}>
+              <View style={styles.stageTitleWrap}>
+                <Text style={styles.stageName}>{stage.name}</Text>
               </View>
-            </ScrollView>
-          </View>
-        ))}
+
+              <ScrollView
+                ref={(r) => {
+                  stageRefs.current[stage.key] = r;
+                }}
+                horizontal
+                bounces={false}
+                showsHorizontalScrollIndicator={false}
+                scrollEventThrottle={16}
+                onScroll={handleScroll(stage.key)}
+              >
+                <View
+                  style={[
+                    styles.timelineTrackWrap,
+                    { width: timelineWidth, height: trackHeight },
+                  ]}
+                >
+                  <RacingBorder width={timelineWidth} position='top' />
+                  <RacingBorder width={timelineWidth} position='bottom' />
+
+                  <View
+                    style={[
+                      styles.timelineTrack,
+                      { width: timelineWidth, height: trackContentHeight },
+                    ]}
+                  >
+                    {Array.from({ length: columnCount + 1 }, (_, i) => (
+                      <View
+                        key={`${stage.key}-grid-${i}`}
+                        style={[styles.gridLine, { left: i * COLUMN_WIDTH }]}
+                      />
+                    ))}
+
+                    {positioned.map(({ slot, left, width, lane, visible }) => {
+                      if (!visible) return null;
+
+                      const top =
+                        ARTIST_CARD_TOP +
+                        lane * (ARTIST_CARD_HEIGHT + LANE_GAP);
+                      const showThumb = width >= ARTIST_THUMB_HIDE_THRESHOLD;
+
+                      return (
+                        <Pressable
+                          key={slot.id}
+                          onPress={() => onPressArtist(slot, stage.name)}
+                          style={[
+                            styles.artistCard,
+                            {
+                              left,
+                              width,
+                              top,
+                            },
+                          ]}
+                        >
+                          <View style={styles.artistCardRow}>
+                            {showThumb &&
+                              (slot.imageUri ? (
+                                <Image
+                                  source={{ uri: slot.imageUri }}
+                                  style={styles.artistThumb}
+                                  resizeMode='cover'
+                                />
+                              ) : (
+                                <View style={styles.artistThumbPlaceholder}>
+                                  <FontAwesome6
+                                    name='music'
+                                    size={14}
+                                    color='#888'
+                                  />
+                                </View>
+                              ))}
+
+                            <View
+                              style={[
+                                styles.artistTextCol,
+                                !showThumb && styles.artistTextColNoThumb,
+                              ]}
+                            >
+                              <Text
+                                style={styles.artistName}
+                                numberOfLines={ARTIST_NAME_MAX_LINES}
+                              >
+                                {slot.name.toUpperCase()}
+                              </Text>
+                              <Text style={styles.artistTime} numberOfLines={1}>
+                                {formatClock(slot.startMinutes)}
+                              </Text>
+                            </View>
+                          </View>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </View>
+              </ScrollView>
+            </View>
+          );
+        })}
       </View>
     );
   }
@@ -479,6 +559,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     flex: 1,
     minWidth: 0,
+  },
+  artistTextColNoThumb: {
+    marginLeft: 0,
   },
   artistName: {
     color: '#fff',

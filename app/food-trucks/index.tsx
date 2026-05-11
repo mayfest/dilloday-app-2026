@@ -2,11 +2,10 @@ import React, { useCallback, useMemo, useRef } from 'react';
 
 import { ThemedText } from '@/components/ThemedText';
 import DrawerScreen from '@/components/drawer-screen';
-import {
-  sofachromeTitleContainer,
-  sofachromeTitleTextStyle,
-} from '@/constants/sofachrome-screen-title';
 import LoadingIndicator from '@/components/loading-indicator';
+import {
+  sofachromeTitleTextStyle
+} from '@/constants/sofachrome-screen-title';
 import { useConfig } from '@/lib/config';
 import {
   type ResolvedFoodTruck,
@@ -91,7 +90,14 @@ export default function FoodTrucksScreen() {
   return (
     <DrawerScreen>
       <View style={styles.titleContainer}>
-        <Text style={styles.foodTitle}>Food</Text>
+        <Text
+          style={styles.foodTitle}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.5}
+        >
+          Food
+        </Text>
       </View>
       {trucks.length === 0 ? (
         <View style={styles.emptyWrap}>
@@ -118,12 +124,16 @@ export default function FoodTrucksScreen() {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    ...sofachromeTitleContainer(),
+    alignItems: 'center',
+    width: '100%',
     marginVertical: 16,
   },
   foodTitle: {
     ...sofachromeTitleTextStyle(38),
     letterSpacing: 1,
+    paddingRight: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   listContainer: {
     paddingHorizontal: H_GUTTER,
