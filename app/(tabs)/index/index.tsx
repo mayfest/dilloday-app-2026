@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import InfoSpeedwayHome from '@/assets/images/info-speedway-home.svg';
 import MapSpeedwayHome from '@/assets/images/map-speedway-home.svg';
@@ -12,7 +12,7 @@ import {
 } from '@/constants/sofachrome-screen-title';
 import { getAnnouncements } from '@/lib/announcement';
 import { useConfig } from '@/lib/config';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import {
   RefreshControl,
   ScrollView,
@@ -55,6 +55,10 @@ export default function HomeScreen() {
   const [latestMessage, setLatestMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [nowMinutes, setNowMinutes] = useState(() => {
+    const d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  });
   const router = useRouter();
 
   const mapWidth = MAP_SVG.width * MAP_SCALE;
@@ -62,41 +66,77 @@ export default function HomeScreen() {
   const infoWidth = INFO_SVG.width * INFO_SCALE;
   const infoHeight = INFO_SVG.height * INFO_SCALE;
 
-  const nowMinutes = (() => {
+  const bumpClock = useCallback(() => {
     const d = new Date();
-    return d.getHours() * 60 + d.getMinutes();
-  })();
+    setNowMinutes(d.getHours() * 60 + d.getMinutes());
+  }, []);
 
-  const allArtists = config?.artists ? Object.values(config.artists) : [];
-  const timedArtists = allArtists
-    .filter((a) => a?.available !== false)
-    .map((a) => ({ artist: a, minutes: parseClockMinutes(a.time) }))
-    .filter(
-      (
-        x
-      ): x is {
-        artist: NonNullable<(typeof allArtists)[number]>;
-        minutes: number;
-      } => typeof x.minutes === 'number'
-    )
-    .sort((a, b) => a.minutes - b.minutes);
+  useEffect(() => {
+    bumpClock();
+    const id = setInterval(bumpClock, 60_000);
+    return () => clearInterval(id);
+  }, [bumpClock]);
 
-  const currentTimed =
-    timedArtists.length === 0
-      ? null
-      : ([...timedArtists].reverse().find((x) => x.minutes <= nowMinutes) ??
-        timedArtists[0]);
+  useFocusEffect(
+    useCallback(() => {
+      bumpClock();
+    }, [bumpClock])
+  );
 
-  const currentArtistName = currentTimed?.artist?.name ?? 'TBA';
-  const currentArtistTime = currentTimed?.artist?.time ?? '';
+  const timedArtists = useMemo(() => {
+    const allArtists = config?.artists ? Object.values(config.artists) : [];
+    return allArtists
+      .filter((a) => a?.available !== false)
+      .map((a) => ({ artist: a, minutes: parseClockMinutes(a.time) }))
+      .filter(
+        (
+          x
+        ): x is {
+          artist: NonNullable<(typeof allArtists)[number]>;
+          minutes: number;
+        } => typeof x.minutes === 'number'
+      )
+      .sort((a, b) => a.minutes - b.minutes);
+  }, [config?.artists]);
 
-  const nextTimed =
-    timedArtists.length === 0
-      ? null
-      : (timedArtists.find((x) => x.minutes > nowMinutes) ?? timedArtists[0]);
+  const { currentTimed, nextTimed } = useMemo(() => {
+    if (timedArtists.length === 0) {
+      return { currentTimed: null, nextTimed: null };
+    }
+    let currentIndex = -1;
+    for (let i = timedArtists.length - 1; i >= 0; i--) {
+      if (timedArtists[i].minutes <= nowMinutes) {
+        currentIndex = i;
+        break;
+      }
+    }
+    if (currentIndex < 0) {
+      return { currentTimed: null, nextTimed: timedArtists[0] };
+    }
+    const currentTimed = timedArtists[currentIndex];
+    const nextTimed =
+      currentIndex < timedArtists.length - 1
+        ? timedArtists[currentIndex + 1]
+        : null;
+    return { currentTimed, nextTimed };
+  }, [timedArtists, nowMinutes]);
 
-  const nextArtistName = nextTimed?.artist?.name ?? 'TBA';
-  const nextArtistTime = nextTimed?.artist?.time ?? '';
+  /** NOW only while clock is in [this act’s start, next act’s start) — no “now” during gaps before the next slot. */
+  const showNowPlaying =
+    currentTimed != null &&
+    nowMinutes >= currentTimed.minutes &&
+    (nextTimed == null || nowMinutes < nextTimed.minutes);
+
+  const currentArtistName = showNowPlaying
+    ? (currentTimed!.artist.name ?? '')
+    : '';
+  const currentArtistTime = showNowPlaying
+    ? (currentTimed!.artist.time ?? '')
+    : '';
+
+  /** NEXT: always show the following slot when it exists (including before the first set). */
+  const nextArtistName = nextTimed ? (nextTimed.artist.name ?? '') : '';
+  const nextArtistTime = nextTimed ? (nextTimed.artist.time ?? '') : '';
 
   const loadAnnouncements = async () => {
     setLoading(true);
