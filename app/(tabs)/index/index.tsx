@@ -31,6 +31,9 @@ const MAP_SCALE = 1;
 /** Resize the info SVG (1 = native pixel size from the asset). */
 const INFO_SCALE = 1;
 
+/** Fallback set length (in minutes) when we can't infer an end time from config. */
+const DEFAULT_SET_DURATION_MIN = 60;
+
 function parseClockMinutes(time?: string): number | null {
   if (!time) return null;
   const t = time.trim().toUpperCase();
@@ -65,35 +68,85 @@ export default function HomeScreen() {
   })();
 
   const allArtists = config?.artists ? Object.values(config.artists) : [];
+  // Include every artist (regardless of `available`) so unavailable acts still
+  // anchor the timeline; we gate visibility per slot below.
   const timedArtists = allArtists
-    .filter((a) => a?.available !== false)
-    .map((a) => ({ artist: a, minutes: parseClockMinutes(a.time) }))
+    .map((a) => ({ artist: a, minutes: parseClockMinutes(a?.time) }))
     .filter(
       (
         x
       ): x is {
         artist: NonNullable<(typeof allArtists)[number]>;
         minutes: number;
-      } => typeof x.minutes === 'number'
+      } => typeof x.minutes === 'number' && Boolean(x.artist)
     )
     .sort((a, b) => a.minutes - b.minutes);
 
-  const currentTimed =
-    timedArtists.length === 0
-      ? null
-      : ([...timedArtists].reverse().find((x) => x.minutes <= nowMinutes) ??
-        timedArtists[0]);
+  const currentIndex = (() => {
+    let idx = -1;
+    for (let i = 0; i < timedArtists.length; i++) {
+      if (timedArtists[i].minutes <= nowMinutes) {
+        idx = i;
+      } else {
+        break;
+      }
+    }
+    return idx;
+  })();
 
-  const currentArtistName = currentTimed?.artist?.name ?? 'TBA';
-  const currentArtistTime = currentTimed?.artist?.time ?? '';
+  const currentCandidate =
+    currentIndex >= 0 ? timedArtists[currentIndex] : null;
 
-  const nextTimed =
-    timedArtists.length === 0
-      ? null
-      : (timedArtists.find((x) => x.minutes > nowMinutes) ?? timedArtists[0]);
+  const currentEndMinutes = (() => {
+    if (!currentCandidate) return null;
+    const { artist, minutes } = currentCandidate;
+    const explicitEnd = parseClockMinutes(artist.endTime);
+    if (explicitEnd != null && explicitEnd > minutes) return explicitEnd;
+    if (
+      typeof artist.durationMinutes === 'number' &&
+      artist.durationMinutes > 0
+    ) {
+      return minutes + artist.durationMinutes;
+    }
+    const next = timedArtists[currentIndex + 1];
+    if (next) return next.minutes;
+    return minutes + DEFAULT_SET_DURATION_MIN;
+  })();
 
-  const nextArtistName = nextTimed?.artist?.name ?? 'TBA';
-  const nextArtistTime = nextTimed?.artist?.time ?? '';
+  const isCurrentlyPlaying =
+    currentCandidate != null &&
+    currentEndMinutes != null &&
+    nowMinutes < currentEndMinutes;
+
+  const showCurrent =
+    isCurrentlyPlaying && currentCandidate?.artist.available !== false;
+
+  const currentArtistName = showCurrent
+    ? (currentCandidate!.artist.name ?? '')
+    : '';
+  const currentArtistTime = showCurrent
+    ? (currentCandidate!.artist.time ?? '')
+    : '';
+
+  // Start with the next scheduled artist, then keep moving forward until an
+  // available artist is found. Wrap around for pre/post festival testing.
+  const nextCandidate = (() => {
+    if (timedArtists.length === 0) return null;
+
+    const nextIndex = timedArtists.findIndex((x) => x.minutes > nowMinutes);
+    const startIndex = nextIndex === -1 ? 0 : nextIndex;
+
+    for (let offset = 0; offset < timedArtists.length; offset++) {
+      const candidate =
+        timedArtists[(startIndex + offset) % timedArtists.length];
+      if (candidate.artist.available !== false) return candidate;
+    }
+
+    return null;
+  })();
+
+  const nextArtistName = nextCandidate?.artist.name ?? '';
+  const nextArtistTime = nextCandidate?.artist.time ?? '';
 
   const loadAnnouncements = async () => {
     setLoading(true);
