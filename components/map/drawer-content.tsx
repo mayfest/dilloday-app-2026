@@ -150,7 +150,7 @@ const LOCATION_INFO: Record<
   info: {
     title: 'Info Desk',
     description:
-      'Stop by the Info Desk to ask questions about wristbands, directions, activities, and general help during the festival.',
+      'Stop by the Info Desk to ask questions about directions, device charging, lost and found, activities, and other general help during the festival.',
     details: '',
   },
   artistMerch: {
