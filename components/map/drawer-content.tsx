@@ -147,6 +147,12 @@ const LOCATION_INFO: Record<
     details:
       'Bring your own reusable bottle to help us reduce waste and keep the environment clean.',
   },
+  info: {
+    title: 'Info Desk',
+    description:
+      'Stop by the Info Desk to ask questions about wristbands, directions, activities, and general help during the festival.',
+    details: '',
+  },
   artistMerch: {
     title: 'Artist Merch',
     description:
