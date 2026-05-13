@@ -21,6 +21,12 @@ export interface Artist {
   order?: number;
 }
 
+/** `available: false` = not announced; omitted `available` counts as announced (matches home NOW/NEXT). */
+export function isArtistAnnounced(artist: Artist | undefined | null): boolean {
+  if (!artist) return false;
+  return artist.available !== false;
+}
+
 export type ArtistParams = {
   artist: string;
   stage: string;

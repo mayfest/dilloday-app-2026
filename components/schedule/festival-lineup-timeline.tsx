@@ -24,7 +24,7 @@ const COLUMN_MINUTES_SPAN = 30;
 const COLUMN_WIDTH = 152;
 
 const HEADER_TIME_HEIGHT = 44;
-const STAGE_TITLE_HEIGHT = 34;
+const STAGE_TITLE_HEIGHT = 40;
 /** Vertical space between stage sections (title + track blocks). */
 const STAGE_BLOCK_GAP = 24;
 /** Taller track = taller stage row (title + this + gap). */
@@ -481,9 +481,7 @@ const styles = StyleSheet.create({
   stageName: {
     color: '#FFEB3B',
     fontFamily: 'FuturaBold',
-    fontSize: 17,
-    fontWeight: '800',
-    letterSpacing: 0.5,
+    fontSize: 20,
     textTransform: 'uppercase',
   },
   timelineTrackWrap: {

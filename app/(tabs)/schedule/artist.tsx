@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import StackScreen from '@/components/stack-screen';
 import { Colors } from '@/constants/Colors';
-import { ArtistParams } from '@/lib/artist';
+import { ArtistParams, isArtistAnnounced } from '@/lib/artist';
 import { useConfig } from '@/lib/config';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
@@ -31,7 +31,7 @@ export default function ArtistScreen() {
 
   return (
     <StackScreen>
-      {config !== null && artist !== null ? (
+      {config !== null && artist !== null && isArtistAnnounced(artist) ? (
         <ScrollView>
           <View style={styles.imageContainer}>
             <Image style={styles.image} source={{ uri: artist.image }} />
@@ -68,6 +68,12 @@ export default function ArtistScreen() {
             </View>
           </View>
         </ScrollView>
+      ) : config !== null && artist !== null ? (
+        <View style={styles.placeholderContainer}>
+          <Text style={styles.placeholderText}>
+            {"This artist hasn't been announced yet."}
+          </Text>
+        </View>
       ) : null}
     </StackScreen>
   );
@@ -118,5 +124,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 32,
     marginBottom: 80,
+  },
+  placeholderContainer: {
+    flex: 1,
+    padding: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderText: {
+    fontSize: 18,
+    fontFamily: 'Cabin_400Regular',
+    color: Colors.light.text,
+    textAlign: 'center',
   },
 });

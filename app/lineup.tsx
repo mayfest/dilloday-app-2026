@@ -21,7 +21,7 @@ import {
   sofachromeTitleContainer,
   sofachromeTitleTextStyle,
 } from '@/constants/sofachrome-screen-title';
-import type { Artist } from '@/lib/artist';
+import { type Artist } from '@/lib/artist';
 import { type Config, useConfig } from '@/lib/config';
 import type { Stage } from '@/lib/schedule';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';

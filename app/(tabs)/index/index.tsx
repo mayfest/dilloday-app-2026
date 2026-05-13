@@ -11,6 +11,7 @@ import {
   sofachromeTitleTextStyle
 } from '@/constants/sofachrome-screen-title';
 import { getAnnouncements } from '@/lib/announcement';
+import { isArtistAnnounced } from '@/lib/artist';
 import { useConfig } from '@/lib/config';
 import { useFocusEffect, useRouter } from 'expo-router';
 import {
@@ -50,6 +51,32 @@ function parseClockMinutes(time?: string): number | null {
   return h * 60 + m;
 }
 
+/**
+ * Times are same-calendar-day minutes only. The next slot can be “earlier” on
+ * the clock (e.g. 11 AM after 1:45 PM) when the next day’s first acts sort
+ * first — we must not treat NOW as running until that next morning start.
+ */
+const ASSUMED_MAX_SET_MINUTES = 150;
+
+/** After this (local clock), if no act has start > now, NEXT is the earliest “morning” act. */
+const NIGHT_NEXT_MORNING_AFTER = 19 * 60;
+/** “Morning restart” window for picking NEXT after a festival night (local clock). */
+const MORNING_BAND_START = 6 * 60;
+const MORNING_BAND_END = 13 * 60;
+
+function slotEndMinutesForNow(
+  current: { minutes: number },
+  next: { minutes: number } | null
+): number {
+  if (next == null) {
+    return current.minutes + ASSUMED_MAX_SET_MINUTES;
+  }
+  if (next.minutes > current.minutes) {
+    return next.minutes;
+  }
+  return current.minutes + ASSUMED_MAX_SET_MINUTES;
+}
+
 export default function HomeScreen() {
   const { config } = useConfig();
   const [latestMessage, setLatestMessage] = useState<string>('');
@@ -83,10 +110,10 @@ export default function HomeScreen() {
     }, [bumpClock])
   );
 
-  const timedArtists = useMemo(() => {
+  const allTimedArtists = useMemo(() => {
     const allArtists = config?.artists ? Object.values(config.artists) : [];
     return allArtists
-      .filter((a) => a?.available !== false)
+      .filter((a): a is NonNullable<(typeof allArtists)[number]> => !!a)
       .map((a) => ({ artist: a, minutes: parseClockMinutes(a.time) }))
       .filter(
         (
@@ -99,44 +126,89 @@ export default function HomeScreen() {
       .sort((a, b) => a.minutes - b.minutes);
   }, [config?.artists]);
 
-  const { currentTimed, nextTimed } = useMemo(() => {
-    if (timedArtists.length === 0) {
-      return { currentTimed: null, nextTimed: null };
+  /** Announced acts only — drives NEXT and whether NOW may show a name. */
+  const availableTimedArtists = useMemo(
+    () => allTimedArtists.filter((x) => isArtistAnnounced(x.artist)),
+    [allTimedArtists]
+  );
+
+  const { currentAll, nextAll } = useMemo(() => {
+    if (allTimedArtists.length === 0) {
+      return { currentAll: null, nextAll: null };
     }
     let currentIndex = -1;
-    for (let i = timedArtists.length - 1; i >= 0; i--) {
-      if (timedArtists[i].minutes <= nowMinutes) {
+    for (let i = allTimedArtists.length - 1; i >= 0; i--) {
+      if (allTimedArtists[i].minutes <= nowMinutes) {
         currentIndex = i;
         break;
       }
     }
     if (currentIndex < 0) {
-      return { currentTimed: null, nextTimed: timedArtists[0] };
+      return { currentAll: null, nextAll: allTimedArtists[0] };
     }
-    const currentTimed = timedArtists[currentIndex];
-    const nextTimed =
-      currentIndex < timedArtists.length - 1
-        ? timedArtists[currentIndex + 1]
+    const currentAll = allTimedArtists[currentIndex];
+    const nextAll =
+      currentIndex < allTimedArtists.length - 1
+        ? allTimedArtists[currentIndex + 1]
         : null;
-    return { currentTimed, nextTimed };
-  }, [timedArtists, nowMinutes]);
+    return { currentAll, nextAll };
+  }, [allTimedArtists, nowMinutes]);
 
-  /** NOW only while clock is in [this act’s start, next act’s start) — no “now” during gaps before the next slot. */
+  const slotEnd =
+    currentAll != null ? slotEndMinutesForNow(currentAll, nextAll) : null;
+
+  /** In [current start, slot end); slot end caps overnight gaps (see slotEndMinutesForNow). */
+  const showSlotPlaying =
+    currentAll != null &&
+    slotEnd != null &&
+    nowMinutes >= currentAll.minutes &&
+    nowMinutes < slotEnd;
+
+  /** NOW text only when that slot is “live” and the act is announced (`available !== false`). */
   const showNowPlaying =
-    currentTimed != null &&
-    nowMinutes >= currentTimed.minutes &&
-    (nextTimed == null || nowMinutes < nextTimed.minutes);
+    !!currentAll &&
+    showSlotPlaying &&
+    isArtistAnnounced(currentAll.artist);
 
   const currentArtistName = showNowPlaying
-    ? (currentTimed!.artist.name ?? '')
+    ? (currentAll.artist.name ?? '')
     : '';
   const currentArtistTime = showNowPlaying
-    ? (currentTimed!.artist.time ?? '')
+    ? (currentAll.artist.time ?? '')
     : '';
 
-  /** NEXT: always show the following slot when it exists (including before the first set). */
-  const nextArtistName = nextTimed ? (nextTimed.artist.name ?? '') : '';
-  const nextArtistTime = nextTimed ? (nextTimed.artist.time ?? '') : '';
+  const { nextArtistName, nextArtistTime } = useMemo(() => {
+    if (availableTimedArtists.length === 0) {
+      return { nextArtistName: '', nextArtistTime: '' };
+    }
+    const upcoming = availableTimedArtists.find((t) => t.minutes > nowMinutes);
+    if (upcoming) {
+      return {
+        nextArtistName: upcoming.artist.name ?? '',
+        nextArtistTime: upcoming.artist.time ?? '',
+      };
+    }
+    if (nowMinutes >= NIGHT_NEXT_MORNING_AFTER) {
+      const morning = availableTimedArtists.filter(
+        (t) =>
+          t.minutes >= MORNING_BAND_START && t.minutes < MORNING_BAND_END
+      );
+      if (morning.length > 0) {
+        const earliest = morning.reduce((a, b) =>
+          a.minutes <= b.minutes ? a : b
+        );
+        return {
+          nextArtistName: earliest.artist.name ?? '',
+          nextArtistTime: earliest.artist.time ?? '',
+        };
+      }
+    }
+    const last = availableTimedArtists[availableTimedArtists.length - 1]!;
+    return {
+      nextArtistName: last.artist.name ?? '',
+      nextArtistTime: last.artist.time ?? '',
+    };
+  }, [availableTimedArtists, nowMinutes]);
 
   const loadAnnouncements = async () => {
     setLoading(true);
