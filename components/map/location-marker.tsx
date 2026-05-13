@@ -20,7 +20,9 @@ type IconType =
   | 'id-card'
   | 'users'
   | 'exit'
-  | 'food';
+  | 'food'
+  | 'star'
+  | 'info-circle';
 interface Props {
   icon: IconType;
   label?: string;
