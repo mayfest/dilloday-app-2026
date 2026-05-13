@@ -7,7 +7,7 @@ import {
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-export const VERSION = '1.0.3';
+export const VERSION = '1.0.4';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyALC7_uNBF4IFQmr-CXOYa6s3slDka1KYc',

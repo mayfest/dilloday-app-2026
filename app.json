@@ -2,7 +2,7 @@
   "expo": {
     "name": "Dillo Day 2026",
     "slug": "dillo-app",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icons/app-icon.png",
     "scheme": "myapp",
@@ -14,7 +14,7 @@
       "entitlements": {
         "aps-environment": "production"
       },
-      "bundleIdentifier": "com.anonymous.dillo-app",
+      "bundleIdentifier": "com.mayfest.dilloday2026",
       "runtimeVersion": "1.0.2",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
