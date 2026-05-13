@@ -71,7 +71,8 @@ interface MarkerData {
     | 'water'
     | 'beerGarden'
     | 'lunasPub'
-    | 'restArea';
+    | 'restArea'
+    | 'info';
   icon:
     | 'truck'
     | 'store'
@@ -88,7 +89,9 @@ interface MarkerData {
     | 'id-card'
     | 'users'
     | 'exit'
-    | 'food';
+    | 'food'
+    | 'star'
+    | 'info-circle';
   label: string;
   coordinate: { latitude: number; longitude: number };
 }
@@ -115,7 +118,7 @@ const markers: MarkerData[] = [
     type: 'artistMerch',
     icon: 'store',
     label: 'Artist Merch',
-    coordinate: { latitude: 42.05325, longitude: -87.669917 },
+    coordinate: { latitude: 42.053666667, longitude: -87.669944444 },
   },
   {
     id: 'c',
@@ -150,7 +153,7 @@ const markers: MarkerData[] = [
     type: 'restroom',
     icon: 'restroom',
     label: 'Restrooms',
-    coordinate: { latitude: 42.053639, longitude: -87.672278 },
+    coordinate: { latitude: 42.053611, longitude: -87.671639 },
   },
   {
     id: 't',
@@ -185,21 +188,28 @@ const markers: MarkerData[] = [
     type: 'water',
     icon: 'water',
     label: 'Water Station',
-    coordinate: { latitude: 42.05225, longitude: -87.670056 },
+    coordinate: { latitude: 42.052277778, longitude: -87.669666667 },
   },
   {
     id: 'v',
     type: 'water',
     icon: 'water',
     label: 'Water Station',
-    coordinate: { latitude: 42.053611, longitude: -87.671639 },
+    coordinate: { latitude: 42.053639, longitude: -87.672278 },
   },
   {
     id: 'y',
     type: 'programming-event',
-    icon: 'person-booth',
+    icon: 'star',
     label: 'Programming Areas',
-    coordinate: { latitude: 42.052838, longitude: -87.670006 },
+    coordinate: { latitude: 42.053166667, longitude: -87.670277778 },
+  },
+  {
+    id: 'x',
+    type: 'info',
+    icon: 'info-circle',
+    label: 'Info Desk',
+    coordinate: { latitude: 42.052388889, longitude: -87.67025 },
   },
   {
     id: 'n',
@@ -220,7 +230,7 @@ const markers: MarkerData[] = [
     type: 'restArea',
     icon: 'person-booth',
     label: 'Sponsors and Vendors',
-    coordinate: { latitude: 42.05557, longitude: -87.671849 },
+    coordinate: { latitude: 42.052888889, longitude: -87.669777778 },
   },
   {
     id: 's',
@@ -228,6 +238,13 @@ const markers: MarkerData[] = [
     icon: 'person-booth',
     label: 'Sponsors and Vendors',
     coordinate: { latitude: 42.055587, longitude: -87.670527 },
+  },
+  {
+    id: 'r',
+    type: 'sponsor',
+    icon: 'person-booth',
+    label: 'Sponsors and Vendors',
+    coordinate: { latitude: 42.054, longitude: -87.670722222 },
   },
   {
     id: 'i',
@@ -481,7 +498,11 @@ export default function MapScreen() {
 
   const renderStatic = () => (
     <View key={mapResetKey} style={styles.staticContainer}>
-      <Image source={MapImage} style={staticMapSize} resizeMode='contain' />
+      <Image
+        source={MapImage}
+        style={[staticMapSize, styles.staticMapImage]}
+        resizeMode='contain'
+      />
     </View>
   );
 
@@ -563,6 +584,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  staticMapImage: {
+    transform: [{ translateY: -36 }],
   },
 
   drawer: {
