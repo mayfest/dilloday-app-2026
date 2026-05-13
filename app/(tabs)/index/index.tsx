@@ -121,8 +121,12 @@ export default function HomeScreen() {
   const showCurrent =
     isCurrentlyPlaying && currentCandidate?.artist.available !== false;
 
-  const currentArtistName = showCurrent ? (currentCandidate!.artist.name ?? '') : '';
-  const currentArtistTime = showCurrent ? (currentCandidate!.artist.time ?? '') : '';
+  const currentArtistName = showCurrent
+    ? (currentCandidate!.artist.name ?? '')
+    : '';
+  const currentArtistTime = showCurrent
+    ? (currentCandidate!.artist.time ?? '')
+    : '';
 
   // Start with the next scheduled artist, then keep moving forward until an
   // available artist is found. Wrap around for pre/post festival testing.
