@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import InfoSpeedwayHome from '@/assets/images/info-speedway-home.svg';
 import MapSpeedwayHome from '@/assets/images/map-speedway-home.svg';
@@ -7,9 +7,13 @@ import ArtistPanel from '@/components/home/artist-panel';
 import DilloSpeedwayButton from '@/components/home/dillo-speedway';
 import LoadingIndicator from '@/components/loading-indicator';
 import TabScreen from '@/components/tab-screen';
+import {
+  sofachromeTitleTextStyle
+} from '@/constants/sofachrome-screen-title';
 import { getAnnouncements } from '@/lib/announcement';
+import { isArtistAnnounced } from '@/lib/artist';
 import { useConfig } from '@/lib/config';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import {
   RefreshControl,
   ScrollView,
@@ -47,11 +51,41 @@ function parseClockMinutes(time?: string): number | null {
   return h * 60 + m;
 }
 
+/**
+ * Times are same-calendar-day minutes only. The next slot can be “earlier” on
+ * the clock (e.g. 11 AM after 1:45 PM) when the next day’s first acts sort
+ * first — we must not treat NOW as running until that next morning start.
+ */
+const ASSUMED_MAX_SET_MINUTES = 150;
+
+/** After this (local clock), if no act has start > now, NEXT is the earliest “morning” act. */
+const NIGHT_NEXT_MORNING_AFTER = 19 * 60;
+/** “Morning restart” window for picking NEXT after a festival night (local clock). */
+const MORNING_BAND_START = 6 * 60;
+const MORNING_BAND_END = 13 * 60;
+
+function slotEndMinutesForNow(
+  current: { minutes: number },
+  next: { minutes: number } | null
+): number {
+  if (next == null) {
+    return current.minutes + ASSUMED_MAX_SET_MINUTES;
+  }
+  if (next.minutes > current.minutes) {
+    return next.minutes;
+  }
+  return current.minutes + ASSUMED_MAX_SET_MINUTES;
+}
+
 export default function HomeScreen() {
   const { config } = useConfig();
   const [latestMessage, setLatestMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [nowMinutes, setNowMinutes] = useState(() => {
+    const d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  });
   const router = useRouter();
 
   const mapWidth = MAP_SVG.width * MAP_SCALE;
@@ -59,41 +93,122 @@ export default function HomeScreen() {
   const infoWidth = INFO_SVG.width * INFO_SCALE;
   const infoHeight = INFO_SVG.height * INFO_SCALE;
 
-  const nowMinutes = (() => {
+  const bumpClock = useCallback(() => {
     const d = new Date();
-    return d.getHours() * 60 + d.getMinutes();
-  })();
+    setNowMinutes(d.getHours() * 60 + d.getMinutes());
+  }, []);
 
-  const allArtists = config?.artists ? Object.values(config.artists) : [];
-  const timedArtists = allArtists
-    .filter((a) => a?.available !== false)
-    .map((a) => ({ artist: a, minutes: parseClockMinutes(a.time) }))
-    .filter(
-      (
-        x
-      ): x is {
-        artist: NonNullable<(typeof allArtists)[number]>;
-        minutes: number;
-      } => typeof x.minutes === 'number'
-    )
-    .sort((a, b) => a.minutes - b.minutes);
+  useEffect(() => {
+    bumpClock();
+    const id = setInterval(bumpClock, 60_000);
+    return () => clearInterval(id);
+  }, [bumpClock]);
 
-  const currentTimed =
-    timedArtists.length === 0
-      ? null
-      : ([...timedArtists].reverse().find((x) => x.minutes <= nowMinutes) ??
-        timedArtists[0]);
+  useFocusEffect(
+    useCallback(() => {
+      bumpClock();
+    }, [bumpClock])
+  );
 
-  const currentArtistName = currentTimed?.artist?.name ?? 'TBA';
-  const currentArtistTime = currentTimed?.artist?.time ?? '';
+  const allTimedArtists = useMemo(() => {
+    const allArtists = config?.artists ? Object.values(config.artists) : [];
+    return allArtists
+      .filter((a): a is NonNullable<(typeof allArtists)[number]> => !!a)
+      .map((a) => ({ artist: a, minutes: parseClockMinutes(a.time) }))
+      .filter(
+        (
+          x
+        ): x is {
+          artist: NonNullable<(typeof allArtists)[number]>;
+          minutes: number;
+        } => typeof x.minutes === 'number'
+      )
+      .sort((a, b) => a.minutes - b.minutes);
+  }, [config?.artists]);
 
-  const nextTimed =
-    timedArtists.length === 0
-      ? null
-      : (timedArtists.find((x) => x.minutes > nowMinutes) ?? timedArtists[0]);
+  /** Announced acts only — drives NEXT and whether NOW may show a name. */
+  const availableTimedArtists = useMemo(
+    () => allTimedArtists.filter((x) => isArtistAnnounced(x.artist)),
+    [allTimedArtists]
+  );
 
-  const nextArtistName = nextTimed?.artist?.name ?? 'TBA';
-  const nextArtistTime = nextTimed?.artist?.time ?? '';
+  const { currentAll, nextAll } = useMemo(() => {
+    if (allTimedArtists.length === 0) {
+      return { currentAll: null, nextAll: null };
+    }
+    let currentIndex = -1;
+    for (let i = allTimedArtists.length - 1; i >= 0; i--) {
+      if (allTimedArtists[i].minutes <= nowMinutes) {
+        currentIndex = i;
+        break;
+      }
+    }
+    if (currentIndex < 0) {
+      return { currentAll: null, nextAll: allTimedArtists[0] };
+    }
+    const currentAll = allTimedArtists[currentIndex];
+    const nextAll =
+      currentIndex < allTimedArtists.length - 1
+        ? allTimedArtists[currentIndex + 1]
+        : null;
+    return { currentAll, nextAll };
+  }, [allTimedArtists, nowMinutes]);
+
+  const slotEnd =
+    currentAll != null ? slotEndMinutesForNow(currentAll, nextAll) : null;
+
+  /** In [current start, slot end); slot end caps overnight gaps (see slotEndMinutesForNow). */
+  const showSlotPlaying =
+    currentAll != null &&
+    slotEnd != null &&
+    nowMinutes >= currentAll.minutes &&
+    nowMinutes < slotEnd;
+
+  /** NOW text only when that slot is “live” and the act is announced (`available !== false`). */
+  const showNowPlaying =
+    !!currentAll &&
+    showSlotPlaying &&
+    isArtistAnnounced(currentAll.artist);
+
+  const currentArtistName = showNowPlaying
+    ? (currentAll.artist.name ?? '')
+    : '';
+  const currentArtistTime = showNowPlaying
+    ? (currentAll.artist.time ?? '')
+    : '';
+
+  const { nextArtistName, nextArtistTime } = useMemo(() => {
+    if (availableTimedArtists.length === 0) {
+      return { nextArtistName: '', nextArtistTime: '' };
+    }
+    const upcoming = availableTimedArtists.find((t) => t.minutes > nowMinutes);
+    if (upcoming) {
+      return {
+        nextArtistName: upcoming.artist.name ?? '',
+        nextArtistTime: upcoming.artist.time ?? '',
+      };
+    }
+    if (nowMinutes >= NIGHT_NEXT_MORNING_AFTER) {
+      const morning = availableTimedArtists.filter(
+        (t) =>
+          t.minutes >= MORNING_BAND_START && t.minutes < MORNING_BAND_END
+      );
+      if (morning.length > 0) {
+        const earliest = morning.reduce((a, b) =>
+          a.minutes <= b.minutes ? a : b
+        );
+        return {
+          nextArtistName: earliest.artist.name ?? '',
+          nextArtistTime: earliest.artist.time ?? '',
+        };
+      }
+    }
+    const last = availableTimedArtists[availableTimedArtists.length - 1]!;
+    return {
+      nextArtistName: last.artist.name ?? '',
+      nextArtistTime: last.artist.time ?? '',
+    };
+  }, [availableTimedArtists, nowMinutes]);
 
   const loadAnnouncements = async () => {
     setLoading(true);
@@ -190,12 +305,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginVertical: 16,
-    overflow: 'visible',
   },
   lineupTitle: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 38,
+    ...sofachromeTitleTextStyle(38),
     letterSpacing: 1,
     paddingRight: 8,
     width: '100%',

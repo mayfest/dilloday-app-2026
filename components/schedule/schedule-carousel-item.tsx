@@ -71,7 +71,7 @@ export default function ScheduleCarouselItem({
     }
   };
 
-  // Filter out unavailable artists
+  // Filter out unavailable artists (`available: false` or omitted)
   const availableArtists = stage.artists.filter((artistId) => {
     const artist = config?.artists?.[artistId];
     return artist && artist.available;

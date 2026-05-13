@@ -22,12 +22,13 @@ export function Rectangle({
 }: RectangleProps) {
   return (
     <Pressable
-      onPress={() =>
+      onPress={() => {
+        if (!artist?.trim()) return;
         router.push({
           pathname: '/lineup',
           params: { artist },
-        })
-      }
+        });
+      }}
       style={[styles.container, { opacity: rectangleOpacity }]}
     >
       <View style={[styles.leftColorRect, { backgroundColor: color }]}>

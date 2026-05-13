@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import DrawerScreen from '@/components/drawer-screen';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import { useRouter } from 'expo-router';
 import {
   ActivityIndicator,
@@ -161,16 +165,11 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   titleContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    ...sofachromeTitleContainer(),
     marginVertical: 16,
-    overflow: 'visible',
   },
   pageTitle: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 38,
+    ...sofachromeTitleTextStyle(38),
     letterSpacing: 1,
     paddingRight: 8,
     width: '100%',

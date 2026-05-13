@@ -3,6 +3,10 @@ import React, { useEffect, useState } from 'react';
 import DrawerScreen from '@/components/drawer-screen';
 import { Colors } from '@/constants/Colors';
 import { SOCIALS } from '@/constants/socials';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
 import { FontAwesome6 } from '@expo/vector-icons';
 import {
   Dimensions,
@@ -92,16 +96,11 @@ export default function SocialsPage() {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    ...sofachromeTitleContainer(),
     marginBottom: 16,
-    overflow: 'visible',
   },
   pageTitle: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 38,
+    ...sofachromeTitleTextStyle(38),
     letterSpacing: 1,
     paddingRight: 8,
     width: '100%',

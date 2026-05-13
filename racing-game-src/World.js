@@ -5,6 +5,7 @@ import { Accelerometer } from 'expo-sensors';
 import sampleSize from 'lodash.samplesize';
 import Matter from 'matter-js';
 import randomInt from 'random-int';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GameEngine } from 'react-native-game-engine';
 
@@ -30,12 +31,12 @@ import {
   RACING_PLAYER_MAX_SPEED,
   RACING_TILT_DEADZONE,
   RACING_TILT_SENSITIVITY,
+  RACING_BUTTON_VIRTUAL_TILT_CAP,
   gravityForTier,
   worldSpeedPxPerSec,
 } from './Constants';
 import { OPPOSING_CAR_IMAGES } from './Images';
 import { car, floor, road } from './Objects';
-import Box from './components/Box';
 import Car from './components/Car';
 import Road from './components/Road';
 import getRandomDecimal from './helpers/getRandomDecimal';
@@ -103,6 +104,10 @@ export default class World extends Component {
     this.blueCarSpinDir = 1;
     this._blueCarWasActive = false;
     this.tiltX = 0;
+    /** -1 | 0 | 1 while on-screen steer buttons are held */
+    this.buttonSteer = 0;
+    /** Smoothed virtual tilt from buttons; merged with accelerometer in playerMotion */
+    this.virtualTilt = 0;
     this.playerX = DEVICE_WIDTH / 2;
 
     const { engine, world } = this.addObjectsToWorld(car);
@@ -125,7 +130,16 @@ export default class World extends Component {
       }
 
       const dt = Math.min(time.delta / 1000, 0.064);
-      const raw = this.tiltX;
+      const BTN_RAMP = 20;
+      const BTN_DECAY = 26;
+      if (this.buttonSteer !== 0) {
+        const tgt = this.buttonSteer * RACING_BUTTON_VIRTUAL_TILT_CAP;
+        this.virtualTilt += (tgt - this.virtualTilt) * Math.min(1, BTN_RAMP * dt);
+      } else {
+        this.virtualTilt += (0 - this.virtualTilt) * Math.min(1, BTN_DECAY * dt);
+      }
+      const raw =
+        Math.abs(this.virtualTilt) > 0.02 ? this.virtualTilt : this.tiltX;
       const mag = Math.abs(raw);
       let speed = 0;
       if (mag > RACING_TILT_DEADZONE) {
@@ -237,6 +251,8 @@ export default class World extends Component {
     });
 
     this.playerX = DEVICE_WIDTH / 2;
+    this.buttonSteer = 0;
+    this.virtualTilt = 0;
     Matter.Body.setPosition(car, {
       x: this.playerX,
       y: DEVICE_HEIGHT - 200,
@@ -399,13 +415,6 @@ export default class World extends Component {
         renderer: Car,
       },
 
-      gameFloor: {
-        body: floor,
-        size: [DEVICE_WIDTH, 10],
-        color: '#414448',
-        renderer: Box,
-      },
-
       blueHazard: {
         body: this.blueCar,
         size: [CAR_WIDTH, CAR_HEIGHT],
@@ -464,32 +473,34 @@ export default class World extends Component {
               </View>
             ) : null}
           </View>
-          {__DEV__ && (
-            <View style={styles.devControls} pointerEvents='box-none'>
-              <Pressable
-                style={[styles.devButton, styles.devButtonLeft]}
-                onPressIn={() => {
-                  this.tiltX = -0.15;
-                }}
-                onPressOut={() => {
-                  this.tiltX = 0;
-                }}
-              >
-                <Text style={styles.devButtonText}>◀</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.devButton, styles.devButtonRight]}
-                onPressIn={() => {
-                  this.tiltX = 0.15;
-                }}
-                onPressOut={() => {
-                  this.tiltX = 0;
-                }}
-              >
-                <Text style={styles.devButtonText}>▶</Text>
-              </Pressable>
-            </View>
-          )}
+          <View style={styles.steerControls} pointerEvents='box-none'>
+            <Pressable
+              style={[styles.steerButton, styles.steerButtonLeft]}
+              onPressIn={() => {
+                this.buttonSteer = -1;
+              }}
+              onPressOut={() => {
+                this.buttonSteer = 0;
+              }}
+            >
+              <View style={styles.steerIconWrap}>
+                <FontAwesome6 name='chevron-left' size={36} color='#fff' />
+              </View>
+            </Pressable>
+            <Pressable
+              style={[styles.steerButton, styles.steerButtonRight]}
+              onPressIn={() => {
+                this.buttonSteer = 1;
+              }}
+              onPressOut={() => {
+                this.buttonSteer = 0;
+              }}
+            >
+              <View style={styles.steerIconWrap}>
+                <FontAwesome6 name='chevron-right' size={36} color='#fff' />
+              </View>
+            </Pressable>
+          </View>
         </GameEngine>
       );
     }
@@ -506,6 +517,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'gray',
+    overflow: 'hidden',
   },
   infoWrapper: {
     flex: 1,
@@ -542,7 +554,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     color: '#1a1a1a',
   },
-  devControls: {
+  steerControls: {
     position: 'absolute',
     left: 0,
     right: 0,
@@ -551,19 +563,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 24,
   },
-  devButton: {
-    width: 84,
-    height: 84,
-    borderRadius: 42,
+  steerButton: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     backgroundColor: 'rgba(0,0,0,0.45)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  devButtonLeft: {},
-  devButtonRight: {},
-  devButtonText: {
-    color: '#fff',
-    fontSize: 32,
-    fontWeight: 'bold',
+  steerButtonLeft: {},
+  steerButtonRight: {},
+  /** FA chevrons sit slightly off-center in the glyph box; fixed box + center fixes alignment */
+  steerIconWrap: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

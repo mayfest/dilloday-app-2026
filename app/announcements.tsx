@@ -3,9 +3,18 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import AnnouncementItem from '@/components/announcements/announcement-item';
 import DrawerScreen from '@/components/drawer-screen';
 import LoadingIndicator from '@/components/loading-indicator';
+import {
+  sofachromeTitleContainer
+} from '@/constants/sofachrome-screen-title';
 import { Announcement, getAnnouncements } from '@/lib/announcement';
 import { useFocusEffect } from 'expo-router';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import Toast from 'react-native-toast-message';
 
 export default function AnnouncementScreen() {
@@ -105,6 +114,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     paddingVertical: 5,
+  },
+  titleContainer: {
+    alignSelf: 'stretch',
+    ...sofachromeTitleContainer(),
+    marginTop: 34,
+    marginBottom: 16,
+    width: '100%',
   },
   content: {
     paddingHorizontal: 5,

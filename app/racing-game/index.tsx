@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import AccordionItem from '@/components/faq/accordion-item';
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
+import { sofachromeTitleTextStyle } from '@/constants/sofachrome-screen-title';
 import {
   type RacingLeaderboardEntry,
   subscribeTopLeaderboard,
@@ -376,12 +377,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   title: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 30,
-    letterSpacing: 1,
-    paddingRight: 8,
-    textAlign: 'center',
+    ...sofachromeTitleTextStyle(30, { letterSpacing: 1 }),
   },
   tagline: {
     marginTop: 8,

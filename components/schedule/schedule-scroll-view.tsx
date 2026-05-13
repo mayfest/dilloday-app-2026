@@ -4,6 +4,7 @@ import ArtistItem from '@/components/artist/artist-item';
 import FMOStageBanner from '@/components/schedule/fmo-stage-banner';
 import MainStageBanner from '@/components/schedule/main-stage-banner';
 import { useConfig } from '@/lib/config';
+import { isArtistAnnounced } from '@/lib/artist';
 import { FontAwesome6 } from '@expo/vector-icons';
 import {
   FlatList,
@@ -129,6 +130,10 @@ export default function ScheduleScrollView() {
 
   const selectedStage = stages[selectedStageIndex];
 
+  const announcedArtistIds = selectedStage.artists.filter((artistId) =>
+    isArtistAnnounced(config.artists[artistId])
+  );
+
   return (
     <View style={styles.container}>
       {renderStageSelectors()}
@@ -137,7 +142,7 @@ export default function ScheduleScrollView() {
         {renderStageBanner(selectedStage)}
 
         <FlatList
-          data={selectedStage.artists}
+          data={announcedArtistIds}
           keyExtractor={(item, index) => `artist-${index}`}
           renderItem={({ item }) => (
             <ArtistItem artistId={item} stage={selectedStage} />

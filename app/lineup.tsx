@@ -17,7 +17,11 @@ import {
   MAIN_STAGE_TICKET_RENDERED_HEIGHT,
   getMainStageTicketSvgWidth,
 } from '@/components/schedule/main-stage-ticket';
-import type { Artist } from '@/lib/artist';
+import {
+  sofachromeTitleContainer,
+  sofachromeTitleTextStyle,
+} from '@/constants/sofachrome-screen-title';
+import { type Artist } from '@/lib/artist';
 import { type Config, useConfig } from '@/lib/config';
 import type { Stage } from '@/lib/schedule';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
@@ -511,28 +515,22 @@ export default function LineupScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#000' },
   topBar: {
-    alignItems: 'center',
+    ...sofachromeTitleContainer(),
     backgroundColor: '#000',
-    elevation: 8,
-    overflow: 'visible',
     paddingTop: 18,
     paddingBottom: 14,
-    paddingHorizontal: 8,
-    width: '100%',
+    paddingHorizontal: 4,
     zIndex: 2,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#2a2a2a',
   },
+  /** Same SofachromeIt treatment as “DILLO 54” on the home tab (`app/(tabs)/index/index.tsx`). */
   lineupTitle: {
-    color: LINEUP_ACCENT_YELLOW,
-    fontFamily: 'Sofachrome',
-    fontSize: 29,
-    fontStyle: 'italic',
-    includeFontPadding: false,
-    lineHeight: 38,
-    overflow: 'visible',
-    paddingLeft: 4,
-    paddingRight: 22,
-    textAlign: 'center',
+    ...sofachromeTitleTextStyle(38),
+    letterSpacing: 1,
+    paddingRight: 8,
     width: '100%',
+    textAlign: 'center',
   },
   timelineScroll: { flex: 1 },
   scheduleFallback: {

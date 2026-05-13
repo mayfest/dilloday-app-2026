@@ -3,6 +3,9 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import DrawerScreen from '@/components/drawer-screen';
 import LoadingIndicator from '@/components/loading-indicator';
+import {
+  sofachromeTitleTextStyle
+} from '@/constants/sofachrome-screen-title';
 import { useConfig } from '@/lib/config';
 import {
   type ResolvedFoodTruck,
@@ -124,12 +127,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginVertical: 16,
-    overflow: 'visible',
   },
   foodTitle: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 38,
+    ...sofachromeTitleTextStyle(38),
     letterSpacing: 1,
     paddingRight: 8,
     width: '100%',

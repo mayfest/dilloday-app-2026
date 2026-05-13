@@ -75,6 +75,11 @@ export const RACING_TILT_DEADZONE = 0.04;
 /** Cap on lateral speed (px/s) regardless of tilt */
 export const RACING_PLAYER_MAX_SPEED = 700;
 
+/** Max virtual tilt magnitude while holding on-screen steer buttons (same units
+ *  as accelerometer g). Lower = gentler lateral movement. ~0.36 → ~40% of full
+ *  lateral speed after deadzone + sensitivity. */
+export const RACING_BUTTON_VIRTUAL_TILT_CAP = 0.36;
+
 /** Matter.js collision categories (must not overlap bits) */
 export const MATTER_CAT_FLOOR = 0x0001;
 export const MATTER_CAT_PLAYER = 0x0002;

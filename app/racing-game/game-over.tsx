@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import GlobalNavivationWrapper from '@/components/navigation/navigation-bar';
+import { sofachromeTitleTextStyle } from '@/constants/sofachrome-screen-title';
 import {
   type RacingLeaderboardEntry,
   recordLeaderboardScore,
@@ -319,13 +320,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   title: {
-    color: '#FFEB3B',
-    fontFamily: 'SofachromeIt',
-    fontSize: 30,
-    letterSpacing: 1,
-    paddingRight: 8,
-    textAlign: 'center',
-    textTransform: 'uppercase',
+    ...sofachromeTitleTextStyle(30, {
+      letterSpacing: 1,
+      textTransform: 'uppercase',
+    }),
   },
   subtitle: {
     marginTop: 8,
