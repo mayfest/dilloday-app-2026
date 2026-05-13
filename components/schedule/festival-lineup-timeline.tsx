@@ -146,7 +146,7 @@ function normalizeMinuteOfDay(totalMinutes: number) {
   return ((Math.floor(totalMinutes) % MINUTES_DAY) + MINUTES_DAY) % MINUTES_DAY;
 }
 
-/** 12-hour clock labels for LINEUP timeline (exported for lineup screen alerts). */
+/** 12 hour clock labels for LINEUP timeline (exported for lineup screen alerts). */
 export function formatClock(totalMinutes: number) {
   const mins = normalizeMinuteOfDay(totalMinutes);
   const rawHour = Math.floor(mins / 60) % 24;
