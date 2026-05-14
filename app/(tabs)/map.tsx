@@ -1,7 +1,7 @@
 // MapScreen.tsx — static venue map image only
 import React, { useMemo, useState } from 'react';
 
-import MapImage from '@/assets/images/dillo_map_no_caro.png';
+import MapImage from '@/assets/images/dillo_map_no_caro.jpeg';
 import TabScreen from '@/components/tab-screen';
 import {
   sofachromeTitleContainer,
